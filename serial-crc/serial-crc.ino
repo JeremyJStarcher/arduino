@@ -120,8 +120,8 @@ void runTests() {
 }
 
 void wiringTest(uint16_t testCode) {
-  const byte value2 = 0xA5;
-  const byte value3 = 0x5A;
+  const byte value2 = 0x22;
+  const byte value3 = 0x33;
   byte c;
 
   if (testCode == CODE_WIRING_SETUP) {
@@ -134,11 +134,12 @@ void wiringTest(uint16_t testCode) {
     if (Serial2.available()) {
       c = Serial2.read();
       if (c == value3) {
-        Serial.println(F("Serial2 ** PASSED"));
+        Serial.print(F("Serial2 ** PASSED: "));
+        Serial.println(c, HEX);
       } else {
         is_passing = false;
         Serial.print(F("Serial2 received wrong value: "));
-        Serial.println(c);
+        Serial.println(c, HEX);
       }
     } else {
       is_passing = false;
@@ -148,11 +149,12 @@ void wiringTest(uint16_t testCode) {
     if (Serial3.available()) {
       c = Serial3.read();
       if (c == value2) {
-        Serial.println(F("Serial3 ** PASSED"));
+        Serial.print(F("Serial3 ** PASSED: "));
+        Serial.println(c, HEX);
       } else {
         is_passing = false;
         Serial.print(F("Serial3 received wrong value: "));
-        Serial.println(c);
+        Serial.println(c, HEX);
       }
     } else {
       is_passing = false;
