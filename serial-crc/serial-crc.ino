@@ -5,7 +5,7 @@
 #include "xmodem.h"
 
 
-#define READ_TIMEOUT 1000
+#define READ_TIMEOUT 100
 
 const char message[] = "This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did.";
 size_t message_head = 0;
@@ -103,6 +103,7 @@ void wiringTest() {
     Serial.print(F("Serial3 received wrong value: "));
     Serial.println(c, HEX);
   }
+  Serial.println(F("=== Wiring Test Passed"));
 }
 
 void ioSerialTest(
@@ -154,6 +155,7 @@ void ioSerialTest(
     Serial.println(c, HEX);
     return;
   }
+  Serial.println(F("=== IoSerial Test Passed"));
 }
 
 void ioSerialFlushTest(
@@ -175,15 +177,17 @@ void ioSerialFlushTest(
   signed int c1 = serialA.readbyte(READ_TIMEOUT);
   if (c1 >= 0) {
     Serial.println(F("ERROR: serialA did not flush properly"));
-    Serial.println(c1);
     is_passing = false;
     return;
   }
+  Serial.println(F("serialA ** PASSED: "));
 
-  signed int c2 = serialA.readbyte(READ_TIMEOUT);
+  signed int c2 = serialB.readbyte(READ_TIMEOUT);
   if (c2 >= 0) {
     Serial.println(F("ERROR: serialB did not flush properly"));
     is_passing = false;
     return;
   }
+  Serial.println(F("serialB ** PASSED: "));
+  Serial.println(F("=== IoSerialFlush Test Passed"));
 }
