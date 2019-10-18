@@ -6,13 +6,13 @@ void IoSerial::begin(HardwareSerial *_serial) {
   this->serial = _serial;
 }
 
-unsigned int IoSerial::readbyte(int timeout) {
+signed int IoSerial::readbyte(int timeout) {
   long now = millis();
-  unsigned int c;
+  signed int c;
 
   while ((c = this->serial->read()) == -1) {
     if (millis() > now + timeout) {
-      return -1;
+      break;
     }
   }
 
@@ -21,4 +21,11 @@ unsigned int IoSerial::readbyte(int timeout) {
 
 void IoSerial::writebyte(uint8_t b) {
   this->serial->write(b);
+}
+
+void IoSerial::flush() {
+  // If there is still data coming in
+  delay(1000);
+  while (this->serial->read() != -1)
+    ;
 }

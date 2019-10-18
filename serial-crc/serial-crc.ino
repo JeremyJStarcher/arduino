@@ -40,6 +40,7 @@ void runTests() {
 
   if (is_passing) wiringTest();
   if (is_passing) ioSerialTest(serialHardware2, serialHardware3);
+  if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
 
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -58,7 +59,7 @@ void wiringTest() {
 
   const byte value2 = getRandom();
   const byte value3 = getRandom();
-  int c;
+  signed int c;
 
   Serial.println(F("=== Wiring Test Setup"));
   Serial2.write(value2);
@@ -112,7 +113,7 @@ void ioSerialTest(
   const long wait_time = 1000;
   const byte value2 = getRandom();
   const byte value3 = getRandom();
-  unsigned int c;
+  signed int c;
 
   serialA.writebyte(value2);
   serialB.writebyte(value3);
@@ -151,6 +152,38 @@ void ioSerialTest(
     is_passing = false;
     Serial.print(F("serialB received wrong value: "));
     Serial.println(c, HEX);
+    return;
+  }
+}
+
+void ioSerialFlushTest(
+  IoSerial serialA,
+  IoSerial serialB
+) {
+  Serial.println(F("=== IoSerialFlush Test Setup"));
+  for (int i = 0; i < 10; i++) {
+    const byte value2 = getRandom();
+    const byte value3 = getRandom();
+
+    serialA.writebyte(value2);
+    serialB.writebyte(value3);
+  }
+
+  serialA.flush();
+  serialB.flush();
+
+  signed int c1 = serialA.readbyte(READ_TIMEOUT);
+  if (c1 >= 0) {
+    Serial.println(F("ERROR: serialA did not flush properly"));
+    Serial.println(c1);
+    is_passing = false;
+    return;
+  }
+
+  signed int c2 = serialA.readbyte(READ_TIMEOUT);
+  if (c2 >= 0) {
+    Serial.println(F("ERROR: serialB did not flush properly"));
+    is_passing = false;
     return;
   }
 }

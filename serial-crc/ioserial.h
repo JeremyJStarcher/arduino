@@ -7,9 +7,10 @@
 
 class IoSerial: public IoLine {
   public:
-    unsigned int readbyte(int timeout);
+    signed int readbyte(int timeout);
     void writebyte(uint8_t b);
     void begin(HardwareSerial *_serial);
+    void flush();
 
   private:
     HardwareSerial *serial;
