@@ -1,5 +1,8 @@
 #include "common.h"
-#include "crc.c";
+#include "crc.c"
+
+#include "ioline.h"
+#include "ioserial.h"
 
 const char message[] = "This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did.";
 size_t message_head = 0;
@@ -23,6 +26,9 @@ uint16_t testCode = CODE_SETUP;
 
 void run_test(void (*test)());
 
+IoSerial IoSerial2;
+IoSerial IoSerial3;
+
 void setup() {
   Serial.begin(USB_BAUD);
 
@@ -31,12 +37,14 @@ void setup() {
 
   while (!Serial) ; // wait for Arduino Serial Monitor to open
   Serial.println(F("USB Connection established"));
+
+  IoSerial2.begin(&Serial2);
+  IoSerial3.begin(&Serial3);
 }
 
 void loop() {
   runTests();
 }
-
 
 void run_test(void (*test)())
 {
