@@ -1,6 +1,5 @@
 #include "common.h"
 #include "crc.c"
-
 #include "ioline.h"
 #include "ioserial.h"
 
@@ -11,12 +10,11 @@ bool is_passing = true;
 
 #define CODE_SETUP 0
 #define CODE_WIRING_TEST 1
-
+#define CODE_IOSERIAL_TEST 2
 #define CODE_DONE 900
 #define CODE_FAILED 999
 
 uint16_t testCode = CODE_SETUP;
-
 void run_test(void (*test)());
 
 IoSerial IoSerial2;
@@ -69,12 +67,17 @@ void runTests() {
       testCode = CODE_WIRING_TEST;
       break;
     case CODE_WIRING_TEST:
-      if (wiringTest(testCode)) {
+      if (wiringTest()) {
+        testCode = CODE_IOSERIAL_TEST;
+      }
+      break;
+    case CODE_IOSERIAL_TEST:
+      if (ioSerialTest()) {
         testCode = CODE_DONE;
       }
       break;
     case CODE_DONE:
-      ShowOnce(F("Done"));
+      ShowOnce(F("Done\n"));
       break;
     case CODE_FAILED:
       Serial.println(F("FAILED"));
@@ -83,7 +86,7 @@ void runTests() {
   }
 }
 
-bool wiringTest(uint16_t testCode) {
+bool wiringTest() {
   static byte phase = 0;
   static long startTime;
 
@@ -140,4 +143,57 @@ bool wiringTest(uint16_t testCode) {
     }
     return true;
   }
+}
+
+bool ioSerialTest() {
+  static byte phase = 0;
+  static long startTime;
+
+  const long wait_time = 1000;
+  const byte value2 = 0xA5;
+  const byte value3 = 0x5A;
+  unsigned int c;
+
+  Serial.println(F("=== IoSerial Test Setup"));
+  phase = 1;
+  startTime = millis();
+
+  // Put the write in the loop itself so make sure that being in a
+  // spin lock doesn't prevent the IO from working.
+  while ((c = IoSerial2.readbyte()) == -1) {
+    if (millis() == startTime + wait_time) {
+      Serial.println(F("ERROR: Did not receive signal on Serial2"));
+      is_passing = false;
+      return false;
+    }
+    IoSerial3.writebyte(value3);
+  }
+
+  if (c == value3) {
+    Serial.print(F("Serial2 ** PASSED: "));
+    Serial.println(c, HEX);
+  } else {
+    is_passing = false;
+    Serial.print(F("Serial2 received wrong value: "));
+    Serial.println(c, HEX);
+  }
+
+  while ((c = IoSerial3.readbyte()) == -1) {
+    if (millis() == startTime + wait_time) {
+      Serial.println(F("ERROR: Did not receive signal on Serial2"));
+      is_passing = false;
+      return false;
+    }
+    IoSerial2.writebyte(value2);
+  }
+
+  if (c == value2) {
+    Serial.print(F("Serial3 ** PASSED: "));
+    Serial.println(c, HEX);
+  } else {
+    is_passing = false;
+    Serial.print(F("Serial3 received wrong value: "));
+    Serial.println(c, HEX);
+  }
+  return true;
 }

@@ -5,9 +5,9 @@ void IoSerial::begin(HardwareSerial *_serial) {
 }
 
 int IoSerial::readbyte() {
-  if (this->serial->available()) {
-    return this->serial->read();
-  } else {
-    return -1;
-  }
+  return this->serial->read();
+}
+
+void IoSerial::writebyte(uint8_t b) {
+  this->serial->write(b);
 }

@@ -5,14 +5,7 @@
 class IoLine {
   public:
     virtual int readbyte() = 0;
-
-    //    virtual void f() = 0; // pure virtual
-    //    virtual void g() {}  // non-pure virtual
-    //    ~Abstract() {
-    //        g(); // OK: calls Abstract::g()
-    //        // f(); // undefined behavior
-    //        Abstract::f(); // OK: non-virtual call
-    //    }
+    virtual void writebyte(uint8_t b) = 0;
 };
 
 #endif

@@ -8,6 +8,7 @@
 class IoSerial: public IoLine {
   public:
     int readbyte();
+    void writebyte(uint8_t b);
     void begin(HardwareSerial *_serial);
 
   private:
