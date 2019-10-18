@@ -10,17 +10,10 @@ size_t message_head = 0;
 bool is_passing = true;
 
 #define CODE_SETUP 0
-#define CODE_WIRING_SETUP 1
-#define CODE_WIRING_WAIT2 2
-#define CODE_WIRING_WAIT3 3
-
-#define CODE_WIRING_EVAL 4
+#define CODE_WIRING_TEST 1
 
 #define CODE_DONE 900
 #define CODE_FAILED 999
-
-#define CODE_WAITING_COM2 1000
-#define CODE_WAITING_COM3 1001
 
 uint16_t testCode = CODE_SETUP;
 
@@ -54,7 +47,8 @@ void run_test(void (*test)())
 #define ShowOnce(x) if (testCode != zzz)  {Serial.print(x);}
 
 void runTests() {
-  byte avail;
+  bool is_done;
+
   static uint16_t nextTestCode = -1;
   static uint16_t lastTestCode = -1;
   static uint16_t testCodeNext = CODE_SETUP;
@@ -69,48 +63,18 @@ void runTests() {
   }
 
   switch (testCode) {
-    case CODE_WAITING_COM2:
-    case CODE_WAITING_COM3:
-      ShowOnce("Waiting on serial port #");
-      ShowOnce(testCode == CODE_WAITING_COM2 ? "2" : "3");
-      Serial.print(F("."));
-
-
-      avail = testCode == CODE_WAITING_COM2
-              ? Serial2.available()
-              : Serial3.available();
-
-      if (avail >= testBytesNeeded) {
-        testCode = testCodeNext;
-        Serial.println(F("!"));
-      }
-
-      break;
     case CODE_SETUP:
       Serial.println(F("Running tests..."));
       is_passing = true;
-      testCode = CODE_WIRING_SETUP;
+      testCode = CODE_WIRING_TEST;
       break;
-    case CODE_WIRING_SETUP:
-      wiringTest(testCode);
-      testCode = CODE_WIRING_WAIT2;
-      break;
-    case CODE_WIRING_WAIT2:
-      testCodeNext = CODE_WIRING_WAIT3;
-      testCode = CODE_WAITING_COM2;
-      testBytesNeeded = 1;
-      break;
-    case CODE_WIRING_WAIT3:
-      testCodeNext = CODE_WIRING_EVAL;
-      testCode = CODE_WAITING_COM3;
-      testBytesNeeded = 1;
-      break;
-    case CODE_WIRING_EVAL:
-      wiringTest(testCode);
-      testCode = CODE_DONE;
+    case CODE_WIRING_TEST:
+      if (wiringTest(testCode)) {
+        testCode = CODE_DONE;
+      }
       break;
     case CODE_DONE:
-      // Serial.println(F("Done"));
+      ShowOnce(F("Done"));
       break;
     case CODE_FAILED:
       Serial.println(F("FAILED"));
@@ -119,46 +83,61 @@ void runTests() {
   }
 }
 
-void wiringTest(uint16_t testCode) {
+bool wiringTest(uint16_t testCode) {
+  static byte phase = 0;
+  static long startTime;
+
   const byte value2 = 0x22;
   const byte value3 = 0x33;
-  byte c;
+  int c;
 
-  if (testCode == CODE_WIRING_SETUP) {
+  if (phase == 0) {
     Serial.println(F("=== Wiring Test Setup"));
     Serial2.write(value2);
     Serial3.write(value3);
+    phase = 1;
+    startTime = millis();
+    return false;
   }
 
-  if (testCode == CODE_WIRING_EVAL) {
-    if (Serial2.available()) {
-      c = Serial2.read();
-      if (c == value3) {
-        Serial.print(F("Serial2 ** PASSED: "));
-        Serial.println(c, HEX);
-      } else {
-        is_passing = false;
-        Serial.print(F("Serial2 received wrong value: "));
-        Serial.println(c, HEX);
+  while (phase == 1) {
+    if (millis() == startTime + (1000)) {
+      if (!Serial2.available()) {
+        Serial.println(F("ERROR: Did not receive signal on Serial2"));
       }
-    } else {
+      if (!Serial3.available()) {
+        Serial.println(F("ERROR: Did not receive signal on Serial3"));
+      }
       is_passing = false;
-      Serial.println(F("Serial2 received did not receive a value: "));
+      return false;
     }
 
-    if (Serial3.available()) {
-      c = Serial3.read();
-      if (c == value2) {
-        Serial.print(F("Serial3 ** PASSED: "));
-        Serial.println(c, HEX);
-      } else {
-        is_passing = false;
-        Serial.print(F("Serial3 received wrong value: "));
-        Serial.println(c, HEX);
-      }
+    if (Serial2.available() && Serial3.available()) {
+      phase = 2;
+    }
+    return false;
+  }
+
+  if (phase == 2) {
+    c = Serial2.read();
+    if (c == value3) {
+      Serial.print(F("Serial2 ** PASSED: "));
+      Serial.println(c, HEX);
     } else {
       is_passing = false;
-      Serial.println(F("Serial3 received did not receive a value: "));
+      Serial.print(F("Serial2 received wrong value: "));
+      Serial.println(c, HEX);
     }
+
+    c = Serial3.read();
+    if (c == value2) {
+      Serial.print(F("Serial3 ** PASSED: "));
+      Serial.println(c, HEX);
+    } else {
+      is_passing = false;
+      Serial.print(F("Serial3 received wrong value: "));
+      Serial.println(c, HEX);
+    }
+    return true;
   }
 }
