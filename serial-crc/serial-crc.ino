@@ -11,15 +11,6 @@ size_t message_head = 0;
 
 bool is_passing = true;
 
-#define CODE_SETUP 0
-#define CODE_WIRING_TEST 1
-#define CODE_IOSERIAL_TEST 2
-#define CODE_DONE 900
-#define CODE_FAILED 999
-
-uint16_t testCode = CODE_SETUP;
-void run_test(void (*test)());
-
 IoSerial IoSerial2;
 IoSerial IoSerial3;
 
@@ -30,81 +21,46 @@ void setup() {
   Serial3.begin(UART_BAUD);
 
   while (!Serial) ; // wait for Arduino Serial Monitor to open
-  Serial.println(F("USB Connection established"));
+  Serial.println(F("\n\n\nUSB Connection established"));
 
   IoSerial2.begin(&Serial2);
   IoSerial3.begin(&Serial3);
-}
 
-void loop() {
   runTests();
 }
 
-void run_test(void (*test)())
-{
-  test();
+void loop() {
 }
 
-#define ShowOnce(x) if (testCode != zzz)  {Serial.print(x);}
 
 void runTests() {
-  bool is_done;
 
-  static uint16_t nextTestCode = -1;
-  static uint16_t lastTestCode = -1;
-  static uint16_t testCodeNext = CODE_SETUP;
-  static uint16_t testBytesNeeded;
-  static uint16_t zzz;
+  Serial.println(F("Running tests..."));
+  is_passing = true;
 
-  zzz = lastTestCode;
-  lastTestCode = testCode;
+  if (is_passing) wiringTest();
+  if (is_passing) ioSerialTest();
 
-  if (is_passing == false && testCode != CODE_DONE) {
-    testCode = CODE_FAILED;
+  if (!is_passing) {
+    Serial.println(F("FAILED"));
   }
 
-  switch (testCode) {
-    case CODE_SETUP:
-      Serial.println(F("Running tests..."));
-      is_passing = true;
-      testCode = CODE_WIRING_TEST;
-      break;
-    case CODE_WIRING_TEST:
-      if (wiringTest()) {
-        testCode = CODE_IOSERIAL_TEST;
-      }
-      break;
-    case CODE_IOSERIAL_TEST:
-      if (ioSerialTest()) {
-        testCode = CODE_DONE;
-      }
-      break;
-    case CODE_DONE:
-      ShowOnce(F("Done\n"));
-      break;
-    case CODE_FAILED:
-      Serial.println(F("FAILED"));
-      testCode = CODE_DONE;
-      break;
-  }
+  Serial.println(F("Done"));
 }
 
-bool wiringTest() {
-  static byte phase = 0;
-  static long startTime;
+void wiringTest() {
+  byte phase = 0;
+  long startTime;
 
   const byte value2 = 0x22;
   const byte value3 = 0x33;
   int c;
 
-  if (phase == 0) {
-    Serial.println(F("=== Wiring Test Setup"));
-    Serial2.write(value2);
-    Serial3.write(value3);
-    phase = 1;
-    startTime = millis();
-    return false;
-  }
+  Serial.println(F("=== Wiring Test Setup"));
+  Serial2.write(value2);
+  Serial3.write(value3);
+  phase = 1;
+  startTime = millis();
 
   while (phase == 1) {
     if (millis() == startTime + (1000)) {
@@ -115,61 +71,15 @@ bool wiringTest() {
         Serial.println(F("ERROR: Did not receive signal on Serial3"));
       }
       is_passing = false;
-      return false;
+      return;
     }
 
     if (Serial2.available() && Serial3.available()) {
       phase = 2;
     }
-    return false;
   }
 
-  if (phase == 2) {
-    c = Serial2.read();
-    if (c == value3) {
-      Serial.print(F("Serial2 ** PASSED: "));
-      Serial.println(c, HEX);
-    } else {
-      is_passing = false;
-      Serial.print(F("Serial2 received wrong value: "));
-      Serial.println(c, HEX);
-    }
-
-    c = Serial3.read();
-    if (c == value2) {
-      Serial.print(F("Serial3 ** PASSED: "));
-      Serial.println(c, HEX);
-    } else {
-      is_passing = false;
-      Serial.print(F("Serial3 received wrong value: "));
-      Serial.println(c, HEX);
-    }
-    return true;
-  }
-}
-
-bool ioSerialTest() {
-  static byte phase = 0;
-  static long startTime;
-
-  const long wait_time = 1000;
-  const byte value2 = 0xA5;
-  const byte value3 = 0x5A;
-  unsigned int c;
-  IoSerial2.writebyte(value2);
-  IoSerial3.writebyte(value3);
-
-  Serial.println(F("=== IoSerial Test Setup"));
-  phase = 1;
-  startTime = millis();
-
-  c = IoSerial2.readbyte(READ_TIMEOUT);
-  if (c < 0) {
-    Serial.println(F("ERROR: Did not receive signal on Serial2"));
-    is_passing = false;
-    return false;
-  }
-
+  c = Serial2.read();
   if (c == value3) {
     Serial.print(F("Serial2 ** PASSED: "));
     Serial.println(c, HEX);
@@ -179,11 +89,52 @@ bool ioSerialTest() {
     Serial.println(c, HEX);
   }
 
+  c = Serial3.read();
+  if (c == value2) {
+    Serial.print(F("Serial3 ** PASSED: "));
+    Serial.println(c, HEX);
+  } else {
+    is_passing = false;
+    Serial.print(F("Serial3 received wrong value: "));
+    Serial.println(c, HEX);
+  }
+}
+
+void ioSerialTest() {
+  long startTime;
+  const long wait_time = 1000;
+  const byte value2 = 0xA5;
+  const byte value3 = 0x5A;
+  unsigned int c;
+
+  IoSerial2.writebyte(value2);
+  IoSerial3.writebyte(value3);
+
+  Serial.println(F("=== IoSerial Test Setup"));
+  startTime = millis();
+
+  c = IoSerial2.readbyte(READ_TIMEOUT);
+  if (c < 0) {
+    Serial.println(F("ERROR: Did not receive signal on Serial2"));
+    is_passing = false;
+    return;
+  }
+
+  if (c == value3) {
+    Serial.print(F("Serial2 ** PASSED: "));
+    Serial.println(c, HEX);
+  } else {
+    is_passing = false;
+    Serial.print(F("Serial2 received wrong value: "));
+    Serial.println(c, HEX);
+    return;
+  }
+
   c = IoSerial3.readbyte(READ_TIMEOUT);
   if (c < 0) {
     Serial.println(F("ERROR: Did not receive signal on Serial2"));
     is_passing = false;
-    return false;
+    return;
   }
 
   if (c == value2) {
@@ -193,6 +144,6 @@ bool ioSerialTest() {
     is_passing = false;
     Serial.print(F("Serial3 received wrong value: "));
     Serial.println(c, HEX);
+    return;
   }
-  return true;
 }
