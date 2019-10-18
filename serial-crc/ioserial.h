@@ -1,13 +1,13 @@
 #ifndef IO_SERIAL_H
 #define IO_SERIAL_H
 
-#include "ioline.h"
 #include <stdint.h>
 #include <HardwareSerial.h>
+#include "ioline.h"
 
 class IoSerial: public IoLine {
   public:
-    int readbyte();
+    unsigned int readbyte(int timeout);
     void writebyte(uint8_t b);
     void begin(HardwareSerial *_serial);
 

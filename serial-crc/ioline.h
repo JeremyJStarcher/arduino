@@ -4,7 +4,7 @@
 
 class IoLine {
   public:
-    virtual int readbyte() = 0;
+    virtual unsigned int readbyte(int timeout) = 0;
     virtual void writebyte(uint8_t b) = 0;
 };
 

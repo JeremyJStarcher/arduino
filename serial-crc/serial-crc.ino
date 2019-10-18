@@ -2,6 +2,9 @@
 #include "crc.c"
 #include "ioline.h"
 #include "ioserial.h"
+#include "xmodem.h"
+
+#define READ_TIMEOUT 1000
 
 const char message[] = "This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did.";
 size_t message_head = 0;
@@ -153,20 +156,18 @@ bool ioSerialTest() {
   const byte value2 = 0xA5;
   const byte value3 = 0x5A;
   unsigned int c;
+  IoSerial2.writebyte(value2);
+  IoSerial3.writebyte(value3);
 
   Serial.println(F("=== IoSerial Test Setup"));
   phase = 1;
   startTime = millis();
 
-  // Put the write in the loop itself so make sure that being in a
-  // spin lock doesn't prevent the IO from working.
-  while ((c = IoSerial2.readbyte()) == -1) {
-    if (millis() == startTime + wait_time) {
-      Serial.println(F("ERROR: Did not receive signal on Serial2"));
-      is_passing = false;
-      return false;
-    }
-    IoSerial3.writebyte(value3);
+  c = IoSerial2.readbyte(READ_TIMEOUT);
+  if (c < 0) {
+    Serial.println(F("ERROR: Did not receive signal on Serial2"));
+    is_passing = false;
+    return false;
   }
 
   if (c == value3) {
@@ -178,13 +179,11 @@ bool ioSerialTest() {
     Serial.println(c, HEX);
   }
 
-  while ((c = IoSerial3.readbyte()) == -1) {
-    if (millis() == startTime + wait_time) {
-      Serial.println(F("ERROR: Did not receive signal on Serial2"));
-      is_passing = false;
-      return false;
-    }
-    IoSerial2.writebyte(value2);
+  c = IoSerial3.readbyte(READ_TIMEOUT);
+  if (c < 0) {
+    Serial.println(F("ERROR: Did not receive signal on Serial2"));
+    is_passing = false;
+    return false;
   }
 
   if (c == value2) {
