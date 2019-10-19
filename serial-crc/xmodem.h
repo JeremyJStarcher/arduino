@@ -48,7 +48,7 @@
 #define DLY_1S 1000
 #define MAXRETRANS 25
 
-
+bool zusedCrc = false;
 
 class XmodemCrc {
   public:
@@ -56,6 +56,7 @@ class XmodemCrc {
     int xmodemReceive(unsigned char *dest, int destsz);
     int xmodemTransmit(unsigned char *src, int srcsz);
     //int xmodemTransmit(unsigned char *src, int srcsz, int tmpsz, void (*getsrc)());
+    bool usedCrc();
   private:
     IoLine *serial;
     void _outbyte(int b);
@@ -63,6 +64,10 @@ class XmodemCrc {
     void flushinput(void);
     static int check(int crc, const unsigned char *buf, int sz);
 };
+
+bool XmodemCrc::usedCrc() {
+  return zusedCrc;
+}
 
 
 void XmodemCrc::begin(IoLine *_serial) {
@@ -166,6 +171,7 @@ void XmodemCrc::_outbyte(int b) {
 
 unsigned short crc16_ccitt( const void *buf, int len )
 {
+  zusedCrc = true;
   unsigned short crc = 0;
   while ( len-- ) {
     int i;
@@ -213,7 +219,7 @@ int XmodemCrc::xmodemTransmit(
   int srcsz //,
   //int tmpsz,
   //void (*getsrc)()
-  )
+)
 {
   unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
   int bufsz, crc = -1;
@@ -259,7 +265,7 @@ start_trans:
       if (c > bufsz) c = bufsz;
       if (c >= 0) {
         // IF YOU HAVE THE WHOLE BUFFER AT ONCE
-         memset (&xbuff[3], 0, bufsz);
+        memset (&xbuff[3], 0, bufsz);
 
         //offset = len % tmpsz;
         //if (offset == 0) {

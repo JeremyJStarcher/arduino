@@ -6,6 +6,26 @@
 #include "ioserial.h"
 #include "xmodem.h"
 
+
+/* Wiring between two MEGAs
+
+    From    To
+    M14     M17
+    M15     M16
+    S14     S17
+    S15     S16
+    M18     S19
+    M19     S18
+    M8      S<reset>
+    M<gnd>  S<gnd>
+
+    For Master:
+    A2      HIGH
+
+    For Slave
+    A2      LOW
+*/
+
 #define SOH  0x01
 #define STX  0x02
 #define EOT  0x04
@@ -16,13 +36,18 @@
 
 #define READ_TIMEOUT 100
 
-const char longMessage[] PROGMEM = {"This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did."};
+const char poolStr[] = "ABCEDFGHIJKLMNOPQRSTUVWXYZ012345670";
+const size_t longMessageLen = 2048;
+unsigned char longMessage[longMessageLen];
+
 const char shortMessage[] PROGMEM = {'M', 'S', 'G', 0, '1', '7', '0', '1'};
 const byte shortMessageLength = 8;
 
-byte boardRole = 0;
+bool isBoardMaster = false;
 
 bool is_passing = true;
+const int slaveResetPin = 8;
+const int masterSelectPin = A2;
 
 void setup() {
   Serial.begin(USB_BAUD);
@@ -33,18 +58,24 @@ void setup() {
   while (!Serial) ; // wait for Arduino Serial Monitor to open
   Serial.println(F("\n\n\nUSB Connection established"));
 
-  // EEPROM.update(BOARD_ROLE_ADDRESS, BOARD_ROLE_SLAVE);
-  // EEPROM.update(BOARD_ROLE_ADDRESS, BOARD_ROLE_MASTER);
+  for (int i = 0; i < longMessageLen; i++) {
+    longMessage[i] = poolStr[i % strlen(poolStr)];
+  }
 
-  boardRole = EEPROM.read(BOARD_ROLE_ADDRESS);
-  if (boardRole == BOARD_ROLE_MASTER) {
+  pinMode(masterSelectPin, INPUT);
+
+  isBoardMaster = digitalRead(masterSelectPin);
+
+  if (isBoardMaster) {
     Serial.println(F("Master board.  In control."));
-  } else if (boardRole == BOARD_ROLE_SLAVE) {
-    Serial.println(F("Slave board"));
+    Serial.println(F("Resetting slave"));
+    pinMode(slaveResetPin, OUTPUT);
+    digitalWrite(slaveResetPin, LOW);
+    delay(1000);
+    digitalWrite(slaveResetPin, HIGH);
+    pinMode(slaveResetPin, INPUT);
   } else {
-    Serial.println(F("No role established for this board.  Dying."));
-    while (true)
-      ;
+    Serial.println(F("Slave board"));
   }
 
   runTests();
@@ -53,13 +84,18 @@ void setup() {
 void loop() {
 }
 
+void waitForSync() {
+  delay(2 * 1000);
+}
 
 void runTests() {
 
+  IoSerial serialHardware0;
   IoSerial serialHardware1;
   IoSerial serialHardware2;
   IoSerial serialHardware3;
 
+  serialHardware0.begin(&Serial);
   serialHardware1.begin(&Serial1);
   serialHardware2.begin(&Serial2);
   serialHardware3.begin(&Serial3);
@@ -72,17 +108,22 @@ void runTests() {
   if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
   if (is_passing) ioSerialPushTest(serialHardware2) ;
 
-  if (is_passing && boardRole == BOARD_ROLE_MASTER) {
-    sendShortMessage(serialHardware1);
+  if (is_passing && isBoardMaster) {
+    waitForSync();
     receiveShortMessage(serialHardware1);
+    waitForSync();
+    sendShortMessage(serialHardware1);
+    waitForSync();
+    sendXmodem(serialHardware1);
   }
 
-  if (is_passing && boardRole == BOARD_ROLE_SLAVE) {
-    Serial.println(F("Waiting for datastream.  Reset MASTER Arduino."));
-    receiveShortMessage(serialHardware1);
-    // Crappy workaround for a race condition.
-    delay(2 * 1000);
+  if (is_passing && !isBoardMaster) {
+    waitForSync();
     sendShortMessage(serialHardware1);
+    waitForSync();
+    receiveShortMessage(serialHardware1);
+    waitForSync();
+    receiveXmodem(serialHardware1);
   }
 
   if (!is_passing) {
@@ -96,6 +137,7 @@ byte getRandom() {
   delay(100); // Give time for it to randomize
   return analogRead(0) & 0xFF;
 }
+
 void wiringTest() {
   byte phase = 0;
   long startTime;
@@ -146,6 +188,7 @@ void wiringTest() {
     Serial.print(F("Serial3 received wrong value: "));
     Serial.println(c, HEX);
   }
+
   Serial.println(F("=== Wiring Test Passed"));
 }
 
@@ -277,21 +320,21 @@ void sendShortMessage(IoSerial remote) {
   unsigned int c;
 
   Serial.println(F("=== Sending short message"));
+
   remote.writebyte(SOH);
   for (size_t i = 0; i < shortMessageLength; i++) {
     byte b = pgm_read_byte_near(shortMessage + i);
     remote.writebyte(b);
     Serial.write(b);
   }
-  Serial.println("");
+  Serial.println("<----");
 
-
-  Serial.print(F("Waiting for ACK"));
+  Serial.println(F("Waiting for ACK"));
   while ((c = remote.readbyte(READ_TIMEOUT)) != ACK)
     ;
   remote.writebyte(EOT);
 
-  Serial.println(F("\n=== Sending short message ** PASS"));
+  Serial.println(F("=== Sending short message ** PASS"));
   remote.flush();
 }
 
@@ -301,12 +344,16 @@ void receiveShortMessage(IoSerial remote) {
   size_t idx = 0;
   signed int c;
 
+  Serial.println(F("Waiting for SOH"));
   // Wait for the datastream to start
   while ((c = remote.readbyte(READ_TIMEOUT)) != SOH)
     ;
+  Serial.println(F("Found SOH"));
 
   while (true) {
     c = remote.readbyte(READ_TIMEOUT);
+    Serial.println(c);
+
     if (c == -1) continue;
 
     byte b = pgm_read_byte_near(shortMessage + idx);
@@ -326,19 +373,42 @@ void receiveShortMessage(IoSerial remote) {
         break;
       }
     }
-
   }
 
   // Tell the remote we got it.
   remote.writebyte(ACK);
 
   Serial.println("");
-  Serial.print(F("Waiting for reply to our ACK"));
+  Serial.println(F("Waiting for reply to our ACK"));
   while ((c = remote.readbyte(READ_TIMEOUT)) != EOT)
     ;
 
   if (is_passing) {
-    Serial.println(F("\n=== Receiving short message **PASS"));
+    Serial.println(F("=== Receiving short message **PASS"));
   }
   remote.flush();
+}
+
+void sendXmodem(IoSerial remote) {
+  Serial.println("Sending XModem");
+  XmodemCrc xmodem;
+  xmodem.begin(&remote);
+  int res = xmodem.xmodemTransmit(longMessage, longMessageLen);
+
+  Serial.print("Used CRC? ");
+  Serial.println(xmodem.usedCrc());
+  Serial.print("Result: ");
+  Serial.println(res);
+}
+
+void receiveXmodem(IoSerial remote) {
+  Serial.println("Recieve XModem");
+  XmodemCrc xmodem;
+  xmodem.begin(&remote);
+  int res = xmodem.xmodemReceive(longMessage, longMessageLen);
+
+  Serial.print("Used CRC? ");
+  Serial.println(xmodem.usedCrc());
+  Serial.print("Result: ");
+  Serial.println(res);
 }
