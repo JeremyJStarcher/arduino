@@ -37,13 +37,13 @@
 #include <stdint.h>
 #include "ioline.h"
 
-#define SOH  0x01
-#define STX  0x02
-#define EOT  0x04
-#define ACK  0x06
-#define NAK  0x15
-#define CAN  0x18
-#define CTRLZ 0x1A
+#define XMODEM_SOH  0x01
+#define XMODEM_STX  0x02
+#define XMODEM_EOT  0x04
+#define XMODEM_ACK  0x06
+#define XMODEM_NAK  0x15
+#define XMODEM_CAN  0x18
+#define XMODEM_CTRLZ 0x1A
 
 #define DLY_1S 1000
 #define MAXRETRANS 25
@@ -89,20 +89,20 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
       if (trychar) _outbyte(trychar);
       if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
         switch (c) {
-          case SOH:
+          case XMODEM_SOH:
             bufsz = 128;
             goto start_recv;
-          case STX:
+          case XMODEM_STX:
             bufsz = 1024;
             goto start_recv;
-          case EOT:
+          case XMODEM_EOT:
             flushinput();
-            _outbyte(ACK);
+            _outbyte(XMODEM_ACK);
             return len; /* normal end */
-          case CAN:
-            if ((c = _inbyte(DLY_1S)) == CAN) {
+          case XMODEM_CAN:
+            if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
               flushinput();
-              _outbyte(ACK);
+              _outbyte(XMODEM_ACK);
               return -1; /* canceled by remote */
             }
             break;
@@ -112,13 +112,13 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
       }
     }
     if (trychar == 'C') {
-      trychar = NAK;
+      trychar = XMODEM_NAK;
       continue;
     }
     flushinput();
-    _outbyte(CAN);
-    _outbyte(CAN);
-    _outbyte(CAN);
+    _outbyte(XMODEM_CAN);
+    _outbyte(XMODEM_CAN);
+    _outbyte(XMODEM_CAN);
     return -2; /* sync error */
 
 start_recv:
@@ -146,17 +146,17 @@ start_recv:
       }
       if (--retrans <= 0) {
         flushinput();
-        _outbyte(CAN);
-        _outbyte(CAN);
-        _outbyte(CAN);
+        _outbyte(XMODEM_CAN);
+        _outbyte(XMODEM_CAN);
+        _outbyte(XMODEM_CAN);
         return -3; /* too many retry error */
       }
-      _outbyte(ACK);
+      _outbyte(XMODEM_ACK);
       continue;
     }
 reject:
     flushinput();
-    _outbyte(NAK);
+    _outbyte(XMODEM_NAK);
   }
 }
 
@@ -235,12 +235,12 @@ int XmodemOld::xmodemTransmit(
           case 'C':
             crc = 1;
             goto start_trans;
-          case NAK:
+          case XMODEM_NAK:
             crc = 0;
             goto start_trans;
-          case CAN:
-            if ((c = _inbyte(DLY_1S)) == CAN) {
-              _outbyte(ACK);
+          case XMODEM_CAN:
+            if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
+              _outbyte(XMODEM_ACK);
               flushinput();
               return -1; /* canceled by remote */
             }
@@ -250,15 +250,15 @@ int XmodemOld::xmodemTransmit(
         }
       }
     }
-    _outbyte(CAN);
-    _outbyte(CAN);
-    _outbyte(CAN);
+    _outbyte(XMODEM_CAN);
+    _outbyte(XMODEM_CAN);
+    _outbyte(XMODEM_CAN);
     flushinput();
     return -2; /* no sync */
 
     for (;;) {
 start_trans:
-      xbuff[0] = SOH; bufsz = 128;
+      xbuff[0] = XMODEM_SOH; bufsz = 128;
       xbuff[1] = packetno;
       xbuff[2] = ~packetno;
       c = srcsz - len;
@@ -274,11 +274,11 @@ start_trans:
         //memcpy (&xbuff[3], &src[offset], c);
 
         if (c == 0) {
-          xbuff[3] = CTRLZ;
+          xbuff[3] = XMODEM_CTRLZ;
         }
         else {
           memcpy (&xbuff[3], &src[len], c);
-          if (c < bufsz) xbuff[3 + c] = CTRLZ;
+          if (c < bufsz) xbuff[3 + c] = XMODEM_CTRLZ;
         }
         if (crc) {
           unsigned short ccrc = crc16_ccitt(&xbuff[3], bufsz);
@@ -298,36 +298,36 @@ start_trans:
           }
           if ((c = _inbyte(DLY_1S)) >= 0 ) {
             switch (c) {
-              case ACK:
+              case XMODEM_ACK:
                 ++packetno;
                 len += bufsz;
                 goto start_trans;
-              case CAN:
-                if ((c = _inbyte(DLY_1S)) == CAN) {
-                  _outbyte(ACK);
+              case XMODEM_CAN:
+                if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
+                  _outbyte(XMODEM_ACK);
                   flushinput();
                   return -1; /* canceled by remote */
                 }
                 break;
-              case NAK:
+              case XMODEM_NAK:
               default:
                 break;
             }
           }
         }
-        _outbyte(CAN);
-        _outbyte(CAN);
-        _outbyte(CAN);
+        _outbyte(XMODEM_CAN);
+        _outbyte(XMODEM_CAN);
+        _outbyte(XMODEM_CAN);
         flushinput();
         return -4; /* xmit error */
       }
       else {
         for (retry = 0; retry < 10; ++retry) {
-          _outbyte(EOT);
-          if ((c = _inbyte((DLY_1S) << 1)) == ACK) break;
+          _outbyte(XMODEM_EOT);
+          if ((c = _inbyte((DLY_1S) << 1)) == XMODEM_ACK) break;
         }
         flushinput();
-        return (c == ACK) ? len : -5;
+        return (c == XMODEM_ACK) ? len : -5;
       }
     }
   }
