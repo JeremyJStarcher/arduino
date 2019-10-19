@@ -1,7 +1,6 @@
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 #include "common.h"
-#include "crc.c"
 #include "ioline.h"
 #include "ioserial.h"
 #include "xmodem.h"
