@@ -14,7 +14,14 @@
 #define CODE_CAN 0x18
 #define CODE_CTRLZ 0x1A
 
+bool XmodemCrc::isDone() {
+  return this->status != 0;
+}
+
 void XmodemCrc::next() {
+  if (this->status != 0) {
+    return;
+  }
   switch (this->state)
   {
     case XMODEM_STATE_T_SYNC:
@@ -22,6 +29,9 @@ void XmodemCrc::next() {
       break;
     case XMODEM_STATE_T_FRAME:
       this->t_frame();
+      break;
+    case XMODEM_STATE_T_EOT:
+      this->t_eot();
       break;
   }
 }
@@ -31,22 +41,19 @@ void XmodemCrc::transmit(
   unsigned char
   *src, int srcSize
 ) {
-  Serial.println("transmit");
   this->buf = src;
   this->bufSize = srcSize;
   this->pos = 0;
-  this->retries = 16;
-  this->packetNumber = 1;
+  this->packetNumber = 0;
   this->state = XMODEM_STATE_T_SYNC;
   this->status = XMODEM_STATUS_RUNNING;
   this->serial = _serial;
-  this->len = 0;
+  this->t_init_frame();
 }
 
 void XmodemCrc::t_sync() {
-  Serial.println("t_sync()");
-  this->retries--;
-  if (this->retries == 0) {
+  this->triesLeft--;
+  if (this->triesLeft == 0) {
     _outbyte(CODE_CAN);
     _outbyte(CODE_CAN);
     _outbyte(CODE_CAN);
@@ -58,12 +65,10 @@ void XmodemCrc::t_sync() {
   if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
     switch (c) {
       case 'C':
-        Serial.println("USING CRC MODE");
         this->useCrc = true;
         this->state = XMODEM_STATE_T_FRAME;
         break;
       case CODE_NAK:
-        Serial.println("USING CHECKSOME MODE");
         this->useCrc = false;
         this->state = XMODEM_STATE_T_FRAME;
         break;
@@ -86,6 +91,22 @@ void XmodemCrc::calcRunningChecksum(unsigned char ch) {
   _outbyte(ch);
 }
 
+void XmodemCrc::t_init_frame() {
+  this->triesLeft = MAXRETRANS;
+  this->packetNumber++;
+}
+
+void XmodemCrc::t_eot() {
+  signed int c;
+
+  for (int retry = 0; retry < MAXRETRANS; ++retry) {
+    _outbyte(CODE_EOT);
+    if ((c = _inbyte((DLY_1S) << 1)) == CODE_ACK) break;
+  }
+  flushinput();
+  this->status = (c == CODE_ACK) ? 1 : -5;
+}
+
 void XmodemCrc::t_frame() {
 
   // I've optimized for memory usage at the cost of run-time speed.
@@ -93,97 +114,64 @@ void XmodemCrc::t_frame() {
   // hey, this is embedded work/
   // No transmit buffer, so we'll calculate *and* transmit in the same breath
 
-  if (this->pos > this->bufSize) {
-    signed int c;
-
-    for (int retry = 0; retry < 10; ++retry) {
-      _outbyte(CODE_EOT);
-      if ((c = _inbyte((DLY_1S) << 1)) == CODE_ACK) break;
-    }
+  this->triesLeft--;
+  if (!this->triesLeft) {
+    _outbyte(CODE_CAN);
+    _outbyte(CODE_CAN);
+    _outbyte(CODE_CAN);
     flushinput();
-    this->status = (c == CODE_ACK) ? len : -5;
+    this->status = -4; /* xmit error */
     return;
   }
 
-  for (int retry = 0; retry < MAXRETRANS; ++retry) {
-    Serial.print("t_frame() #");
-    Serial.print(this->packetNumber);
-    Serial.print(" try ");
-    Serial.println(retry);
+  this->bytesInPacket = 0;
+  this->txSize = 128;
+  this->crc = 0; // "Modern" CRC checksum
+  this->ccks = 0; // Original XModem checksum
 
-    this->bytesInPacket = 0;
-    this->txSize = 128;
-    this->crc = 0; // "Modern" CRC checksum
-    this->ccks = 0; // Original XModem checksum
+  _outbyte(CODE_SOH);
+  _outbyte(this->packetNumber);
+  _outbyte(~this->packetNumber);
 
-    _outbyte(CODE_SOH);
-    _outbyte(this->packetNumber);
-    _outbyte(~this->packetNumber);
+  for (int i = 0; i < this->txSize; i++)
+  {
+    size_t p = this->pos + i;
 
-    Serial.print("CRC2 ");
-    for (int i = 0; i < this->txSize; i++)
-    {
-      size_t p = this->pos + i;
+    unsigned char ch = (p <= this->bufSize) ? this->buf[p] : CODE_CTRLZ;
+    calcRunningChecksum(ch);
+  }
 
-      unsigned char ch = (p <= this->bufSize) ? this->buf[p] : CODE_CTRLZ;
-      Serial.print((int) ch);
-      Serial.print(" ");
-      calcRunningChecksum(ch);
-    }
-    Serial.println("");
-    Serial.print("CRC: ");
-    Serial.println(this->crc);
+  if (this->useCrc) {
+    _outbyte((this->crc >> 8) & 0xFF);
+    _outbyte(this->crc & 0xFF);
+  } else {
+    _outbyte(this->ccks);
+  }
 
-    // WORKING VALUE
-    // CRC CHARS: 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87
-    //         C2 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 48 49 50 51 52 53 54 55 48 65 66 67 69 68 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87
-    // 16703
+  signed int c;
+  if ((c = _inbyte(DLY_1S)) >= 0 ) {
+    switch (c) {
+      case CODE_ACK:
+        this->t_init_frame();
+        this->pos += this->txSize;
 
-
-    if (this->useCrc) {
-      _outbyte((this->crc >> 8) & 0xFF);
-      _outbyte(this->crc & 0xFF);
-    } else {
-      _outbyte(this->ccks);
-    }
-
-    signed int c;
-    if ((c = _inbyte(DLY_1S)) >= 0 ) {
-      switch (c) {
-        case CODE_ACK:
-          Serial.println("CODE_ACK");
-          ++this->packetNumber;
-          this->pos += this->txSize;
-          // We stay in this state goto start_trans;
-          return;
-          break;
-        case CODE_CAN:
-          Serial.println("CODE_CAN");
-          if ((c = _inbyte(DLY_1S)) == CODE_CAN) {
-            _outbyte(CODE_ACK);
-            flushinput();
-            this->status = -1; /* canceled by remote */
-          }
-          return;
-          break;
-        case CODE_NAK:
-          Serial.println("CODE_NAK");
-          break;
-        default:
-          Serial.print("default, C = 0x");
-          Serial.print(c, HEX);
-          Serial.print(" ");
-          Serial.println(c, DEC);
-          break;
-      }
+        if (this->pos >= this->bufSize) {
+          this->state = XMODEM_STATE_T_EOT;
+        }
+        return;
+      case CODE_CAN:
+        if ((c = _inbyte(DLY_1S)) == CODE_CAN) {
+          _outbyte(CODE_ACK);
+          flushinput();
+          this->status = -1; /* canceled by remote */
+        }
+        return;
+      case CODE_NAK:
+        return;
+      default:
+        break;
     }
   }
-  _outbyte(CODE_CAN);
-  _outbyte(CODE_CAN);
-  _outbyte(CODE_CAN);
-  flushinput();
-  Serial.println("XMIT ERROR");
-  this->status = -4; /* xmit error */
 }
 
 

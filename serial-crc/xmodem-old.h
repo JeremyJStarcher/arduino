@@ -185,15 +185,9 @@ unsigned short crc16_ccitt(const void *buf, int len)
       else
         crc = crc << 1;
     }
-
-  //  Serial.print((int) kk);
-  //  Serial.print(" ");
   }
-  Serial.print("CRC ");
-  Serial.println(crc);
   return crc;
 }
-
 
 static int XmodemOld::check(int crc, const unsigned char *buf, int sz)
 {

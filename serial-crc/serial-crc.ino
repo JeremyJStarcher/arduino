@@ -35,7 +35,7 @@
 
 #define READ_TIMEOUT 100
 
-const char poolStr[] = "ABCEDFGHIJKLMNOPQRSTUVWXYZ012345670";
+const char poolStr[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670";
 const size_t longMessageLen = 2048;
 unsigned char longMessage[longMessageLen];
 
@@ -77,9 +77,9 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
+  runOldTests();
   runXModemTests();
 
-  //runOldTests();
 }
 
 void loop() {
@@ -463,16 +463,9 @@ void sendNewXmodem(IoSerial remote) {
     crc2 = xmodem.crc16_ccitt(crc2, longMessage[i]);
   }
 
-  Serial.print("CRC CHECK: ");
-  Serial.print(crc1);
-  Serial.print(" ");
-  Serial.print(crc2);
-  Serial.print(" ");
-  Serial.println(crc1 == crc2);
-
   xmodem.transmit(&remote, longMessage, longMessageLen);
 
-  while (xmodem.status == 0) {
+  while (!xmodem.isDone()) {
     xmodem.next();
   }
 
