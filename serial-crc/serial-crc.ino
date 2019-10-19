@@ -1,3 +1,4 @@
+#include <EEPROM.h>
 #include "common.h"
 #include "crc.c"
 #include "ioline.h"
@@ -10,6 +11,8 @@
 const char message[] = "This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did.";
 size_t message_head = 0;
 
+byte boardRole = 0;
+
 bool is_passing = true;
 
 void setup() {
@@ -20,6 +23,19 @@ void setup() {
   while (!Serial) ; // wait for Arduino Serial Monitor to open
   Serial.println(F("\n\n\nUSB Connection established"));
 
+  // EEPROM.update(BOARD_ROLE_ADDRESS, BOARD_ROLE_SLAVE);
+  // EEPROM.update(BOARD_ROLE_ADDRESS, BOARD_ROLE_MASTER);
+
+  boardRole = EEPROM.read(BOARD_ROLE_ADDRESS);
+  if (boardRole == BOARD_ROLE_MASTER) {
+    Serial.println(F("Master board.  In control."));
+  } else if (boardRole == BOARD_ROLE_SLAVE) {
+    Serial.println(F("Slave board"));
+  } else {
+    Serial.println(F("No role established for this board.  Dying."));
+    while (true)
+      ;
+  }
 
   runTests();
 }
