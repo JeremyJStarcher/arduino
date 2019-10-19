@@ -1,15 +1,24 @@
 #include <EEPROM.h>
+#include <avr/pgmspace.h>
 #include "common.h"
 #include "crc.c"
 #include "ioline.h"
 #include "ioserial.h"
 #include "xmodem.h"
 
+#define SOH  0x01
+#define STX  0x02
+#define EOT  0x04
+#define ACK  0x06
+#define NAK  0x15
+#define CAN  0x18
+#define CTRLZ 0x1A
 
 #define READ_TIMEOUT 100
 
-const char message[] = "This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did.";
-size_t message_head = 0;
+const char longMessage[] PROGMEM = {"This quick brown fox jumped over the lazy dogs, stretching out his legs and kicking back and forth as he did."};
+const char shortMessage[] PROGMEM = {'M', 'S', 'G', 0, '1', '7', '0', '1'};
+const byte shortMessageLength = 8;
 
 byte boardRole = 0;
 
@@ -17,6 +26,7 @@ bool is_passing = true;
 
 void setup() {
   Serial.begin(USB_BAUD);
+  Serial1.begin(UART_BAUD);
   Serial2.begin(UART_BAUD);
   Serial3.begin(UART_BAUD);
 
@@ -45,9 +55,12 @@ void loop() {
 
 
 void runTests() {
+
+  IoSerial serialHardware1;
   IoSerial serialHardware2;
   IoSerial serialHardware3;
 
+  serialHardware1.begin(&Serial1);
   serialHardware2.begin(&Serial2);
   serialHardware3.begin(&Serial3);
 
@@ -57,6 +70,18 @@ void runTests() {
   if (is_passing) wiringTest();
   if (is_passing) ioSerialTest(serialHardware2, serialHardware3);
   if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
+  if (is_passing) ioSerialPushTest(serialHardware2) ;
+
+  if (is_passing && boardRole == BOARD_ROLE_MASTER) {
+    sendShortMessage(serialHardware1);
+    receiveShortMessage(serialHardware1);
+  }
+
+  if (is_passing && boardRole == BOARD_ROLE_SLAVE) {
+    Serial.println(F("Waiting for datastream.  Reset MASTER Arduino."));
+    receiveShortMessage(serialHardware1);
+    sendShortMessage(serialHardware1);
+  }
 
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -178,7 +203,7 @@ void ioSerialFlushTest(
   IoSerial serialA,
   IoSerial serialB
 ) {
-  Serial.println(F("=== IoSerialFlush Test Setup"));
+  Serial.println(F("=== IoSerialFlushTest Setup"));
   for (int i = 0; i < 10; i++) {
     const byte value2 = getRandom();
     const byte value3 = getRandom();
@@ -205,5 +230,113 @@ void ioSerialFlushTest(
     return;
   }
   Serial.println(F("serialB ** PASSED: "));
-  Serial.println(F("=== IoSerialFlush Test Passed"));
+  Serial.println(F("=== IoSerialFlushTest Passed"));
+}
+
+void ioSerialPushTest(IoSerial serial) {
+  Serial.println(F("=== ioSerialPushTest Flush Test"));
+  signed int c1;
+
+  serial.flush();
+  c1 = serial.readbyte(READ_TIMEOUT);
+  if (c1 != -1) {
+    Serial.println("Data was found in the buffer. Failed");
+    is_passing = false;
+    return;
+  }
+
+  serial.push(0xA5);
+  c1 = serial.readbyte(READ_TIMEOUT);
+  if (c1 != 0xA5) {
+    Serial.println("Pushed data not found.  Failed.");
+    is_passing = false;
+    return;
+  }
+
+  c1 = serial.readbyte(READ_TIMEOUT);
+  if (c1 != -1) {
+    Serial.println("Data was found in the buffer after reading pushed data. Failed");
+    is_passing = false;
+    return;
+  }
+
+  serial.push(0xA5);
+  serial.flush();
+  c1 = serial.readbyte(READ_TIMEOUT);
+  if (c1 != -1) {
+    Serial.println("Data was found in the buffer after flushing pushed data. Failed");
+    is_passing = false;
+    return;
+  }
+  Serial.println(F("=== ioSerialPushTest Test Passed"));
+}
+
+void sendShortMessage(IoSerial remote) {
+  unsigned int c;
+
+  Serial.println(F("=== Sending short message"));
+  remote.writebyte(SOH);
+  for (size_t i = 0; i < shortMessageLength; i++) {
+    byte b = pgm_read_byte_near(shortMessage + i);
+    remote.writebyte(b);
+    Serial.write(b);
+  }
+  Serial.println("");
+
+
+  Serial.print(F("Waiting for ACK"));
+  while ((c = remote.readbyte(READ_TIMEOUT)) != ACK)
+    ;
+  remote.writebyte(EOT);
+
+  remote.flush();
+  Serial.println(F("\n=== Sending short message ** PASS"));
+}
+
+void receiveShortMessage(IoSerial remote) {
+  Serial.println(F("=== Receiving short message"));
+  long now = millis();
+  size_t idx = 0;
+  signed int c;
+
+  // Wait for the datastream to start
+  while ((c = remote.readbyte(READ_TIMEOUT)) != SOH)
+    ;
+
+  while (true) {
+    c = remote.readbyte(READ_TIMEOUT);
+    if (c == -1) continue;
+
+    byte b = pgm_read_byte_near(shortMessage + idx);
+    if (b != c) {
+      Serial.print(F("\nRead failed.  Expected "));
+      Serial.print(b);
+      Serial.print(F(" got "));
+      Serial.print(c);
+      Serial.println("");
+      is_passing = false;
+      break;
+    } else {
+      Serial.write(c);
+
+      idx++;
+      if (idx == shortMessageLength) {
+        break;
+      }
+    }
+
+  }
+
+  // Tell the remote we got it.
+  remote.writebyte(ACK);
+
+  Serial.println("");
+  Serial.print(F("Waiting for reply to our ACK"));
+  while ((c = remote.readbyte(READ_TIMEOUT)) != EOT)
+    ;
+
+  remote.flush();
+  if (is_passing) {
+    Serial.println(F("\n=== Receiving short message **PASS"));
+  }
 }
