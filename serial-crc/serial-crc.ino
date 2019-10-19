@@ -80,6 +80,8 @@ void runTests() {
   if (is_passing && boardRole == BOARD_ROLE_SLAVE) {
     Serial.println(F("Waiting for datastream.  Reset MASTER Arduino."));
     receiveShortMessage(serialHardware1);
+    // Crappy workaround for a race condition.
+    delay(2 * 1000);
     sendShortMessage(serialHardware1);
   }
 
@@ -289,8 +291,8 @@ void sendShortMessage(IoSerial remote) {
     ;
   remote.writebyte(EOT);
 
-  remote.flush();
   Serial.println(F("\n=== Sending short message ** PASS"));
+  remote.flush();
 }
 
 void receiveShortMessage(IoSerial remote) {
@@ -335,8 +337,8 @@ void receiveShortMessage(IoSerial remote) {
   while ((c = remote.readbyte(READ_TIMEOUT)) != EOT)
     ;
 
-  remote.flush();
   if (is_passing) {
     Serial.println(F("\n=== Receiving short message **PASS"));
   }
+  remote.flush();
 }
