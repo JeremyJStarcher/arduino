@@ -169,12 +169,15 @@ void XmodemOld::_outbyte(int b) {
   this->serial->writebyte(b);
 }
 
-unsigned short crc16_ccitt( const void *buf, int len )
+unsigned short crc16_ccitt(const void *buf, int len)
 {
   zusedCrc = true;
   unsigned short crc = 0;
   while ( len-- ) {
     int i;
+
+    char kk = *(char *)buf;
+
     crc ^= *(char *)buf++ << 8;
     for ( i = 0; i < 8; ++i ) {
       if ( crc & 0x8000 )
@@ -182,7 +185,12 @@ unsigned short crc16_ccitt( const void *buf, int len )
       else
         crc = crc << 1;
     }
+
+  //  Serial.print((int) kk);
+  //  Serial.print(" ");
   }
+  Serial.print("CRC ");
+  Serial.println(crc);
   return crc;
 }
 
@@ -293,9 +301,11 @@ start_trans:
           xbuff[bufsz + 3] = ccks;
         }
         for (retry = 0; retry < MAXRETRANS; ++retry) {
-          for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i) {
+          int bytesInPacket = bufsz + 4 + (crc ? 1 : 0);
+          for (i = 0; i < bytesInPacket; ++i) {
             _outbyte(xbuff[i]);
           }
+
           if ((c = _inbyte(DLY_1S)) >= 0 ) {
             switch (c) {
               case XMODEM_ACK:
@@ -321,6 +331,7 @@ start_trans:
         flushinput();
         return -4; /* xmit error */
       }
+
       else {
         for (retry = 0; retry < 10; ++retry) {
           _outbyte(XMODEM_EOT);

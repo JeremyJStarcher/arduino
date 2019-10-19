@@ -5,6 +5,8 @@
 #include <HardwareSerial.h>
 #include "ioline.h"
 
+enum XModemTransmitState { none };
+
 class IoSerial: public IoLine {
   public:
     signed int readbyte(int timeout);

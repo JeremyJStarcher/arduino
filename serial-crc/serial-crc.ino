@@ -4,7 +4,7 @@
 #include "ioline.h"
 #include "ioserial.h"
 #include "xmodem-old.h"
-
+#include "xmodem-crc.h"
 
 /* Wiring between two MEGAs
 
@@ -77,7 +77,9 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  runTests();
+  runXModemTests();
+
+  //runOldTests();
 }
 
 void loop() {
@@ -87,7 +89,44 @@ void waitForSync() {
   delay(2 * 1000);
 }
 
-void runTests() {
+
+void runXModemTests() {
+
+  IoSerial serialHardware0;
+  IoSerial serialHardware1;
+  IoSerial serialHardware2;
+  IoSerial serialHardware3;
+
+  serialHardware0.begin(&Serial);
+  serialHardware1.begin(&Serial1);
+  serialHardware2.begin(&Serial2);
+  serialHardware3.begin(&Serial3);
+
+  Serial.println(F("Running tests..."));
+  is_passing = true;
+
+  if (is_passing && isBoardMaster) {
+    waitForSync();
+    receiveShortMessage(serialHardware1);
+    waitForSync();
+    sendNewXmodem(serialHardware1);
+  }
+
+  if (is_passing && !isBoardMaster) {
+    waitForSync();
+    sendShortMessage(serialHardware1);
+    waitForSync();
+    receiveNewXmodem(serialHardware1);
+  }
+
+  if (!is_passing) {
+    Serial.println(F("FAILED"));
+  }
+
+  Serial.println(F("Done"));
+}
+
+void runOldTests() {
 
   IoSerial serialHardware0;
   IoSerial serialHardware1;
@@ -131,6 +170,7 @@ void runTests() {
 
   Serial.println(F("Done"));
 }
+
 
 byte getRandom() {
   delay(100); // Give time for it to randomize
@@ -401,6 +441,46 @@ void sendXmodem(IoSerial remote) {
 }
 
 void receiveXmodem(IoSerial remote) {
+  Serial.println("Recieve XModem");
+  XmodemOld xmodem;
+  xmodem.begin(&remote);
+  int res = xmodem.xmodemReceive(longMessage, longMessageLen);
+
+  Serial.print("Used CRC? ");
+  Serial.println(xmodem.usedCrc());
+  Serial.print("Result: ");
+  Serial.println(res);
+}
+
+
+void sendNewXmodem(IoSerial remote) {
+  Serial.println("Sending XModem");
+  XmodemCrc xmodem;
+
+  unsigned short crc1 = crc16_ccitt(longMessage, longMessageLen);
+  unsigned short crc2 = 0;
+  for (int i = 0; i < longMessageLen; i++) {
+    crc2 = xmodem.crc16_ccitt(crc2, longMessage[i]);
+  }
+
+  Serial.print("CRC CHECK: ");
+  Serial.print(crc1);
+  Serial.print(" ");
+  Serial.print(crc2);
+  Serial.print(" ");
+  Serial.println(crc1 == crc2);
+
+  xmodem.transmit(&remote, longMessage, longMessageLen);
+
+  while (xmodem.status == 0) {
+    xmodem.next();
+  }
+
+  Serial.print("Done: ");
+  Serial.println(xmodem.status);
+}
+
+void receiveNewXmodem(IoSerial remote) {
   Serial.println("Recieve XModem");
   XmodemOld xmodem;
   xmodem.begin(&remote);
