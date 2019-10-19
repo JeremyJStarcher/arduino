@@ -54,8 +54,8 @@ class XmodemCrc {
   public:
     void begin(IoLine *_serial);
     int xmodemReceive(unsigned char *dest, int destsz);
-    // int xmodemTransmit(unsigned char *src, int srcsz);
-    int xmodemTransmit(unsigned char *src, int srcsz, int tmpsz, void (*getsrc)());
+    int xmodemTransmit(unsigned char *src, int srcsz);
+    //int xmodemTransmit(unsigned char *src, int srcsz, int tmpsz, void (*getsrc)());
   private:
     IoLine *serial;
     void _outbyte(int b);
@@ -210,16 +210,17 @@ void XmodemCrc::flushinput(void)
 
 int XmodemCrc::xmodemTransmit(
   unsigned char *src,
-  int srcsz,
-  int tmpsz,
-  void (*getsrc)())
+  int srcsz //,
+  //int tmpsz,
+  //void (*getsrc)()
+  )
 {
   unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
   int bufsz, crc = -1;
   unsigned char packetno = 1;
   int i, c, len = 0;
   int retry;
-  int offset; // EXTRA
+  //int offset; // EXTRA
 
   for (;;) {
     for ( retry = 0; retry < 16; ++retry) {
@@ -258,13 +259,13 @@ start_trans:
       if (c > bufsz) c = bufsz;
       if (c >= 0) {
         // IF YOU HAVE THE WHOLE BUFFER AT ONCE
-        /// memset (&xbuff[3], 0, bufsz);
+         memset (&xbuff[3], 0, bufsz);
 
-        offset = len % tmpsz;
-        if (offset == 0) {
-          getsrc();
-        }
-        memcpy (&xbuff[3], &src[offset], c);
+        //offset = len % tmpsz;
+        //if (offset == 0) {
+        //  getsrc();
+        //}
+        //memcpy (&xbuff[3], &src[offset], c);
 
         if (c == 0) {
           xbuff[3] = CTRLZ;
