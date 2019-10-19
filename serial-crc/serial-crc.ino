@@ -3,7 +3,7 @@
 #include "common.h"
 #include "ioline.h"
 #include "ioserial.h"
-#include "xmodem.h"
+#include "xmodem-old.h"
 
 
 /* Wiring between two MEGAs
@@ -390,7 +390,7 @@ void receiveShortMessage(IoSerial remote) {
 
 void sendXmodem(IoSerial remote) {
   Serial.println("Sending XModem");
-  XmodemCrc xmodem;
+  XmodemOld xmodem;
   xmodem.begin(&remote);
   int res = xmodem.xmodemTransmit(longMessage, longMessageLen);
 
@@ -402,7 +402,7 @@ void sendXmodem(IoSerial remote) {
 
 void receiveXmodem(IoSerial remote) {
   Serial.println("Recieve XModem");
-  XmodemCrc xmodem;
+  XmodemOld xmodem;
   xmodem.begin(&remote);
   int res = xmodem.xmodemReceive(longMessage, longMessageLen);
 

@@ -50,7 +50,7 @@
 
 bool zusedCrc = false;
 
-class XmodemCrc {
+class XmodemOld {
   public:
     void begin(IoLine *_serial);
     int xmodemReceive(unsigned char *dest, int destsz);
@@ -65,16 +65,16 @@ class XmodemCrc {
     static int check(int crc, const unsigned char *buf, int sz);
 };
 
-bool XmodemCrc::usedCrc() {
+bool XmodemOld::usedCrc() {
   return zusedCrc;
 }
 
 
-void XmodemCrc::begin(IoLine *_serial) {
+void XmodemOld::begin(IoLine *_serial) {
   this->serial = _serial;
 }
 
-int XmodemCrc::xmodemReceive(unsigned char *dest, int destsz)
+int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
 {
   unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
   unsigned char *p;
@@ -161,11 +161,11 @@ reject:
 }
 
 
-int XmodemCrc::_inbyte(int t) {
+int XmodemOld::_inbyte(int t) {
   return this->serial->readbyte(t);
 }
 
-void XmodemCrc::_outbyte(int b) {
+void XmodemOld::_outbyte(int b) {
   this->serial->writebyte(b);
 }
 
@@ -187,7 +187,7 @@ unsigned short crc16_ccitt( const void *buf, int len )
 }
 
 
-static int XmodemCrc::check(int crc, const unsigned char *buf, int sz)
+static int XmodemOld::check(int crc, const unsigned char *buf, int sz)
 {
   if (crc) {
     unsigned short crc = crc16_ccitt(buf, sz);
@@ -208,13 +208,13 @@ static int XmodemCrc::check(int crc, const unsigned char *buf, int sz)
   return 0;
 }
 
-void XmodemCrc::flushinput(void)
+void XmodemOld::flushinput(void)
 {
   while (_inbyte(((DLY_1S) * 3) >> 1) >= 0)
     ;
 }
 
-int XmodemCrc::xmodemTransmit(
+int XmodemOld::xmodemTransmit(
   unsigned char *src,
   int srcsz //,
   //int tmpsz,
