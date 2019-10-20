@@ -6,12 +6,10 @@
 
 #define XMODEM_STATUS_RUNNING 0
 
+#define XMODEM_STATE_DONE 0
 #define XMODEM_STATE_T_SYNC 1
 #define XMODEM_STATE_T_FRAME 2
 #define XMODEM_STATE_T_EOT 3
-
-#define XMODEM_STATE_DONE 0
-
 
 class XmodemCrc {
   public:
