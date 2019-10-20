@@ -77,7 +77,7 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  //runOldTests();
+  runOldTests();
   runXModemTests();
 }
 
@@ -148,7 +148,7 @@ void runOldTests() {
     waitForSync();
     sendShortMessage(serialHardware1);
     waitForSync();
-    sendXmodem(serialHardware1);
+    sendOldXmodem(serialHardware1);
   }
 
   if (is_passing && !isBoardMaster) {
@@ -157,7 +157,7 @@ void runOldTests() {
     waitForSync();
     receiveShortMessage(serialHardware1);
     waitForSync();
-    receiveXmodem(serialHardware1);
+    receiveOldXmodem(serialHardware1);
   }
 
   if (!is_passing) {
@@ -424,8 +424,8 @@ void receiveShortMessage(IoSerial remote) {
   remote.flush();
 }
 
-void sendXmodem(IoSerial remote) {
-  Serial.println("Sending XModem");
+void sendOldXmodem(IoSerial remote) {
+  Serial.println("Sending OLD XModem");
   XmodemOld xmodem;
   xmodem.begin(&remote);
   int res = xmodem.xmodemTransmit(longMessage, longMessageLen);
@@ -436,8 +436,8 @@ void sendXmodem(IoSerial remote) {
   Serial.println(res);
 }
 
-void receiveXmodem(IoSerial remote) {
-  Serial.println("Recieve XModem");
+void receiveOldXmodem(IoSerial remote) {
+  Serial.println("Recieve OLD XModem");
   XmodemOld xmodem;
   xmodem.begin(&remote);
   int res = xmodem.xmodemReceive(longMessage, longMessageLen);
@@ -475,16 +475,4 @@ void sendNewXmodem(IoSerial remote) {
     is_passing = false;
     Serial.println("Sending new XModem **FAIL");
   }
-}
-
-void receiveOldXmodem(IoSerial remote) {
-  Serial.println("Recieve OLD XModem");
-  XmodemOld xmodem;
-  xmodem.begin(&remote);
-  int res = xmodem.xmodemReceive(longMessage, longMessageLen);
-
-  Serial.print("Used CRC? ");
-  Serial.println(xmodem.usedCrc());
-  Serial.print("Result: ");
-  Serial.println(res);
 }
