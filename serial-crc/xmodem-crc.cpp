@@ -96,17 +96,6 @@ void XmodemCrc::t_init_frame() {
   this->packetNumber++;
 }
 
-void XmodemCrc::t_eot() {
-  signed int c;
-
-  for (int retry = 0; retry < MAXRETRANS; ++retry) {
-    _outbyte(CODE_EOT);
-    if ((c = _inbyte((DLY_1S) << 1)) == CODE_ACK) break;
-  }
-  flushinput();
-  this->status = (c == CODE_ACK) ? 1 : -5;
-}
-
 void XmodemCrc::t_frame() {
 
   // I've optimized for memory usage at the cost of run-time speed.
@@ -174,6 +163,16 @@ void XmodemCrc::t_frame() {
   }
 }
 
+void XmodemCrc::t_eot() {
+  signed int c;
+
+  for (int retry = 0; retry < MAXRETRANS; ++retry) {
+    _outbyte(CODE_EOT);
+    if ((c = _inbyte((DLY_1S) << 1)) == CODE_ACK) break;
+  }
+  flushinput();
+  this->status = (c == CODE_ACK) ? 1 : -5;
+}
 
 // Raw IO routines
 
