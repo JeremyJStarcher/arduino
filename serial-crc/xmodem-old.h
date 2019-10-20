@@ -1,3 +1,4 @@
+#define OLD_XMODEM_BLOCK 16
 /*
    Copyright 2001-2010 Georges Menie (www.menie.org)
    All rights reserved.
@@ -37,7 +38,7 @@
 #include <stdint.h>
 #include "ioline.h"
 
-#define XMODEM_SOH  0x01
+#define XMODEM_SOH  0xFF //0x01
 #define XMODEM_STX  0x02
 #define XMODEM_EOT  0x04
 #define XMODEM_ACK  0x06
@@ -90,7 +91,7 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
       if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
         switch (c) {
           case XMODEM_SOH:
-            bufsz = 128;
+            bufsz = OLD_XMODEM_BLOCK;
             goto start_recv;
           case XMODEM_STX:
             bufsz = 1024;
@@ -130,6 +131,8 @@ start_recv:
       if ((c = _inbyte(DLY_1S)) < 0) goto reject;
       *p++ = c;
     }
+    Serial.print("(rec) len --");
+    Serial.println(len);
 
     if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
         (xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
@@ -260,7 +263,7 @@ int XmodemOld::xmodemTransmit(
 
     for (;;) {
 start_trans:
-      xbuff[0] = XMODEM_SOH; bufsz = 128;
+      xbuff[0] = XMODEM_SOH; bufsz = OLD_XMODEM_BLOCK;
       xbuff[1] = packetno;
       xbuff[2] = ~packetno;
       c = srcsz - len;
@@ -274,6 +277,8 @@ start_trans:
         //  getsrc();
         //}
         //memcpy (&xbuff[3], &src[offset], c);
+        Serial.print("(trans) len --");
+        Serial.println(len);
 
         if (c == 0) {
           xbuff[3] = XMODEM_CTRLZ;
@@ -298,6 +303,10 @@ start_trans:
           int bytesInPacket = bufsz + 4 + (crc ? 1 : 0);
           for (i = 0; i < bytesInPacket; ++i) {
             _outbyte(xbuff[i]);
+            Serial.print("(trans)\t");
+            Serial.print(i);
+            Serial.print("\t");
+            Serial.println(xbuff[i]);
           }
 
           if ((c = _inbyte(DLY_1S)) >= 0 ) {

@@ -77,7 +77,7 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  runOldTests();
+  //runOldTests();
   runXModemTests();
 }
 
@@ -107,8 +107,8 @@ void runXModemTests() {
     if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) sendNewXmodem(serialHardware1);
-   // if (is_passing) waitForSync();
-   // if (is_passing) receiveNewXmodem(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) receiveNewXmodem(serialHardware1);
   }
 
   if (!isBoardMaster) {
@@ -116,8 +116,8 @@ void runXModemTests() {
     if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) receiveOldXmodem(serialHardware1);
-   // if (is_passing) waitForSync();
-   // if (is_passing) sendOldXmodem(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) sendOldXmodem(serialHardware1);
   }
 
   if (!is_passing) {
@@ -441,7 +441,7 @@ void sendOldXmodem(IoSerial remote) {
 }
 
 void receiveOldXmodem(IoSerial remote) {
-  Serial.println("Recieve OLD XModem");
+  Serial.println("receive OLD XModem");
   XmodemOld xmodem;
   xmodem.begin(&remote);
   int res = xmodem.xmodemReceive(longMessage, longMessageLen);
@@ -478,5 +478,28 @@ void sendNewXmodem(IoSerial remote) {
   } else {
     is_passing = false;
     Serial.println("Sending new XModem **FAIL");
+  }
+}
+
+void receiveNewXmodem(IoSerial remote) {
+  Serial.println("Receive new XModem");
+  XmodemCrc xmodem;
+
+  xmodem.receive(&remote, longMessage, longMessageLen);
+
+  while (!xmodem.isDone()) {
+    // Serial.print("Packet :");
+    // Serial.println(xmodem.getPacketNumber());
+    xmodem.next();
+  }
+
+  Serial.print("Status: ");
+  Serial.println(xmodem.status);
+
+  if (xmodem.status > 0) {
+    Serial.println("Receive new XModem **PASS");
+  } else {
+    is_passing = false;
+    Serial.println("Receive new XModem **FAIL");
   }
 }

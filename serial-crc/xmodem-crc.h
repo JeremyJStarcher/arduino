@@ -11,6 +11,7 @@
 #define XMODEM_STATE_T_FRAME 11
 #define XMODEM_STATE_T_EOT 12
 #define XMODEM_STATE_R_SYNC 20
+#define XMODEM_STATE_R_FRAME 21
 
 class XmodemCrc {
   public:
@@ -23,7 +24,6 @@ class XmodemCrc {
     bool isDone();
     signed char status;
     unsigned short crc16_ccitt(unsigned short crc, unsigned char ch);
-
   private:
     void t_sync();
     void t_frame();
@@ -32,6 +32,7 @@ class XmodemCrc {
 
     void r_sync();
     void r_init_frame();
+    void r_frame();
 
     void calcRunningChecksum(unsigned char ch);
     void _outbyte(int b);
@@ -50,6 +51,7 @@ class XmodemCrc {
     unsigned short crc; // "Modern" CRC checksum
     int txSize;
 
+    char tryChar;
     int pos; // Position in the buffer
     int triesLeft;
     int bytesInPacket;
