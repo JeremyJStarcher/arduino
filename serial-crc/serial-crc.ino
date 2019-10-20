@@ -89,9 +89,7 @@ void waitForSync() {
   delay(2 * 1000);
 }
 
-
 void runXModemTests() {
-
   IoSerial serialHardware0;
   IoSerial serialHardware1;
   IoSerial serialHardware2;
@@ -127,7 +125,6 @@ void runXModemTests() {
 }
 
 void runOldTests() {
-
   IoSerial serialHardware0;
   IoSerial serialHardware1;
   IoSerial serialHardware2;
@@ -451,7 +448,6 @@ void receiveXmodem(IoSerial remote) {
   Serial.print("Result: ");
   Serial.println(res);
 }
-
 
 void sendNewXmodem(IoSerial remote) {
   Serial.println("Sending XModem");
