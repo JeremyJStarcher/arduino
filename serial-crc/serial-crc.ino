@@ -102,18 +102,22 @@ void runXModemTests() {
   Serial.println(F("Running tests..."));
   is_passing = true;
 
-  if (is_passing && isBoardMaster) {
-    waitForSync();
-    receiveShortMessage(serialHardware1);
-    waitForSync();
-    sendNewXmodem(serialHardware1);
+  if (isBoardMaster) {
+    if (is_passing) waitForSync();
+    if (is_passing) receiveShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) sendNewXmodem(serialHardware1);
+   // if (is_passing) waitForSync();
+   // if (is_passing) receiveNewXmodem(serialHardware1);
   }
 
-  if (is_passing && !isBoardMaster) {
-    waitForSync();
-    sendShortMessage(serialHardware1);
-    waitForSync();
-    receiveOldXmodem(serialHardware1);
+  if (!isBoardMaster) {
+    if (is_passing) waitForSync();
+    if (is_passing) sendShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) receiveOldXmodem(serialHardware1);
+   // if (is_passing) waitForSync();
+   // if (is_passing) sendOldXmodem(serialHardware1);
   }
 
   if (!is_passing) {
@@ -142,22 +146,22 @@ void runOldTests() {
   if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
   if (is_passing) ioSerialPushTest(serialHardware2) ;
 
-  if (is_passing && isBoardMaster) {
-    waitForSync();
-    receiveShortMessage(serialHardware1);
-    waitForSync();
-    sendShortMessage(serialHardware1);
-    waitForSync();
-    sendOldXmodem(serialHardware1);
+  if (isBoardMaster) {
+    if (is_passing) waitForSync();
+    if (is_passing) receiveShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) sendShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) sendOldXmodem(serialHardware1);
   }
 
-  if (is_passing && !isBoardMaster) {
-    waitForSync();
-    sendShortMessage(serialHardware1);
-    waitForSync();
-    receiveShortMessage(serialHardware1);
-    waitForSync();
-    receiveOldXmodem(serialHardware1);
+  if (!isBoardMaster) {
+    if (is_passing) waitForSync();
+    if (is_passing) sendShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) receiveShortMessage(serialHardware1);
+    if (is_passing) waitForSync();
+    if (is_passing) receiveOldXmodem(serialHardware1);
   }
 
   if (!is_passing) {
