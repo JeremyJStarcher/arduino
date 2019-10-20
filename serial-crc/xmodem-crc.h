@@ -7,16 +7,21 @@
 #define XMODEM_STATUS_RUNNING 0
 
 #define XMODEM_STATE_DONE 0
-#define XMODEM_STATE_T_SYNC 1
-#define XMODEM_STATE_T_FRAME 2
-#define XMODEM_STATE_T_EOT 3
+#define XMODEM_STATE_T_SYNC 10
+#define XMODEM_STATE_T_FRAME 11
+#define XMODEM_STATE_T_EOT 12
+#define XMODEM_STATE_R_SYNC 20
 
 class XmodemCrc {
   public:
     void transmit(IoLine *_serial, unsigned char *src, int srcSize);
+    void receive(IoLine *_serial, unsigned char *dest, int destSize);
+
+    unsigned char getPacketNumber();
+
     void next();
     bool isDone();
-    unsigned char status;
+    signed char status;
     unsigned short crc16_ccitt(unsigned short crc, unsigned char ch);
 
   private:
@@ -24,6 +29,9 @@ class XmodemCrc {
     void t_frame();
     void t_init_frame();
     void t_eot();
+
+    void r_sync();
+    void r_init_frame();
 
     void calcRunningChecksum(unsigned char ch);
     void _outbyte(int b);

@@ -3,6 +3,9 @@
 #include "ioline.h"
 #include "xmodem-crc.h"
 
+// TODO
+// merge the init_frame code if it turns out those are the same.
+
 #define DLY_1S 1000
 #define MAXRETRANS 3
 
@@ -33,14 +36,31 @@ void XmodemCrc::next() {
     case XMODEM_STATE_T_EOT:
       this->t_eot();
       break;
+    case XMODEM_STATE_R_SYNC:
+      this->r_sync();
   }
 }
 
-void XmodemCrc::transmit(
-  IoLine *_serial,
-  unsigned char
-  *src, int srcSize
-) {
+void XmodemCrc::receive(IoLine *_serial, unsigned char *dest, int destSize) {
+  this->buf = dest;
+  this->bufSize = destSize;
+  this->pos = 0;
+  this->packetNumber = 0;
+  this->state = XMODEM_STATE_R_SYNC;
+  this->status = XMODEM_STATUS_RUNNING;
+  this->serial = _serial;
+  this->r_init_frame();
+}
+
+void XmodemCrc::r_init_frame() {
+  this->triesLeft = MAXRETRANS;
+  this->packetNumber++;
+}
+
+void XmodemCrc::r_sync() {
+}
+///////////////////////////////////////////////////////////
+void XmodemCrc::transmit(IoLine *_serial, unsigned char *src, int srcSize) {
   this->buf = src;
   this->bufSize = srcSize;
   this->pos = 0;
@@ -88,7 +108,6 @@ void XmodemCrc::t_sync() {
 void XmodemCrc::calcRunningChecksum(unsigned char ch) {
   this->crc = this->crc16_ccitt(crc, ch);
   this->ccks += ch;
-  _outbyte(ch);
 }
 
 void XmodemCrc::t_init_frame() {
@@ -97,7 +116,6 @@ void XmodemCrc::t_init_frame() {
 }
 
 void XmodemCrc::t_frame() {
-
   // I've optimized for memory usage at the cost of run-time speed.
   // There are some messy things here that I'd normally never do, but
   // hey, this is embedded work/
@@ -128,6 +146,7 @@ void XmodemCrc::t_frame() {
 
     unsigned char ch = (p <= this->bufSize) ? this->buf[p] : CODE_CTRLZ;
     calcRunningChecksum(ch);
+    _outbyte(ch);
   }
 
   if (this->useCrc) {
@@ -191,7 +210,6 @@ void XmodemCrc::flushinput(void)
     ;
 }
 
-
 unsigned short XmodemCrc::crc16_ccitt(unsigned short crc, unsigned char ch)
 {
   int i;
@@ -204,4 +222,8 @@ unsigned short XmodemCrc::crc16_ccitt(unsigned short crc, unsigned char ch)
   }
 
   return crc;
+}
+
+unsigned char XmodemCrc::getPacketNumber() {
+  return this->packetNumber;
 }
