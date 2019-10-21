@@ -36,8 +36,10 @@
 #define READ_TIMEOUT 100
 
 const char poolStr[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670";
-const size_t longMessageLen = 2048;
-unsigned char longMessage[longMessageLen];
+const size_t longMessageLen = XMODEM_BLOCKSIZE * 2;
+const size_t longMessageBufferLen = XMODEM_BLOCKSIZE * 3;
+
+unsigned char longMessage[longMessageBufferLen];
 
 const char shortMessage[] PROGMEM = {'M', 'S', 'G', 0, '1', '7', '0', '1'};
 const byte shortMessageLength = 8;
@@ -48,6 +50,12 @@ bool is_passing = true;
 const int slaveResetPin = 8;
 const int masterSelectPin = A2;
 
+void populateLongMessage() {
+  for (int i = 0; i < longMessageBufferLen; i++) {
+    longMessage[i] = poolStr[i % strlen(poolStr)];
+  }
+}
+
 void setup() {
   Serial.begin(USB_BAUD);
   Serial1.begin(UART_BAUD);
@@ -56,10 +64,6 @@ void setup() {
 
   while (!Serial) ; // wait for Arduino Serial Monitor to open
   Serial.println(F("\n\n\nUSB Connection established"));
-
-  for (int i = 0; i < longMessageLen; i++) {
-    longMessage[i] = poolStr[i % strlen(poolStr)];
-  }
 
   pinMode(masterSelectPin, INPUT);
 
@@ -77,8 +81,14 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  //runOldTests();
+  runOldTests();
   runXModemTests();
+
+  if (is_passing) {
+    blinkSuccess();
+  } else {
+    blinkError();
+  }
 }
 
 void loop() {
@@ -88,6 +98,30 @@ void waitForSync() {
   delay(2 * 1000);
 }
 
+void blinkError() {
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  const int blinkRate = 100;
+  while (true) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(blinkRate);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(blinkRate);
+  }
+}
+
+
+void blinkSuccess() {
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  const int blinkRate = 100;
+  while (true) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(blinkRate * 4);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(blinkRate);
+  }
+}
 void runXModemTests() {
   IoSerial serialHardware0;
   IoSerial serialHardware1;
@@ -100,24 +134,24 @@ void runXModemTests() {
   serialHardware3.begin(&Serial3);
 
   Serial.println(F("Running tests..."));
-  is_passing = true;
 
   if (isBoardMaster) {
     if (is_passing) waitForSync();
     if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
-    if (is_passing) sendNewXmodem(serialHardware1);
+    if (is_passing) sendNewXmodem(serialHardware1, 0);
     if (is_passing) waitForSync();
-    if (is_passing) receiveNewXmodem(serialHardware1);
+    if (is_passing) receiveNewXmodem(serialHardware1, 0);
   }
 
   if (!isBoardMaster) {
+    Serial.println("MAY NEED TO RESET MASTER");
     if (is_passing) waitForSync();
     if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
-    if (is_passing) receiveOldXmodem(serialHardware1);
+    if (is_passing) receiveOldXmodem(serialHardware1, 0);
     if (is_passing) waitForSync();
-    if (is_passing) sendOldXmodem(serialHardware1);
+    if (is_passing) sendOldXmodem(serialHardware1, 0);
   }
 
   if (!is_passing) {
@@ -152,16 +186,17 @@ void runOldTests() {
     if (is_passing) waitForSync();
     if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
-    if (is_passing) sendOldXmodem(serialHardware1);
+    if (is_passing) sendOldXmodem(serialHardware1, 0);
   }
 
   if (!isBoardMaster) {
+    Serial.println("MAY NEED TO RESET MASTER");
     if (is_passing) waitForSync();
     if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
-    if (is_passing) receiveOldXmodem(serialHardware1);
+    if (is_passing) receiveOldXmodem(serialHardware1, 0);
   }
 
   if (!is_passing) {
@@ -324,7 +359,7 @@ void ioSerialPushTest(IoSerial serial) {
   serial.flush();
   c1 = serial.readbyte(READ_TIMEOUT);
   if (c1 != -1) {
-    Serial.println("Data was found in the buffer. Failed");
+    Serial.println(F("Data was found in the buffer. Failed"));
     is_passing = false;
     return;
   }
@@ -332,14 +367,14 @@ void ioSerialPushTest(IoSerial serial) {
   serial.push(0xA5);
   c1 = serial.readbyte(READ_TIMEOUT);
   if (c1 != 0xA5) {
-    Serial.println("Pushed data not found.  Failed.");
+    Serial.println(F("Pushed data not found.  Failed."));
     is_passing = false;
     return;
   }
 
   c1 = serial.readbyte(READ_TIMEOUT);
   if (c1 != -1) {
-    Serial.println("Data was found in the buffer after reading pushed data. Failed");
+    Serial.println(F("Data was found in the buffer after reading pushed data. Failed"));
     is_passing = false;
     return;
   }
@@ -348,7 +383,7 @@ void ioSerialPushTest(IoSerial serial) {
   serial.flush();
   c1 = serial.readbyte(READ_TIMEOUT);
   if (c1 != -1) {
-    Serial.println("Data was found in the buffer after flushing pushed data. Failed");
+    Serial.println(F("Data was found in the buffer after flushing pushed data. Failed"));
     is_passing = false;
     return;
   }
@@ -366,7 +401,7 @@ void sendShortMessage(IoSerial remote) {
     remote.writebyte(b);
     Serial.write(b);
   }
-  Serial.println("<----");
+  Serial.println(F("<----"));
 
   Serial.println(F("Waiting for ACK"));
   while ((c = remote.readbyte(READ_TIMEOUT)) != ACK)
@@ -428,33 +463,65 @@ void receiveShortMessage(IoSerial remote) {
   remote.flush();
 }
 
-void sendOldXmodem(IoSerial remote) {
-  Serial.println("Sending OLD XModem");
+void sendOldXmodem(IoSerial remote, int offset) {
+  Serial.println(F("Sending OLD XModem"));
   XmodemOld xmodem;
   xmodem.begin(&remote);
-  int res = xmodem.xmodemTransmit(longMessage, longMessageLen);
+  populateLongMessage();
 
-  Serial.print("Used CRC? ");
+  size_t mesgLen = longMessageLen + offset;
+  int res = xmodem.xmodemTransmit(longMessage, mesgLen);
+
+  Serial.print(F("Used CRC? "));
   Serial.println(xmodem.usedCrc());
-  Serial.print("Result: ");
+  Serial.print(F("Result: "));
   Serial.println(res);
 }
 
-void receiveOldXmodem(IoSerial remote) {
-  Serial.println("receive OLD XModem");
+bool tmpMatch (char *tmp, char *str, size_t len, int offset) {
+  Serial.print(F("*****"));
+  Serial.println(len);
+
+  for (int i = 0; i < len - 1; i++) {
+    if (tmp[i] != str[i]) {
+      Serial.print(i);
+      Serial.print("\t");
+      Serial.print(tmp[i]);
+      Serial.print("\t");
+      Serial.println(str[i]);
+
+      Serial.println(F("String contents did not match"));
+      return false;
+    }
+  }
+  return true;
+}
+
+void receiveOldXmodem(IoSerial remote, int offset) {
+  Serial.println(F("receive OLD XModem"));
   XmodemOld xmodem;
   xmodem.begin(&remote);
-  int res = xmodem.xmodemReceive(longMessage, longMessageLen);
+  populateLongMessage();
 
-  Serial.print("Used CRC? ");
+  unsigned char tmp[longMessageBufferLen];
+
+  size_t mesgLen = longMessageLen + offset;
+  int res = xmodem.xmodemReceive(tmp, mesgLen);
+
+  if (!tmpMatch(tmp, longMessage, longMessageLen, offset)) {
+    is_passing = false;
+  }
+
+  Serial.print(F("Used CRC? "));
   Serial.println(xmodem.usedCrc());
-  Serial.print("Result: ");
+  Serial.print(F("Result: "));
   Serial.println(res);
 }
 
-void sendNewXmodem(IoSerial remote) {
-  Serial.println("Sending new XModem");
+void sendNewXmodem(IoSerial remote, int offset) {
+  Serial.println(F("Sending new XModem"));
   XmodemCrc xmodem;
+  populateLongMessage();
 
   unsigned short crc1 = crc16_ccitt(longMessage, longMessageLen);
   unsigned short crc2 = 0;
@@ -462,10 +529,11 @@ void sendNewXmodem(IoSerial remote) {
     crc2 = xmodem.crc16_ccitt(crc2, longMessage[i]);
   }
 
-  xmodem.transmit(&remote, longMessage, longMessageLen);
+  size_t mesgLen = longMessageLen + offset;
+  xmodem.transmit(&remote, longMessage, mesgLen);
 
   while (!xmodem.isDone()) {
-    Serial.print("(T) Packet: ");
+    Serial.print(F("(T) Packet: "));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
     Serial.print(xmodem.status);
@@ -476,42 +544,55 @@ void sendNewXmodem(IoSerial remote) {
     xmodem.next();
   }
 
-  Serial.print("Status: ");
+  Serial.print(F("Status: "));
   Serial.println(xmodem.status);
 
-  if (xmodem.status > 0) {
-    Serial.println("Sending new XModem **PASS");
-  } else {
+  if (xmodem.status < 0) {
     is_passing = false;
-    Serial.println("Sending new XModem **FAIL");
+  }
+
+  if (is_passing ) {
+    Serial.println(F("Sending new XModem **PASS"));
+  } else {
+    Serial.println(F("Sending new XModem **FAIL"));
   }
 }
 
-void receiveNewXmodem(IoSerial remote) {
-  Serial.println("Receive new XModem");
+void receiveNewXmodem(IoSerial remote, int offset) {
+  Serial.println(F("Receive new XModem"));
   XmodemCrc xmodem;
+  populateLongMessage();
 
-  xmodem.receive(&remote, longMessage, longMessageLen);
+  unsigned char tmp[longMessageBufferLen];
+  size_t mesgLen = longMessageLen + offset;
+  xmodem.receive(&remote, tmp, mesgLen);
 
   while (!xmodem.isDone()) {
-    Serial.print("(R) Packet:");
+    Serial.print(F("(R) Packet:"));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
     Serial.print(xmodem.status);
     Serial.print("\t");
     Serial.print(xmodem.state);
     Serial.println("");
-    
+
     xmodem.next();
   }
 
-  Serial.print("Status: ");
+  Serial.print(F("Status: "));
   Serial.println(xmodem.status);
 
-  if (xmodem.status > 0) {
-    Serial.println("Receive new XModem **PASS");
-  } else {
+  if (!tmpMatch(tmp, longMessage, longMessageLen, offset)) {
     is_passing = false;
-    Serial.println("Receive new XModem **FAIL");
+  }
+
+  if (xmodem.status < 0) {
+    is_passing = false;
+  }
+
+  if (is_passing) {
+    Serial.println(F("Receive new XModem **PASS"));
+  } else {
+    Serial.println(F("Receive new XModem **FAIL"));
   }
 }
