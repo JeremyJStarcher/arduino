@@ -137,14 +137,14 @@ void XmodemCrc::r_frame() {
 
   if (packetNumber == -1) isRejected = true;
   if (complimentPacketNumber == -1) isRejected = true;
-  
+
   for (int i = 0; i < this->txSize; i++)
   {
     size_t p = this->pos + i;
     int ch = _inbyte(XMODEM_TIMEOUT);
 
     if (ch == -1) {
-    isRejected = true;
+      isRejected = true;
       break;
     }
 

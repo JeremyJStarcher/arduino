@@ -122,6 +122,7 @@ void blinkSuccess() {
     delay(blinkRate);
   }
 }
+
 void runXModemTests() {
   IoSerial serialHardware0;
   IoSerial serialHardware1;

@@ -73,7 +73,6 @@ bool XmodemOld::usedCrc() {
   return zusedCrc;
 }
 
-
 void XmodemOld::begin(IoLine *_serial) {
   this->serial = _serial;
 }
@@ -289,6 +288,7 @@ start_trans:
           memcpy (&xbuff[3], &src[len], c);
           if (c < bufsz) xbuff[3 + c] = XMODEM_CTRLZ;
         }
+
         if (crc) {
           unsigned short ccrc = crc16_ccitt(&xbuff[3], bufsz);
           xbuff[bufsz + 3] = (ccrc >> 8) & 0xFF;
