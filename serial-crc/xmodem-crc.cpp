@@ -4,9 +4,6 @@
 #include "ioline.h"
 #include "xmodem-crc.h"
 
-// TODO
-// merge the init_frame code if it turns out those are the same.
-
 #define MAXRETRANS 16
 
 #define CODE_SOH 0x01
