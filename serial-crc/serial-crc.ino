@@ -1,4 +1,3 @@
-#include <EEPROM.h>
 #include <avr/pgmspace.h>
 #include "common.h"
 #include "ioline.h"
