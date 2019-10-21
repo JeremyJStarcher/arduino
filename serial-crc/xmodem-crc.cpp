@@ -148,7 +148,9 @@ void XmodemCrc::r_frame() {
       break;
     }
 
-    if (p <= this->bufSize) this->buf[p] = ch;
+    if (p < this->bufSize) {
+      this->buf[p] = ch;
+    }
     calcRunningChecksum(ch);
   }
 

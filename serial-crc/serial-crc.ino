@@ -134,24 +134,25 @@ void runXModemTests() {
   serialHardware3.begin(&Serial3);
 
   Serial.println(F("Running tests..."));
+  for (int offset = -5; offset <= 5; offset++) {
+    if (isBoardMaster) {
+      if (is_passing) waitForSync();
+      if (is_passing) receiveShortMessage(serialHardware1);
+      if (is_passing) waitForSync();
+      if (is_passing) sendNewXmodem(serialHardware1, offset);
+      if (is_passing) waitForSync();
+      if (is_passing) receiveNewXmodem(serialHardware1, offset);
+    }
 
-  if (isBoardMaster) {
-    if (is_passing) waitForSync();
-    if (is_passing) receiveShortMessage(serialHardware1);
-    if (is_passing) waitForSync();
-    if (is_passing) sendNewXmodem(serialHardware1, 0);
-    if (is_passing) waitForSync();
-    if (is_passing) receiveNewXmodem(serialHardware1, 0);
-  }
-
-  if (!isBoardMaster) {
-    Serial.println("MAY NEED TO RESET MASTER");
-    if (is_passing) waitForSync();
-    if (is_passing) sendShortMessage(serialHardware1);
-    if (is_passing) waitForSync();
-    if (is_passing) receiveOldXmodem(serialHardware1, 0);
-    if (is_passing) waitForSync();
-    if (is_passing) sendOldXmodem(serialHardware1, 0);
+    if (!isBoardMaster) {
+      Serial.println("MAY NEED TO RESET MASTER");
+      if (is_passing) waitForSync();
+      if (is_passing) sendShortMessage(serialHardware1);
+      if (is_passing) waitForSync();
+      if (is_passing) receiveOldXmodem(serialHardware1, offset);
+      if (is_passing) waitForSync();
+      if (is_passing) sendOldXmodem(serialHardware1, offset);
+    }
   }
 
   if (!is_passing) {
@@ -463,8 +464,57 @@ void receiveShortMessage(IoSerial remote) {
   remote.flush();
 }
 
+void fillTmp(char *tmp, size_t len, char value) {
+  memset(tmp, value, len);
+}
+
+bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
+  Serial.print(F("*****"));
+  Serial.println(len);
+  size_t strLen = len + offset;
+  bool ret = true;
+
+  for (int i = 0; i < strLen; i++) {
+    if (tmp[i] != str[i]) {
+      Serial.print(i);
+      Serial.print("\t");
+      Serial.print(tmp[i]);
+      Serial.print("\t");
+      Serial.println(str[i]);
+
+      Serial.println(F("String contents did not match"));
+      ret = false;
+      break;
+    }
+  }
+
+  for (int i = strLen; i < longMessageBufferLen; i++) {
+    if (tmp[i] != FILL_BYTE) {
+      Serial.print(F("Fill byte overwritten at "));
+      Serial.println(i);
+      Serial.print(tmp[i], DEC);
+      Serial.println("");
+
+      ret = false;
+      break;
+    }
+  }
+
+#if 0
+  for (int i = 0; i < longMessageBufferLen; i++) {
+    Serial.print(tmp[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println("");
+#endif
+
+  return ret;
+}
+
 void sendOldXmodem(IoSerial remote, int offset) {
-  Serial.println(F("Sending OLD XModem"));
+  Serial.print(F("Sending OLD XModem with offset "));
+  Serial.println(offset);
+
   XmodemOld xmodem;
   xmodem.begin(&remote);
   populateLongMessage();
@@ -478,32 +528,16 @@ void sendOldXmodem(IoSerial remote, int offset) {
   Serial.println(res);
 }
 
-bool tmpMatch (char *tmp, char *str, size_t len, int offset) {
-  Serial.print(F("*****"));
-  Serial.println(len);
-
-  for (int i = 0; i < len - 1; i++) {
-    if (tmp[i] != str[i]) {
-      Serial.print(i);
-      Serial.print("\t");
-      Serial.print(tmp[i]);
-      Serial.print("\t");
-      Serial.println(str[i]);
-
-      Serial.println(F("String contents did not match"));
-      return false;
-    }
-  }
-  return true;
-}
-
 void receiveOldXmodem(IoSerial remote, int offset) {
-  Serial.println(F("receive OLD XModem"));
+  Serial.print(F("receive OLD XModem with offset "));
+  Serial.println(offset);
+
   XmodemOld xmodem;
   xmodem.begin(&remote);
   populateLongMessage();
 
   unsigned char tmp[longMessageBufferLen];
+  fillTmp(tmp, longMessageBufferLen, FILL_BYTE);
 
   size_t mesgLen = longMessageLen + offset;
   int res = xmodem.xmodemReceive(tmp, mesgLen);
@@ -519,7 +553,9 @@ void receiveOldXmodem(IoSerial remote, int offset) {
 }
 
 void sendNewXmodem(IoSerial remote, int offset) {
-  Serial.println(F("Sending new XModem"));
+  Serial.print(F("Sending new XModem with offset "));
+  Serial.println(offset);
+
   XmodemCrc xmodem;
   populateLongMessage();
 
@@ -559,11 +595,15 @@ void sendNewXmodem(IoSerial remote, int offset) {
 }
 
 void receiveNewXmodem(IoSerial remote, int offset) {
-  Serial.println(F("Receive new XModem"));
+  Serial.print(F("Receive new XModem with offset "));
+  Serial.println(offset);
+
   XmodemCrc xmodem;
   populateLongMessage();
 
   unsigned char tmp[longMessageBufferLen];
+  fillTmp(tmp, longMessageBufferLen, FILL_BYTE);
+
   size_t mesgLen = longMessageLen + offset;
   xmodem.receive(&remote, tmp, mesgLen);
 

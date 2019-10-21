@@ -1,6 +1,8 @@
 #define USB_BAUD 9600
 #define UART_BAUD 9600
 
+#define FILL_BYTE 0xA0
+
 const size_t buffer_size = 8;
 const size_t msg_chunk_size = buffer_size - 2;
 
