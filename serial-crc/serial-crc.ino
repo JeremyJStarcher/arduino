@@ -572,18 +572,18 @@ void sendNewXmodem(IoSerial remote, int offset) {
     Serial.print(F("(T) Packet: "));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
-    Serial.print(xmodem.status);
+    Serial.print(xmodem.getStatus());
     Serial.print("\t");
-    Serial.print(xmodem.state);
+    Serial.print(xmodem.getState());
     Serial.println("");
 
     xmodem.next();
   }
 
   Serial.print(F("Status: "));
-  Serial.println(xmodem.status);
+  Serial.println(xmodem.getStatus());
 
-  if (xmodem.status < 0) {
+  if (xmodem.getStatus() < 0) {
     is_passing = false;
   }
 
@@ -611,22 +611,22 @@ void receiveNewXmodem(IoSerial remote, int offset) {
     Serial.print(F("(R) Packet:"));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
-    Serial.print(xmodem.status);
+    Serial.print(xmodem.getStatus());
     Serial.print("\t");
-    Serial.print(xmodem.state);
+    Serial.print(xmodem.getState());
     Serial.println("");
 
     xmodem.next();
   }
 
   Serial.print(F("Status: "));
-  Serial.println(xmodem.status);
+  Serial.println(xmodem.getStatus());
 
   if (!tmpMatch(tmp, longMessage, longMessageLen, offset)) {
     is_passing = false;
   }
 
-  if (xmodem.status < 0) {
+  if (xmodem.getStatus() < 0) {
     is_passing = false;
   }
 

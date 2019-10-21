@@ -14,6 +14,9 @@
 #define CODE_CAN 0x18
 #define CODE_CTRLZ 0x1A
 
+#define INIT_FRAME_RETRY 1
+#define INIT_FRAME_NEW 2
+
 bool XmodemCrc::isDone() {
   return this->status != 0;
 }
@@ -52,16 +55,8 @@ void XmodemCrc::receive(IoLine *_serial, unsigned char *dest, int destSize) {
   this->status = XMODEM_STATUS_RUNNING;
   this->serial = _serial;
   this->tryChar = 'C';
-  this->r_init_frame();
-}
-
-void XmodemCrc::r_init_frame() {
-  this->crc = 0;
-  this->ccks = 0;
-  this->triesLeft = MAXRETRANS;
-  this->packetNumber++;
-  this->txSize = XMODEM_BLOCKSIZE;
   this->state = XMODEM_STATE_R_SYNC;
+  this->init_frame(INIT_FRAME_NEW);
 }
 
 void XmodemCrc::r_sync() {
@@ -165,12 +160,14 @@ void XmodemCrc::r_frame() {
 
   if (isRejected) {
     this->packetNumber--; // init increments it.
-    this->r_init_frame();
+    this->init_frame(INIT_FRAME_RETRY);
   } else {
     _outbyte(CODE_ACK);
-    this->r_init_frame();
     this->pos += this->txSize;
   }
+  this->state = XMODEM_STATE_R_SYNC;
+  this->init_frame(INIT_FRAME_NEW);
+
 }
 
 ///////////////////////////////////////////////////////////
@@ -182,7 +179,7 @@ void XmodemCrc::transmit(IoLine *_serial, unsigned char *src, int srcSize) {
   this->state = XMODEM_STATE_T_INIT_TRANSMISSION;
   this->status = XMODEM_STATUS_RUNNING;
   this->serial = _serial;
-  this->t_init_frame();
+  this->init_frame(INIT_FRAME_NEW);
 }
 
 void XmodemCrc::t_init_transmission() {
@@ -225,12 +222,14 @@ void XmodemCrc::calcRunningChecksum(unsigned char ch) {
   this->ccks += ch;
 }
 
-void XmodemCrc::t_init_frame() {
+void XmodemCrc::init_frame(char initMode) {
   this->crc = 0;
   this->ccks = 0;
   this->triesLeft = MAXRETRANS;
-  this->packetNumber++;
   this->txSize = XMODEM_BLOCKSIZE;
+  if (initMode == INIT_FRAME_NEW) {
+    this->packetNumber++;
+  }
 }
 
 void XmodemCrc::t_frame() {
@@ -275,7 +274,7 @@ void XmodemCrc::t_frame() {
   if ((c = _inbyte(XMODEM_TIMEOUT)) >= 0 ) {
     switch (c) {
       case CODE_ACK:
-        this->t_init_frame();
+        this->init_frame(INIT_FRAME_NEW);
         this->pos += this->txSize;
 
         if (this->pos >= this->bufSize) {
@@ -341,4 +340,12 @@ unsigned short XmodemCrc::crc16_ccitt(unsigned short crc, unsigned char ch)
 
 unsigned char XmodemCrc::getPacketNumber() {
   return this->packetNumber;
+}
+
+unsigned char XmodemCrc::getState() {
+  return this->state;
+}
+
+signed char XmodemCrc::getStatus() {
+  return this->status;
 }

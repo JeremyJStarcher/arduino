@@ -26,24 +26,29 @@ class XmodemCrc {
 
     void next();
     bool isDone();
-    signed char status;
+    unsigned char getState();
+    signed char getStatus();
+
     unsigned short crc16_ccitt(unsigned short crc, unsigned char ch);
-    unsigned char state;
- 
+
   private:
+    void init_frame(char initMode);
+
     void t_init_transmission();
     void t_frame();
-    void t_init_frame();
     void t_eot();
 
     void r_sync();
-    void r_init_frame();
     void r_frame();
+
 
     void calcRunningChecksum(unsigned char ch);
     void _outbyte(int b);
     int _inbyte(int t);
     void flushinput(void);
+
+    unsigned char state;
+    signed char status;
 
     // DATA
     IoLine *serial;
