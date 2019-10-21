@@ -4,14 +4,18 @@
 #include <stdint.h>
 #include "ioline.h"
 
+#define XMODEM_TIMEOUT (1000 * 1)
+#define XMODEM_BLOCKSIZE 128
+
+
 #define XMODEM_STATUS_RUNNING 0
 
 #define XMODEM_STATE_DONE 0
-#define XMODEM_STATE_T_SYNC 10
-#define XMODEM_STATE_T_FRAME 11
+#define XMODEM_STATE_T_INIT_TRANSMISSION 10
+#define XMODEM_STATE_T_PACKET 11
 #define XMODEM_STATE_T_EOT 12
 #define XMODEM_STATE_R_SYNC 20
-#define XMODEM_STATE_R_FRAME 21
+#define XMODEM_STATE_R_PACKET 21
 
 class XmodemCrc {
   public:
@@ -24,8 +28,10 @@ class XmodemCrc {
     bool isDone();
     signed char status;
     unsigned short crc16_ccitt(unsigned short crc, unsigned char ch);
+    unsigned char state;
+ 
   private:
-    void t_sync();
+    void t_init_transmission();
     void t_frame();
     void t_init_frame();
     void t_eot();
@@ -43,7 +49,6 @@ class XmodemCrc {
     IoLine *serial;
     unsigned char *buf;
     int bufSize;
-    unsigned char state;
     unsigned char packetNumber;
 
     bool useCrc;

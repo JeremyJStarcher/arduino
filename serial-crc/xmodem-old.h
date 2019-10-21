@@ -1,4 +1,8 @@
-#define OLD_XMODEM_BLOCK 16
+#include "xmodem-crc.h"
+#define OLD_XMODEM_BLOCK XMODEM_BLOCKSIZE
+#define DLY_1S XMODEM_TIMEOUT
+
+
 /*
    Copyright 2001-2010 Georges Menie (www.menie.org)
    All rights reserved.
@@ -38,7 +42,7 @@
 #include <stdint.h>
 #include "ioline.h"
 
-#define XMODEM_SOH  0xFF //0x01
+#define XMODEM_SOH  0x01
 #define XMODEM_STX  0x02
 #define XMODEM_EOT  0x04
 #define XMODEM_ACK  0x06
@@ -46,7 +50,6 @@
 #define XMODEM_CAN  0x18
 #define XMODEM_CTRLZ 0x1A
 
-#define DLY_1S 1000
 #define MAXRETRANS 25
 
 bool zusedCrc = false;
@@ -131,8 +134,6 @@ start_recv:
       if ((c = _inbyte(DLY_1S)) < 0) goto reject;
       *p++ = c;
     }
-    Serial.print("(rec) len --");
-    Serial.println(len);
 
     if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
         (xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
@@ -277,8 +278,6 @@ start_trans:
         //  getsrc();
         //}
         //memcpy (&xbuff[3], &src[offset], c);
-        Serial.print("(trans) len --");
-        Serial.println(len);
 
         if (c == 0) {
           xbuff[3] = XMODEM_CTRLZ;
@@ -303,10 +302,6 @@ start_trans:
           int bytesInPacket = bufsz + 4 + (crc ? 1 : 0);
           for (i = 0; i < bytesInPacket; ++i) {
             _outbyte(xbuff[i]);
-            Serial.print("(trans)\t");
-            Serial.print(i);
-            Serial.print("\t");
-            Serial.println(xbuff[i]);
           }
 
           if ((c = _inbyte(DLY_1S)) >= 0 ) {

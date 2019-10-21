@@ -1,4 +1,3 @@
-#define BLOCKSIZE 16
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -8,10 +7,9 @@
 // TODO
 // merge the init_frame code if it turns out those are the same.
 
-#define DLY_1S 1000
-#define MAXRETRANS 3
+#define MAXRETRANS 16
 
-#define CODE_SOH 0xFF // 0x01
+#define CODE_SOH 0x01
 #define CODE_STX 0x02
 #define CODE_EOT 0x04
 #define CODE_ACK 0x06
@@ -29,10 +27,10 @@ void XmodemCrc::next() {
   }
   switch (this->state)
   {
-    case XMODEM_STATE_T_SYNC:
-      this->t_sync();
+    case XMODEM_STATE_T_INIT_TRANSMISSION:
+      this->t_init_transmission();
       break;
-    case XMODEM_STATE_T_FRAME:
+    case XMODEM_STATE_T_PACKET:
       this->t_frame();
       break;
     case XMODEM_STATE_T_EOT:
@@ -41,7 +39,7 @@ void XmodemCrc::next() {
     case XMODEM_STATE_R_SYNC:
       this->r_sync();
       break;
-    case XMODEM_STATE_R_FRAME:
+    case XMODEM_STATE_R_PACKET:
       this->r_frame();
       break;
 
@@ -65,12 +63,11 @@ void XmodemCrc::r_init_frame() {
   this->ccks = 0;
   this->triesLeft = MAXRETRANS;
   this->packetNumber++;
-  this->txSize = BLOCKSIZE;
+  this->txSize = XMODEM_BLOCKSIZE;
   this->state = XMODEM_STATE_R_SYNC;
 }
 
 void XmodemCrc::r_sync() {
-  Serial.println("r_sync()");
   this->triesLeft--;
   if (this->triesLeft == 0) {
     _outbyte(CODE_CAN);
@@ -91,13 +88,10 @@ void XmodemCrc::r_sync() {
 
   if (this->tryChar) _outbyte(this->tryChar);
 
-  Serial.print("this->tryChar = ");
-  Serial.println(this->tryChar);
-
-  if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
+  if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
       case CODE_SOH:
-        this->state = XMODEM_STATE_R_FRAME;
+        this->state = XMODEM_STATE_R_PACKET;
         break;
       // goto start_recv;
       //    case XMODEM_STX:
@@ -109,7 +103,7 @@ void XmodemCrc::r_sync() {
         this->status = 1;
         break;
       case CODE_CAN:
-        if ((c = _inbyte(DLY_1S)) == CODE_CAN) {
+        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
           flushinput();
           _outbyte(CODE_ACK);
           this->status = -1;/* canceled by remote */
@@ -121,11 +115,7 @@ void XmodemCrc::r_sync() {
   }
 }
 
-int jjz = 999;
 void XmodemCrc::r_frame() {
-  Serial.print("r_frame() ");
-  Serial.println(this->packetNumber);
-
   this->triesLeft--;
   if (!this->triesLeft) {
     _outbyte(CODE_CAN);
@@ -142,74 +132,47 @@ void XmodemCrc::r_frame() {
 
   bool isRejected = false;
 
-  int packetNumber = _inbyte(DLY_1S);
-  int complimentPacketNumber = _inbyte(DLY_1S);
+  int packetNumber = _inbyte(XMODEM_TIMEOUT);
+  int complimentPacketNumber = _inbyte(XMODEM_TIMEOUT);
 
   if (packetNumber == -1) isRejected = true;
   if (complimentPacketNumber == -1) isRejected = true;
-  Serial.print("receive checkchars: ");
-  Serial.print("(this->pos) ");
-  Serial.println(this->pos);
-
+  
   for (int i = 0; i < this->txSize; i++)
   {
     size_t p = this->pos + i;
-    int ch = _inbyte(DLY_1S);
-
-    Serial.print("\t[");
-    Serial.print(p);
-    Serial.print("]");
-    Serial.print("\t");
-    Serial.print("ch = \t");
-    Serial.print(ch);
-    Serial.print("\t");
-    Serial.write(ch);
-    Serial.println("");
+    int ch = _inbyte(XMODEM_TIMEOUT);
 
     if (ch == -1) {
-      isRejected = true;
+    isRejected = true;
       break;
     }
 
     if (p <= this->bufSize) this->buf[p] = ch;
     calcRunningChecksum(ch);
   }
-  Serial.println("");
 
   if (this->useCrc) {
-    int crcHigh =  _inbyte(DLY_1S);
-    int crcLow =  _inbyte(DLY_1S);
+    int crcHigh =  _inbyte(XMODEM_TIMEOUT);
+    int crcLow =  _inbyte(XMODEM_TIMEOUT);
 
     int crc = (crcHigh * 256) + crcLow;
 
-    Serial.println("\n\ncrc validate");
-    Serial.print(crc, HEX);
-    Serial.print(" ");
-    Serial.println(this->crc, HEX);
-
     if (crc != this->crc) isRejected = true;
   } else {
-    int ccks = _inbyte(DLY_1S);
+    int ccks = _inbyte(XMODEM_TIMEOUT);
     if (ccks != this->ccks) isRejected = true;
   }
 
   if (isRejected) {
-    Serial.print("REJECTED");
     this->packetNumber--; // init increments it.
     this->r_init_frame();
   } else {
-    Serial.print("Using crc? ");
-    Serial.print(this->useCrc);
-    Serial.println(" Sending ACK");
     _outbyte(CODE_ACK);
     this->r_init_frame();
     this->pos += this->txSize;
   }
-
-  jjz--;
-  if (!jjz) while (true);
 }
-
 
 ///////////////////////////////////////////////////////////
 void XmodemCrc::transmit(IoLine *_serial, unsigned char *src, int srcSize) {
@@ -217,13 +180,13 @@ void XmodemCrc::transmit(IoLine *_serial, unsigned char *src, int srcSize) {
   this->bufSize = srcSize;
   this->pos = 0;
   this->packetNumber = 0;
-  this->state = XMODEM_STATE_T_SYNC;
+  this->state = XMODEM_STATE_T_INIT_TRANSMISSION;
   this->status = XMODEM_STATUS_RUNNING;
   this->serial = _serial;
   this->t_init_frame();
 }
 
-void XmodemCrc::t_sync() {
+void XmodemCrc::t_init_transmission() {
   this->triesLeft--;
   if (this->triesLeft == 0) {
     _outbyte(CODE_CAN);
@@ -235,18 +198,18 @@ void XmodemCrc::t_sync() {
   }
 
   signed int c;
-  if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
+  if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
       case 'C':
         this->useCrc = true;
-        this->state = XMODEM_STATE_T_FRAME;
+        this->state = XMODEM_STATE_T_PACKET;
         break;
       case CODE_NAK:
         this->useCrc = false;
-        this->state = XMODEM_STATE_T_FRAME;
+        this->state = XMODEM_STATE_T_PACKET;
         break;
       case CODE_CAN:
-        if ((c = _inbyte(DLY_1S)) == CODE_CAN) {
+        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
           _outbyte(CODE_ACK);
           flushinput();
           this->status = -1; /* canceled by remote */
@@ -261,8 +224,6 @@ void XmodemCrc::t_sync() {
 void XmodemCrc::calcRunningChecksum(unsigned char ch) {
   this->crc = this->crc16_ccitt(crc, ch);
   this->ccks += ch;
-  Serial.write(ch);
-
 }
 
 void XmodemCrc::t_init_frame() {
@@ -270,7 +231,7 @@ void XmodemCrc::t_init_frame() {
   this->ccks = 0;
   this->triesLeft = MAXRETRANS;
   this->packetNumber++;
-  this->txSize = BLOCKSIZE;
+  this->txSize = XMODEM_BLOCKSIZE;
 }
 
 void XmodemCrc::t_frame() {
@@ -295,7 +256,6 @@ void XmodemCrc::t_frame() {
   _outbyte(this->packetNumber);
   _outbyte(~this->packetNumber);
 
-  Serial.print("sending checkchars: ");
   for (int i = 0; i < this->txSize; i++)
   {
     size_t p = this->pos + i;
@@ -305,20 +265,15 @@ void XmodemCrc::t_frame() {
     _outbyte(ch);
   }
 
-  Serial.println("");
-
   if (this->useCrc) {
     _outbyte((this->crc >> 8) & 0xFF);
     _outbyte(this->crc & 0xFF);
-
-    Serial.print("OUTGOING CRC: ");
-    Serial.println(this->crc, HEX);
   } else {
     _outbyte(this->ccks);
   }
 
   signed int c;
-  if ((c = _inbyte(DLY_1S)) >= 0 ) {
+  if ((c = _inbyte(XMODEM_TIMEOUT)) >= 0 ) {
     switch (c) {
       case CODE_ACK:
         this->t_init_frame();
@@ -329,7 +284,7 @@ void XmodemCrc::t_frame() {
         }
         return;
       case CODE_CAN:
-        if ((c = _inbyte(DLY_1S)) == CODE_CAN) {
+        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
           _outbyte(CODE_ACK);
           flushinput();
           this->status = -1; /* canceled by remote */
@@ -348,7 +303,7 @@ void XmodemCrc::t_eot() {
 
   for (int retry = 0; retry < MAXRETRANS; ++retry) {
     _outbyte(CODE_EOT);
-    if ((c = _inbyte((DLY_1S) << 1)) == CODE_ACK) break;
+    if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) == CODE_ACK) break;
   }
   flushinput();
   this->status = (c == CODE_ACK) ? 1 : -5;
@@ -367,7 +322,7 @@ void XmodemCrc::_outbyte(int b) {
 
 void XmodemCrc::flushinput(void)
 {
-  while (this->_inbyte(((DLY_1S) * 3) >> 1) >= 0)
+  while (this->_inbyte(((XMODEM_TIMEOUT) * 3) >> 1) >= 0)
     ;
 }
 
@@ -388,38 +343,3 @@ unsigned short XmodemCrc::crc16_ccitt(unsigned short crc, unsigned char ch)
 unsigned char XmodemCrc::getPacketNumber() {
   return this->packetNumber;
 }
-
-/* Good transmission strings and the CRC values.
-  ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVW
-  C34
-  XYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJK
-  37AD
-  LMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567
-  298D
-  0ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUV
-  30F0
-  WXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJ
-  F2B1
-  KLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456
-  AAE8
-  70ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTU
-  BC0C
-  VWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHI
-  F432
-  JKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345
-  F0B6
-  670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRST
-  56DA
-  UVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGH
-  BD86
-  IJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ01234
-  C381
-  5670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRS
-  E7CC
-  TUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFG
-  191C
-  HIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0123
-  8A4D
-  45670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQR
-  A992
-*/

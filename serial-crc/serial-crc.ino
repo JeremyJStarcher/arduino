@@ -465,8 +465,14 @@ void sendNewXmodem(IoSerial remote) {
   xmodem.transmit(&remote, longMessage, longMessageLen);
 
   while (!xmodem.isDone()) {
-    Serial.print("Packet :");
-    Serial.println(xmodem.getPacketNumber());
+    Serial.print("(T) Packet: ");
+    Serial.print(xmodem.getPacketNumber());
+    Serial.print("\t");
+    Serial.print(xmodem.status);
+    Serial.print("\t");
+    Serial.print(xmodem.state);
+    Serial.println("");
+
     xmodem.next();
   }
 
@@ -488,8 +494,14 @@ void receiveNewXmodem(IoSerial remote) {
   xmodem.receive(&remote, longMessage, longMessageLen);
 
   while (!xmodem.isDone()) {
-    // Serial.print("Packet :");
-    // Serial.println(xmodem.getPacketNumber());
+    Serial.print("(R) Packet:");
+    Serial.print(xmodem.getPacketNumber());
+    Serial.print("\t");
+    Serial.print(xmodem.status);
+    Serial.print("\t");
+    Serial.print(xmodem.state);
+    Serial.println("");
+    
     xmodem.next();
   }
 
