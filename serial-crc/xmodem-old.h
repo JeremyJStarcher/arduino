@@ -279,6 +279,9 @@ start_trans:
         //}
         //memcpy (&xbuff[3], &src[offset], c);
 
+        // JJS:
+        // According to specs, the buffer should really be padded
+        // out with the controlZ, not just a single one stuck on.
         if (c == 0) {
           xbuff[3] = XMODEM_CTRLZ;
         }
