@@ -404,8 +404,11 @@ void fillTmp(char *tmp, size_t len, char value) {
 }
 
 bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
+#if DEBUG
   Serial.print(F("*****"));
   Serial.println(len);
+#endif
+
   size_t strLen = len + offset;
   size_t errorPosition;
   bool ret = true;
@@ -512,6 +515,10 @@ void sendNewXmodem(IoSerial remote, int offset) {
   xmodem.transmit(&remote, BLOCK_SIZE);
 
   while (!xmodem.isDone()) {
+    size_t startPos = ctr * BLOCK_SIZE;
+    size_t bytesleft = mesgLen - startPos;
+
+#if DEBUG
     Serial.print(F("(T) Packet: "));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
@@ -519,13 +526,10 @@ void sendNewXmodem(IoSerial remote, int offset) {
     Serial.print("\t");
     Serial.print(xmodem.getState());
     Serial.print("\tSP\t");
-
-    size_t startPos = ctr * BLOCK_SIZE;
-    size_t bytesleft = mesgLen - startPos;
-
     Serial.print(startPos);
     Serial.print("\tBL:\t");
     Serial.println(bytesleft);
+#endif
 
     xmodem.nextTransmit(&longMessage[startPos], bytesleft);
     if (lastPacket != xmodem.getPacketNumber()) {
@@ -559,13 +563,20 @@ void receiveNewXmodem(IoSerial remote, int offset) {
   fillTmp(tmp, longMessageBufferLen, FILL_BYTE);
 
   size_t mesgLen = longMessageLen + offset;
+#if DEBUG
   Serial.print("mesgLen = ");  Serial.println(mesgLen);
+#endif
+
   size_t ctr = 0;
   int lastPacket = 1;
 
   xmodem.receive(&remote, BLOCK_SIZE);
 
   while (!xmodem.isDone()) {
+    size_t startPos = ctr * BLOCK_SIZE;
+    size_t bytesleft = mesgLen - startPos;
+
+#if DEBUG
     Serial.print(F("(R) Packet:"));
     Serial.print(xmodem.getPacketNumber());
     Serial.print("\t");
@@ -573,13 +584,10 @@ void receiveNewXmodem(IoSerial remote, int offset) {
     Serial.print("\t");
     Serial.print(xmodem.getState());
     Serial.print("\tSP\t");
-
-    size_t startPos = ctr * BLOCK_SIZE;
-    size_t bytesleft = mesgLen - startPos;
-
     Serial.print(startPos);
     Serial.print("\tBL:\t");
     Serial.println(bytesleft);
+#endif
 
     xmodem.nextRecieve(&tmp[startPos], min(BLOCK_SIZE, bytesleft));
     if (lastPacket != xmodem.getPacketNumber()) {
