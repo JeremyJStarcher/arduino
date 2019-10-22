@@ -9,21 +9,24 @@
 
 /* Wiring between two MEGAs
 
-    From    To
-    M14     M17
-    M15     M16
-    S14     S17
-    S15     S16
-    M18     S19
-    M19     S18
-    M8      S<reset>
-    M<gnd>  S<gnd>
+  Purpose    From        To
+  Loopback    [TX3] M14   [RX2] M17
+  Loopback    [RX3] M15   [TX2] M16
+  Loopback    [TX3] S14   [RX2] S17
+  Loopback    [RX3] S15   [TX2] S16
 
-    For Master:
-    A2      HIGH
+  DataLink    [RX1] M18   [TX1] S19
+  DataLink    [TX1] M19   [RX1] S18
 
-    For Slave
-    A2      LOW
+  Slave RST         M8          S-RST
+
+  Ground            M-GND       S-GND
+
+  Config Master     M-A2        M-+5
+  Config Slave      S-A2        S-GND
+
+  Handshaking       M-7         S-6
+  Handshaking       S-6         M-7
 */
 
 #define SOH  0x01
@@ -50,6 +53,8 @@ bool isBoardMaster = false;
 bool is_passing = true;
 const int slaveResetPin = 8;
 const int masterSelectPin = A2;
+const int clearToSend = 7;
+const int requestToSend = 6;
 
 void populateLongMessage() {
   for (int i = 0; i < longMessageBufferLen; i++) {
@@ -67,8 +72,11 @@ void setup() {
   Serial.println(F("\n\n\nUSB Connection established"));
 
   pinMode(masterSelectPin, INPUT);
-
   isBoardMaster = digitalRead(masterSelectPin);
+
+  pinMode(clearToSend, INPUT);
+  digitalWrite(requestToSend, LOW);
+  pinMode(requestToSend, OUTPUT);
 
   if (isBoardMaster) {
     Serial.println(F("Master board.  In control."));
@@ -78,12 +86,19 @@ void setup() {
     delay(1000);
     digitalWrite(slaveResetPin, HIGH);
     pinMode(slaveResetPin, INPUT);
+
+    Serial.println("Giving slave time to init");
+    delay(6 * 1000);
   } else {
     Serial.println(F("Slave board"));
   }
 
+  waitForSync();
+
   runOldTests();
   runXModemTests();
+
+  waitForSync();
 
   if (is_passing) {
     blinkSuccess();
@@ -95,8 +110,13 @@ void setup() {
 void loop() {
 }
 
+
 void waitForSync() {
-  delay(2 * 1000);
+  digitalWrite(requestToSend, HIGH);
+  while (digitalRead(clearToSend) == LOW) {
+    // idle
+  }
+  digitalWrite(requestToSend, LOW);
 }
 
 void blinkError() {
@@ -139,7 +159,7 @@ void runXModemTests() {
   for (int offset = -5; offset <= 5; offset++) {
     if (isBoardMaster) {
       if (is_passing) waitForSync();
-      if (is_passing) receiveShortMessage(serialHardware1);
+      //if (is_passing) receiveShortMessage(serialHardware1);
       if (is_passing) waitForSync();
       if (is_passing) sendNewXmodem(serialHardware1, offset);
       if (is_passing) waitForSync();
@@ -149,7 +169,7 @@ void runXModemTests() {
     if (!isBoardMaster) {
       Serial.println("MAY NEED TO RESET MASTER");
       if (is_passing) waitForSync();
-      if (is_passing) sendShortMessage(serialHardware1);
+      //if (is_passing) sendShortMessage(serialHardware1);
       if (is_passing) waitForSync();
       if (is_passing) receiveOldXmodem(serialHardware1, offset);
       if (is_passing) waitForSync();
@@ -185,7 +205,7 @@ void runOldTests() {
 
   if (isBoardMaster) {
     if (is_passing) waitForSync();
-    if (is_passing) receiveShortMessage(serialHardware1);
+    //if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
@@ -193,9 +213,9 @@ void runOldTests() {
   }
 
   if (!isBoardMaster) {
-    Serial.println("MAY NEED TO RESET MASTER");
+    if (is_passing) Serial.println("MAY NEED TO RESET MASTER");
     if (is_passing) waitForSync();
-    if (is_passing) sendShortMessage(serialHardware1);
+    //if (is_passing) sendShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
