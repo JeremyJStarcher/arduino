@@ -206,8 +206,9 @@ void runTests() {
   if (is_passing) TestOldtoOld();
 
   for (int offset = -5; offset <= 5; offset++) {
-    sendNewToOld(offset);
-    sendOldToNew(offset);
+    if (is_passing) sendNewToOld(offset);
+    if (is_passing) sendOldToNew(offset);
+    if (is_passing) sendNewToNew(offset);
   }
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -639,5 +640,16 @@ void sendOldToNew(int offset) {
   }
   if (!isBoardMaster) {
     sendOldXmodem(serialHardware1, offset);
+  }
+}
+
+
+void sendNewToNew(int offset) {
+  if (isBoardMaster) {
+    sendNewXmodem(serialHardware1, offset);
+  }
+
+  if (!isBoardMaster) {
+    receiveNewXmodem(serialHardware1, offset);
   }
 }
