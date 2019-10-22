@@ -5,13 +5,21 @@
 
 #define MAXRETRANS 16
 
-#define CODE_SOH 0x01
-#define CODE_STX 0x02
-#define CODE_EOT 0x04
-#define CODE_ACK 0x06
-#define CODE_NAK 0x15
-#define CODE_CAN 0x18
-#define CODE_CTRLZ 0x1A
+//* Control bytes passed back and forth
+#define SOH_128 0x01  // 128 byte packet.
+#define SOH_1024 0x02 // 1024 byte packet(unused)
+#define CODE_EOT 0x04 // End of transmission
+#define CODE_ACK 0x06 // ACK - Good
+#define CODE_NAK 0x15 // Resend
+#define CODE_CAN 0x18 // Cancel transmission
+
+#define CHECKSOME_CRC 'C' // Use CRC checksomes
+#define CHECKSOME_OLD CODE_NAK // use old checksomes.
+
+// When XMODEM was first put together, CTRL-Z was the 'end of file'
+// marker.  Packets should be padded with this character
+#define CODE_PADDING 0x1A
+
 
 #define INIT_FRAME_RETRY 1
 #define INIT_FRAME_NEW 2
@@ -61,7 +69,7 @@ void XmodemCrc::receive(IoLine *_serial, size_t packetSize) {
   this->state = XMODEM_STATE_R_SYNC;
   this->status = XMODEM_STATUS_RUNNING;
   this->serial = _serial;
-  this->tryChar = 'C';
+  this->tryChar = CHECKSOME_CRC;
   this->state = XMODEM_STATE_R_SYNC;
   this->init_frame(INIT_FRAME_NEW);
 }
@@ -78,8 +86,8 @@ void XmodemCrc::r_sync() {
   }
 
   if (this->triesLeft < MAXRETRANS / 2) {
-    if (this->tryChar == 'C') {
-      this->tryChar = CODE_NAK;
+    if (this->tryChar == CHECKSOME_CRC) {
+      this->tryChar = CHECKSOME_OLD;
     }
   }
 
@@ -89,13 +97,14 @@ void XmodemCrc::r_sync() {
 
   if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
-      case CODE_SOH:
+      case SOH_128:
         this->state = XMODEM_STATE_R_PACKET;
         break;
-      // goto start_recv;
-      //    case XMODEM_STX:
-      //      bufsz = 1024;
-      //      goto start_recv;
+#if 0
+      case SOH_1024:
+        this->state = XMODEM_STATE_R_PACKET;
+        goto start_recv;
+#endif
       case CODE_EOT:
         flushinput();
         _outbyte(CODE_ACK);
@@ -125,7 +134,7 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
     return;
   }
 
-  if (this->tryChar == 'C') this->useCrc = true;
+  if (this->tryChar == CHECKSOME_CRC) this->useCrc = true;
 
   this->tryChar = 0;
 
@@ -175,7 +184,6 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
   }
 }
 
-
 ///////////////////////////////////////////////////////////
 void XmodemCrc::transmit(IoLine *_serial, size_t packetSize) {
   //  this->buf = src;
@@ -201,11 +209,11 @@ void XmodemCrc::t_init_transmission() {
   signed int c;
   if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
-      case 'C':
+      case CHECKSOME_CRC:
         this->useCrc = true;
         this->state = XMODEM_STATE_T_PACKET;
         break;
-      case CODE_NAK:
+      case CHECKSOME_OLD:
         this->useCrc = false;
         this->state = XMODEM_STATE_T_PACKET;
         break;
@@ -248,13 +256,14 @@ void XmodemCrc::t_frame(char *buf, size_t bytes) {
     return;
   }
 
-  _outbyte(CODE_SOH); // Hardcoded as 128BYTE packet.
+  _outbyte(SOH_128);
   _outbyte(this->packetNumber);
   _outbyte(~this->packetNumber);
 
   for (int i = 0; i < this->bufSize; i++)
   {
-    unsigned char ch = (i <= bytes) ? buf[i] : CODE_CTRLZ;
+    //JJS TRY ME
+    unsigned char ch = (i <= bytes) ? buf[i] : CODE_PADDING;
     calcRunningChecksum(ch);
     _outbyte(ch);
   }
