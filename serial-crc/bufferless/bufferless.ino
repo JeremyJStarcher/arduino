@@ -102,8 +102,7 @@ void setup() {
 
   waitForSync();
 
-  runOldTests();
-  runXModemTests();
+  runTests();
 
   waitForSync();
 
@@ -194,32 +193,8 @@ void blinkSuccess() {
   }
 }
 
-void runXModemTests() {
-  Serial.println(F("Running tests..."));
-  for (int offset = -5; offset <= 5; offset++) {
-    if (isBoardMaster) {
-      if (is_passing) waitForSync();
-      if (is_passing) sendNewXmodem(serialHardware1, offset);
-      if (is_passing) waitForSync();
-      if (is_passing) receiveNewXmodem(serialHardware1, offset);
-    }
 
-    if (!isBoardMaster) {
-      if (is_passing) waitForSync();
-      if (is_passing) receiveOldXmodem(serialHardware1, offset);
-      if (is_passing) waitForSync();
-      if (is_passing) sendOldXmodem(serialHardware1, offset);
-    }
-  }
-
-  if (!is_passing) {
-    Serial.println(F("FAILED"));
-  }
-
-  Serial.println(F("Done"));
-}
-
-void runOldTests() {
+void runTests() {
   Serial.println(F("Running tests..."));
   is_passing = true;
 
@@ -227,17 +202,13 @@ void runOldTests() {
   if (is_passing) ioSerialTest(serialHardware2, serialHardware3);
   if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
   if (is_passing) ioSerialPushTest(serialHardware2) ;
+  if (is_passing) waitForSync();
+  if (is_passing) TestOldtoOld();
 
-  if (isBoardMaster) {
-    if (is_passing) waitForSync();
-    if (is_passing) sendOldXmodem(serialHardware1, 0);
+  for (int offset = -5; offset <= 5; offset++) {
+    sendNewToOld(offset);
+    sendOldToNew(offset);
   }
-
-  if (!isBoardMaster) {
-    if (is_passing) waitForSync();
-    if (is_passing) receiveOldXmodem(serialHardware1, 0);
-  }
-
   if (!is_passing) {
     Serial.println(F("FAILED"));
   }
@@ -632,5 +603,33 @@ void receiveNewXmodem(IoSerial remote, int offset) {
     Serial.println(F("Receive new XModem **PASS"));
   } else {
     Serial.println(F("Receive new XModem **FAIL"));
+  }
+}
+
+void TestOldtoOld() {
+  if (isBoardMaster) {
+    sendOldXmodem(serialHardware1, 0);
+  }
+
+  if (!isBoardMaster) {
+    receiveOldXmodem(serialHardware1, 0);
+  }
+}
+
+void sendNewToOld(int offset) {
+  if (isBoardMaster) {
+    sendNewXmodem(serialHardware1, offset);
+  }
+  if (!isBoardMaster) {
+    receiveOldXmodem(serialHardware1, offset);
+  }
+}
+
+void sendOldToNew(int offset) {
+  if (isBoardMaster) {
+    receiveNewXmodem(serialHardware1, offset);
+  }
+  if (!isBoardMaster) {
+    sendOldXmodem(serialHardware1, offset);
   }
 }
