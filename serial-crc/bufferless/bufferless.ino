@@ -186,6 +186,7 @@ void blinkSuccess() {
 
   const int blinkRate = 100;
   while (true) {
+    waitForSync();
     digitalWrite(LED_BUILTIN, HIGH);
     delay(blinkRate * 4);
     digitalWrite(LED_BUILTIN, LOW);
