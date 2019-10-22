@@ -29,13 +29,8 @@
   Handshaking       S-6         M-7
 */
 
-#define SOH  0x01
-#define STX  0x02
-#define EOT  0x04
 #define ACK  0x06
-#define NAK  0x15
-#define CAN  0x18
-#define CTRLZ 0x1A
+#define SOH  0x01
 
 #define READ_TIMEOUT 100
 
@@ -45,9 +40,6 @@ const size_t longMessageBufferLen = BLOCK_SIZE * 3;
 
 unsigned char longMessage[longMessageBufferLen];
 
-const char shortMessage[] PROGMEM = {'M', 'S', 'G', 0, '1', '7', '0', '1'};
-const byte shortMessageLength = 8;
-
 bool isBoardMaster = false;
 
 bool is_passing = true;
@@ -55,6 +47,12 @@ const int slaveResetPin = 8;
 const int masterSelectPin = A2;
 const int clearToSend = 7;
 const int requestToSend = 6;
+
+IoSerial serialHardware0;
+IoSerial serialHardware1;
+IoSerial serialHardware2;
+IoSerial serialHardware3;
+
 
 void populateLongMessage() {
   for (int i = 0; i < longMessageBufferLen; i++) {
@@ -93,6 +91,15 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
+  serialHardware0.begin(&Serial);
+  serialHardware1.begin(&Serial1);
+  serialHardware2.begin(&Serial2);
+  serialHardware3.begin(&Serial3);
+
+  waitForSync();
+
+  initSerial(serialHardware1);
+
   waitForSync();
 
   runOldTests();
@@ -110,6 +117,50 @@ void setup() {
 void loop() {
 }
 
+void initSerial(IoSerial remote) {
+  /*
+     Arduino MEGA work around:
+
+     The MEGA has this weird issue...
+
+     Sometimes the serial ports will show traffic of all NILs (0x00) until there
+     has been real traffic on the port.
+
+     Some have recommended a 4.7K pull up resister on the RX line as a work around
+     and I've heard there has been a lot of success with that.
+
+     For my purposes, I'll just send traffic until the serial ports settle down.
+  */
+
+  if (isBoardMaster) {
+    initSerialInner(remote, 1, 0);
+  } else {
+    initSerialInner(remote, 0, 1);
+  }
+}
+
+void initSerialInner(IoSerial remote, int snd, int rcv) {
+  if (snd) {
+    unsigned int c;
+
+    while ((c = remote.readbyte(READ_TIMEOUT)) != ACK) {
+      remote.writebyte(SOH);
+    }
+
+    remote.flush();
+  }
+
+  if (rcv) {
+    signed int c;
+
+    while ((c = remote.readbyte(READ_TIMEOUT)) != SOH) {
+      // Idle...
+    }
+
+    remote.writebyte(ACK);
+    remote.flush();
+  }
+}
 
 void waitForSync() {
   digitalWrite(requestToSend, HIGH);
@@ -131,7 +182,6 @@ void blinkError() {
   }
 }
 
-
 void blinkSuccess() {
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -145,21 +195,9 @@ void blinkSuccess() {
 }
 
 void runXModemTests() {
-  IoSerial serialHardware0;
-  IoSerial serialHardware1;
-  IoSerial serialHardware2;
-  IoSerial serialHardware3;
-
-  serialHardware0.begin(&Serial);
-  serialHardware1.begin(&Serial1);
-  serialHardware2.begin(&Serial2);
-  serialHardware3.begin(&Serial3);
-
   Serial.println(F("Running tests..."));
   for (int offset = -5; offset <= 5; offset++) {
     if (isBoardMaster) {
-      if (is_passing) waitForSync();
-      //if (is_passing) receiveShortMessage(serialHardware1);
       if (is_passing) waitForSync();
       if (is_passing) sendNewXmodem(serialHardware1, offset);
       if (is_passing) waitForSync();
@@ -167,9 +205,6 @@ void runXModemTests() {
     }
 
     if (!isBoardMaster) {
-      Serial.println("MAY NEED TO RESET MASTER");
-      if (is_passing) waitForSync();
-      //if (is_passing) sendShortMessage(serialHardware1);
       if (is_passing) waitForSync();
       if (is_passing) receiveOldXmodem(serialHardware1, offset);
       if (is_passing) waitForSync();
@@ -185,16 +220,6 @@ void runXModemTests() {
 }
 
 void runOldTests() {
-  IoSerial serialHardware0;
-  IoSerial serialHardware1;
-  IoSerial serialHardware2;
-  IoSerial serialHardware3;
-
-  serialHardware0.begin(&Serial);
-  serialHardware1.begin(&Serial1);
-  serialHardware2.begin(&Serial2);
-  serialHardware3.begin(&Serial3);
-
   Serial.println(F("Running tests..."));
   is_passing = true;
 
@@ -205,19 +230,10 @@ void runOldTests() {
 
   if (isBoardMaster) {
     if (is_passing) waitForSync();
-    //if (is_passing) receiveShortMessage(serialHardware1);
-    if (is_passing) waitForSync();
-    if (is_passing) sendShortMessage(serialHardware1);
-    if (is_passing) waitForSync();
     if (is_passing) sendOldXmodem(serialHardware1, 0);
   }
 
   if (!isBoardMaster) {
-    if (is_passing) Serial.println("MAY NEED TO RESET MASTER");
-    if (is_passing) waitForSync();
-    //if (is_passing) sendShortMessage(serialHardware1);
-    if (is_passing) waitForSync();
-    if (is_passing) receiveShortMessage(serialHardware1);
     if (is_passing) waitForSync();
     if (is_passing) receiveOldXmodem(serialHardware1, 0);
   }
@@ -228,7 +244,6 @@ void runOldTests() {
 
   Serial.println(F("Done"));
 }
-
 
 byte getRandom() {
   delay(100); // Give time for it to randomize
@@ -411,79 +426,6 @@ void ioSerialPushTest(IoSerial serial) {
     return;
   }
   Serial.println(F("=== ioSerialPushTest Test Passed"));
-}
-
-void sendShortMessage(IoSerial remote) {
-  unsigned int c;
-
-  Serial.println(F("=== Sending short message"));
-
-  remote.writebyte(SOH);
-  for (size_t i = 0; i < shortMessageLength; i++) {
-    byte b = pgm_read_byte_near(shortMessage + i);
-    remote.writebyte(b);
-    Serial.write(b);
-  }
-  Serial.println(F("<----"));
-
-  Serial.println(F("Waiting for ACK"));
-  while ((c = remote.readbyte(READ_TIMEOUT)) != ACK)
-    ;
-  remote.writebyte(EOT);
-
-  Serial.println(F("=== Sending short message ** PASS"));
-  remote.flush();
-}
-
-void receiveShortMessage(IoSerial remote) {
-  Serial.println(F("=== Receiving short message"));
-  long now = millis();
-  size_t idx = 0;
-  signed int c;
-
-  Serial.println(F("Waiting for SOH"));
-  // Wait for the datastream to start
-  while ((c = remote.readbyte(READ_TIMEOUT)) != SOH)
-    ;
-  Serial.println(F("Found SOH"));
-
-  while (true) {
-    c = remote.readbyte(READ_TIMEOUT);
-    Serial.println(c);
-
-    if (c == -1) continue;
-
-    byte b = pgm_read_byte_near(shortMessage + idx);
-    if (b != c) {
-      Serial.print(F("\nRead failed.  Expected "));
-      Serial.print(b);
-      Serial.print(F(" got "));
-      Serial.print(c);
-      Serial.println("");
-      is_passing = false;
-      break;
-    } else {
-      Serial.write(c);
-
-      idx++;
-      if (idx == shortMessageLength) {
-        break;
-      }
-    }
-  }
-
-  // Tell the remote we got it.
-  remote.writebyte(ACK);
-
-  Serial.println("");
-  Serial.println(F("Waiting for reply to our ACK"));
-  while ((c = remote.readbyte(READ_TIMEOUT)) != EOT)
-    ;
-
-  if (is_passing) {
-    Serial.println(F("=== Receiving short message **PASS"));
-  }
-  remote.flush();
 }
 
 void fillTmp(char *tmp, size_t len, char value) {
