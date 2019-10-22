@@ -5,8 +5,6 @@
 #include "ioline.h"
 
 #define XMODEM_TIMEOUT (1000 * 1)
-#define XMODEM_BLOCKSIZE 128
-
 
 #define XMODEM_STATUS_RUNNING 0
 
@@ -19,28 +17,32 @@
 
 class XmodemCrc {
   public:
-    void transmit(IoLine *_serial, unsigned char *src, int srcSize);
-    void receive(IoLine *_serial, unsigned char *dest, int destSize);
+    void transmit(IoLine *_serial, size_t packetSize);
+    void receive(IoLine *_serial, size_t packetSize);
 
     unsigned char getPacketNumber();
 
-    void next();
+    // If bytes < packetSize then it ends the transmission
+    // if bytes > packetSize then it panics.
+    void nextTransmit(char *buf, size_t bytes);
+    void nextRecieve(char *buf, size_t bytes);
+
     bool isDone();
     unsigned char getState();
     signed char getStatus();
 
     unsigned short crc16_ccitt(unsigned short crc, unsigned char ch);
 
+    bool hasData;
   private:
     void init_frame(char initMode);
 
     void t_init_transmission();
-    void t_frame();
+    void t_frame(char *buf, size_t  bytes);
     void t_eot();
 
     void r_sync();
-    void r_frame();
-
+    void r_frame(char *buf, size_t bytes);
 
     void calcRunningChecksum(unsigned char ch);
     void _outbyte(int b);
@@ -52,19 +54,16 @@ class XmodemCrc {
 
     // DATA
     IoLine *serial;
-    unsigned char *buf;
     int bufSize;
     unsigned char packetNumber;
 
     bool useCrc;
     unsigned char ccks; // Original XModem checksum
     unsigned short crc; // "Modern" CRC checksum
-    int txSize;
 
+    bool needNextPacket;
     char tryChar;
-    int pos; // Position in the buffer
     int triesLeft;
-    int bytesInPacket;
 };
 
 #endif

@@ -1,4 +1,3 @@
-
 #include <Arduino.h>
 #include <stdint.h>
 #include "ioline.h"
@@ -21,35 +20,43 @@ bool XmodemCrc::isDone() {
   return this->status != 0;
 }
 
-void XmodemCrc::next() {
+void XmodemCrc::nextTransmit(char *buf, size_t bytes) {
   if (this->status != 0) {
     return;
   }
+
   switch (this->state)
   {
     case XMODEM_STATE_T_INIT_TRANSMISSION:
       this->t_init_transmission();
       break;
     case XMODEM_STATE_T_PACKET:
-      this->t_frame();
+      this->t_frame(buf, bytes);
       break;
     case XMODEM_STATE_T_EOT:
       this->t_eot();
       break;
+  }
+}
+
+void XmodemCrc::nextRecieve(char *buf, size_t bytes) {
+  if (this->status != 0) {
+    return;
+  }
+  switch (this->state)
+  {
     case XMODEM_STATE_R_SYNC:
       this->r_sync();
       break;
     case XMODEM_STATE_R_PACKET:
-      this->r_frame();
+      this->r_frame(buf, bytes);
       break;
-
   }
 }
 
-void XmodemCrc::receive(IoLine *_serial, unsigned char *dest, int destSize) {
-  this->buf = dest;
-  this->bufSize = destSize;
-  this->pos = 0;
+void XmodemCrc::receive(IoLine *_serial, size_t packetSize) {
+  //  this->buf = dest;
+  this->bufSize = packetSize;
   this->packetNumber = 0;
   this->state = XMODEM_STATE_R_SYNC;
   this->status = XMODEM_STATUS_RUNNING;
@@ -107,7 +114,7 @@ void XmodemCrc::r_sync() {
   }
 }
 
-void XmodemCrc::r_frame() {
+void XmodemCrc::r_frame(char *buf, size_t bytes) {
   this->triesLeft--;
   if (!this->triesLeft) {
     _outbyte(CODE_CAN);
@@ -130,18 +137,16 @@ void XmodemCrc::r_frame() {
   if (packetNumber == -1) isRejected = true;
   if (complimentPacketNumber == -1) isRejected = true;
 
-  for (int i = 0; i < this->txSize; i++)
+  for (int i = 0; i < bufSize; i++)
   {
-    size_t p = this->pos + i;
     int ch = _inbyte(XMODEM_TIMEOUT);
-
     if (ch == -1) {
       isRejected = true;
       break;
     }
 
-    if (p < this->bufSize) {
-      this->buf[p] = ch;
+    if (i < bytes) {
+      buf[i] = ch;
     }
     calcRunningChecksum(ch);
   }
@@ -159,22 +164,22 @@ void XmodemCrc::r_frame() {
   }
 
   if (isRejected) {
-    this->packetNumber--; // init increments it.
+    this->hasData = false;
     this->init_frame(INIT_FRAME_RETRY);
   } else {
+    this->hasData = true;
     _outbyte(CODE_ACK);
-    this->pos += this->txSize;
-  }
-  this->state = XMODEM_STATE_R_SYNC;
-  this->init_frame(INIT_FRAME_NEW);
 
+    this->state = XMODEM_STATE_R_SYNC;
+    this->init_frame(INIT_FRAME_NEW);
+  }
 }
 
+
 ///////////////////////////////////////////////////////////
-void XmodemCrc::transmit(IoLine *_serial, unsigned char *src, int srcSize) {
-  this->buf = src;
-  this->bufSize = srcSize;
-  this->pos = 0;
+void XmodemCrc::transmit(IoLine *_serial, size_t packetSize) {
+  //  this->buf = src;
+  this->bufSize = packetSize;
   this->packetNumber = 0;
   this->state = XMODEM_STATE_T_INIT_TRANSMISSION;
   this->status = XMODEM_STATUS_RUNNING;
@@ -226,18 +231,13 @@ void XmodemCrc::init_frame(char initMode) {
   this->crc = 0;
   this->ccks = 0;
   this->triesLeft = MAXRETRANS;
-  this->txSize = XMODEM_BLOCKSIZE;
+  this->hasData = false;
   if (initMode == INIT_FRAME_NEW) {
     this->packetNumber++;
   }
 }
 
-void XmodemCrc::t_frame() {
-  // I've optimized for memory usage at the cost of run-time speed.
-  // There are some messy things here that I'd normally never do, but
-  // hey, this is embedded work/
-  // No transmit buffer, so we'll calculate *and* transmit in the same breath
-
+void XmodemCrc::t_frame(char *buf, size_t bytes) {
   this->triesLeft--;
   if (!this->triesLeft) {
     _outbyte(CODE_CAN);
@@ -248,17 +248,13 @@ void XmodemCrc::t_frame() {
     return;
   }
 
-  this->bytesInPacket = 0;
-
   _outbyte(CODE_SOH); // Hardcoded as 128BYTE packet.
   _outbyte(this->packetNumber);
   _outbyte(~this->packetNumber);
 
-  for (int i = 0; i < this->txSize; i++)
+  for (int i = 0; i < this->bufSize; i++)
   {
-    size_t p = this->pos + i;
-
-    unsigned char ch = (p <= this->bufSize) ? this->buf[p] : CODE_CTRLZ;
+    unsigned char ch = (i <= bytes) ? buf[i] : CODE_CTRLZ;
     calcRunningChecksum(ch);
     _outbyte(ch);
   }
@@ -275,9 +271,7 @@ void XmodemCrc::t_frame() {
     switch (c) {
       case CODE_ACK:
         this->init_frame(INIT_FRAME_NEW);
-        this->pos += this->txSize;
-
-        if (this->pos >= this->bufSize) {
+        if (bytes < this->bufSize) {
           this->state = XMODEM_STATE_T_EOT;
         }
         return;
@@ -315,7 +309,6 @@ int XmodemCrc::_inbyte(int t) {
 
 void XmodemCrc::_outbyte(int b) {
   this->serial->writebyte(b);
-  this->bytesInPacket++;
 }
 
 void XmodemCrc::flushinput(void)

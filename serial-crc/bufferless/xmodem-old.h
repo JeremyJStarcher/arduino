@@ -1,5 +1,5 @@
 #include "xmodem-crc.h"
-#define OLD_XMODEM_BLOCK XMODEM_BLOCKSIZE
+#define OLD_XMODEM_BLOCK 128
 #define DLY_1S XMODEM_TIMEOUT
 
 

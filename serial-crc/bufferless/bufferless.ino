@@ -5,6 +5,8 @@
 #include "xmodem-old.h"
 #include "xmodem-crc.h"
 
+#define BLOCK_SIZE 128
+
 /* Wiring between two MEGAs
 
     From    To
@@ -35,8 +37,8 @@
 #define READ_TIMEOUT 100
 
 const char poolStr[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670";
-const size_t longMessageLen = XMODEM_BLOCKSIZE * 2;
-const size_t longMessageBufferLen = XMODEM_BLOCKSIZE * 3;
+const size_t longMessageLen = BLOCK_SIZE * 2;
+const size_t longMessageBufferLen = BLOCK_SIZE * 3;
 
 unsigned char longMessage[longMessageBufferLen];
 
@@ -472,10 +474,12 @@ bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
   Serial.print(F("*****"));
   Serial.println(len);
   size_t strLen = len + offset;
+  size_t errorPosition;
   bool ret = true;
 
   for (int i = 0; i < strLen; i++) {
     if (tmp[i] != str[i]) {
+      errorPosition = i;
       Serial.print(i);
       Serial.print("\t");
       Serial.print(tmp[i]);
@@ -501,8 +505,18 @@ bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
   }
 
 #if 0
-  for (int i = 0; i < longMessageBufferLen; i++) {
-    Serial.print(tmp[i], HEX);
+  for (int i = 0; i < strlen; i++) {
+    Serial.print(i == errorPosition ? "[" : "");
+    Serial.print((char) tmp[i], HEX);
+    Serial.print(i == errorPosition ? "]" : "");
+    Serial.print(" ");
+  }
+  Serial.println("");
+
+  for (int i = 0; i < strlen; i++) {
+    Serial.print(i == errorPosition ? "[" : "");
+    Serial.print((char) str[i], HEX);
+    Serial.print(i == errorPosition ? "]" : "");
     Serial.print(" ");
   }
   Serial.println("");
@@ -559,14 +573,10 @@ void sendNewXmodem(IoSerial remote, int offset) {
   XmodemCrc xmodem;
   populateLongMessage();
 
-  unsigned short crc1 = crc16_ccitt(longMessage, longMessageLen);
-  unsigned short crc2 = 0;
-  for (int i = 0; i < longMessageLen; i++) {
-    crc2 = xmodem.crc16_ccitt(crc2, longMessage[i]);
-  }
-
+  int lastPacket = 1;
   size_t mesgLen = longMessageLen + offset;
-  xmodem.transmit(&remote, longMessage, mesgLen);
+  size_t ctr = 0;
+  xmodem.transmit(&remote, BLOCK_SIZE);
 
   while (!xmodem.isDone()) {
     Serial.print(F("(T) Packet: "));
@@ -575,9 +585,20 @@ void sendNewXmodem(IoSerial remote, int offset) {
     Serial.print(xmodem.getStatus());
     Serial.print("\t");
     Serial.print(xmodem.getState());
-    Serial.println("");
+    Serial.print("\tSP\t");
 
-    xmodem.next();
+    size_t startPos = ctr * BLOCK_SIZE;
+    size_t bytesleft = mesgLen - startPos;
+
+    Serial.print(startPos);
+    Serial.print("\tBL:\t");
+    Serial.println(bytesleft);
+
+    xmodem.nextTransmit(&longMessage[startPos], bytesleft);
+    if (lastPacket != xmodem.getPacketNumber()) {
+      ctr += 1;
+    }
+    lastPacket = xmodem.getPacketNumber();
   }
 
   Serial.print(F("Status: "));
@@ -605,7 +626,11 @@ void receiveNewXmodem(IoSerial remote, int offset) {
   fillTmp(tmp, longMessageBufferLen, FILL_BYTE);
 
   size_t mesgLen = longMessageLen + offset;
-  xmodem.receive(&remote, tmp, mesgLen);
+  Serial.print("mesgLen = ");  Serial.println(mesgLen);
+  size_t ctr = 0;
+  int lastPacket = 1;
+
+  xmodem.receive(&remote, BLOCK_SIZE);
 
   while (!xmodem.isDone()) {
     Serial.print(F("(R) Packet:"));
@@ -614,9 +639,20 @@ void receiveNewXmodem(IoSerial remote, int offset) {
     Serial.print(xmodem.getStatus());
     Serial.print("\t");
     Serial.print(xmodem.getState());
-    Serial.println("");
+    Serial.print("\tSP\t");
 
-    xmodem.next();
+    size_t startPos = ctr * BLOCK_SIZE;
+    size_t bytesleft = mesgLen - startPos;
+
+    Serial.print(startPos);
+    Serial.print("\tBL:\t");
+    Serial.println(bytesleft);
+
+    xmodem.nextRecieve(&tmp[startPos], min(BLOCK_SIZE, bytesleft));
+    if (lastPacket != xmodem.getPacketNumber()) {
+      ctr += 1;
+    }
+    lastPacket = xmodem.getPacketNumber();
   }
 
   Serial.print(F("Status: "));
