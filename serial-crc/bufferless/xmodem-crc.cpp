@@ -193,6 +193,8 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
     Serial.println("SENT NAK");
     _outbyte(CODE_NAK);
     this->hasData = false;
+    this->state = XMODEM_STATE_R_SYNC;
+
     this->init_frame(INIT_FRAME_RETRY);
   } else {
     Serial.println("SENT ACK");
@@ -317,10 +319,9 @@ void XmodemCrc::t_frame(char *buf, size_t bytes) {
 void XmodemCrc::t_waitReply(size_t bytes) {
   signed int c;
 
-  while ((c = _inbyte(XMODEM_TIMEOUT))  ) {
+  if ((c = _inbyte(XMODEM_TIMEOUT)) > 0) {
     Serial.print("Wait reply c = ");
     Serial.println(c);
-    delay(100);
 
     switch (c) {
       case CODE_ACK:
@@ -344,6 +345,7 @@ void XmodemCrc::t_waitReply(size_t bytes) {
         this->state = XMODEM_STATE_T_PACKET;
         this->init_frame(INIT_FRAME_RETRY);
         flushinput();
+        delay(10000);
         return;
       default:
         break;

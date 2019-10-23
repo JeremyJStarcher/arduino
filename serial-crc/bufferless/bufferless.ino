@@ -216,12 +216,13 @@ void runTests() {
 
   int offset = 0;
   //for (int offset = -5; offset <= 5; offset++) {
-  if (is_passing) sendNewToOld(offset);
+  // if (is_passing) sendNewToOld(offset);
   // if (is_passing) sendOldToNew(offset);
   // if (is_passing) sendNewToNew(offset);
   //}
 
-  //if (is_passing) sendNewToNew(0);
+  //if (is_passing) sendNewToOld(offset);
+  if (is_passing) sendNewToNew(0);
 
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -670,6 +671,10 @@ void TestOldtoOld() {
 }
 
 void sendNewToOld(int offset) {
+  Serial.println("=================================================");
+  Serial.println("                    NEW TO OLD                   ");
+  Serial.println("=================================================");
+
   if (isBoardMaster) {
     sendNewXmodem(serialRemoteLink, offset, -3  /* NO_PACKAGE_GLITCH */);
   }
@@ -679,6 +684,9 @@ void sendNewToOld(int offset) {
 }
 
 void sendOldToNew(int offset) {
+  Serial.println("=================================================");
+  Serial.println("                    NEW TO NEW                   ");
+  Serial.println("=================================================");
   if (isBoardMaster) {
     receiveNewXmodem(serialRemoteLink, offset);
   }
@@ -688,16 +696,14 @@ void sendOldToNew(int offset) {
 }
 
 void sendNewToNew(int offset) {
-  for (int glitchCount = -2; glitchCount < 2; glitchCount++) {
-    if (!is_passing) {
-      return;
-    }
-    if (isBoardMaster) {
-      sendNewXmodem(serialRemoteLink, offset, 1);
-    }
+  if (!is_passing) {
+    return;
+  }
+  if (isBoardMaster) {
+    sendNewXmodem(serialRemoteLink, offset, -1);
+  }
 
-    if (!isBoardMaster) {
-      receiveNewXmodem(serialRemoteLink, offset);
-    }
+  if (!isBoardMaster) {
+    receiveNewXmodem(serialRemoteLink, offset);
   }
 }
