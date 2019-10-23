@@ -48,11 +48,12 @@ const int masterSelectPin = A2;
 const int clearToSend = 7;
 const int requestToSend = 6;
 
-IoSerial serialHardware0;
 IoSerial serialHardware1;
-IoSerial serialHardware2;
-IoSerial serialHardware3;
 
+#ifdef TEST_SERIAL_LOOPBACK
+IoSerial serialLoopbackA;
+IoSerial serialLoopbackB;
+#endif
 
 void populateLongMessage() {
   for (int i = 0; i < longMessageBufferLen; i++) {
@@ -91,10 +92,12 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  serialHardware0.begin(&Serial);
   serialHardware1.begin(&Serial1);
-  serialHardware2.begin(&Serial2);
-  serialHardware3.begin(&Serial3);
+
+#ifdef TEST_SERIAL_LOOPBACK
+  serialLoopbackA.begin(&Serial2);
+  serialLoopbackB.begin(&Serial3);
+#endif
 
   waitForSync();
 
@@ -199,10 +202,13 @@ void runTests() {
   Serial.println(F("Running tests..."));
   is_passing = true;
 
+#ifdef TEST_SERIAL_LOOPBACK
   if (is_passing) wiringTest();
-  if (is_passing) ioSerialTest(serialHardware2, serialHardware3);
-  if (is_passing) ioSerialFlushTest(serialHardware2, serialHardware3);
-  if (is_passing) ioSerialPushTest(serialHardware2) ;
+  if (is_passing) ioSerialTest(serialLoopbackA, serialLoopbackB);
+  if (is_passing) ioSerialFlushTest(serialLoopbackA, serialLoopbackB);
+  if (is_passing) ioSerialPushTest(serialLoopbackA) ;
+#endif
+
   if (is_passing) waitForSync();
   if (is_passing) TestOldtoOld();
 
@@ -643,7 +649,6 @@ void sendOldToNew(int offset) {
     sendOldXmodem(serialHardware1, offset);
   }
 }
-
 
 void sendNewToNew(int offset) {
   if (isBoardMaster) {
