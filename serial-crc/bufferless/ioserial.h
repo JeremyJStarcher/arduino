@@ -5,6 +5,9 @@
 #include <HardwareSerial.h>
 #include "ioline.h"
 
+extern int XMODEM_HACK_CHANGE_SEND_CNT;
+
+
 enum XModemTransmitState { none };
 
 class IoSerial: public IoLine {

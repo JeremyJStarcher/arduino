@@ -8,10 +8,19 @@
 
 #define XMODEM_STATUS_RUNNING 0
 
+
+extern int XMODEM_SEND_EXTRA_CHARS;
+extern int XMODEM_SEND_EAT_CHARS;
+extern int XMODEM_BREAK_CRC;
+
+
 #define XMODEM_STATE_DONE 0
+
 #define XMODEM_STATE_T_INIT_TRANSMISSION 10
 #define XMODEM_STATE_T_PACKET 11
-#define XMODEM_STATE_T_EOT 12
+#define XMODEM_STATE_T_WAIT_REPLY 13
+#define XMODEM_STATE_T_EOT 14
+
 #define XMODEM_STATE_R_SYNC 20
 #define XMODEM_STATE_R_PACKET 21
 
@@ -39,6 +48,7 @@ class XmodemCrc {
 
     void t_init_transmission();
     void t_frame(char *buf, size_t  bytes);
+    void t_waitReply(size_t bytes);
     void t_eot();
 
     void r_sync();
@@ -47,7 +57,7 @@ class XmodemCrc {
     void calcRunningChecksum(unsigned char ch);
     void _outbyte(int b);
     int _inbyte(int t);
-    void flushinput(void);
+    int flushinput(void);
 
     unsigned char state;
     signed char status;

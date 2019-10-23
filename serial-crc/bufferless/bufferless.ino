@@ -5,6 +5,8 @@
 #include "xmodem-old.h"
 #include "xmodem-crc.h"
 
+#define NO_PACKAGE_GLITCH 0
+#define GLITCH_RETRY_COUNT 3
 #define BLOCK_SIZE 128
 
 /* Wiring between two MEGAs
@@ -210,15 +212,16 @@ void runTests() {
 #endif
 
   if (is_passing) waitForSync();
-  if (is_passing) TestOldtoOld();
+  // if (is_passing) TestOldtoOld();
 
-  for (int offset = -5; offset <= 5; offset++) {
-    // if (is_passing) sendNewToOld(offset);
-    // if (is_passing) sendOldToNew(offset);
-    // if (is_passing) sendNewToNew(offset);
-  }
+  int offset = 0;
+  //for (int offset = -5; offset <= 5; offset++) {
+  if (is_passing) sendNewToOld(offset);
+  // if (is_passing) sendOldToNew(offset);
+  // if (is_passing) sendNewToNew(offset);
+  //}
 
-  if (is_passing) sendNewToNew(0);
+  //if (is_passing) sendNewToNew(0);
 
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -513,7 +516,9 @@ void receiveOldXmodem(IoSerial remote, int offset) {
   Serial.println(res);
 }
 
-void sendNewXmodem(IoSerial remote, int offset) {
+void sendNewXmodem(IoSerial remote, int offset, int packetGlitch) {
+  Serial.print("???????????????"); Serial.println(packetGlitch);
+
   Serial.print(F("Sending new XModem with offset "));
   Serial.println(offset);
 
@@ -521,32 +526,61 @@ void sendNewXmodem(IoSerial remote, int offset) {
   populateLongMessage();
 
   int lastPacket = 1;
+  int glitchRetries = GLITCH_RETRY_COUNT;
+
   size_t mesgLen = longMessageLen + offset;
   size_t ctr = 0;
+
+  if (packetGlitch > 0) {
+    Serial.println("SETTING EXTRAS");
+    XMODEM_SEND_EXTRA_CHARS = packetGlitch;
+  }
+
+  if (packetGlitch > 0) {
+    Serial.println("SETTING EATING CHARS");
+    XMODEM_SEND_EAT_CHARS = abs(packetGlitch);
+  }
+
+
   xmodem.transmit(&remote, BLOCK_SIZE);
 
+  if (packetGlitch < 0) {
+    XMODEM_SEND_EAT_CHARS = abs(packetGlitch);
+  }
+
+  int kk = 10;
   while (!xmodem.isDone()) {
     size_t startPos = ctr * BLOCK_SIZE;
     size_t bytesleft = mesgLen - startPos;
 
+    size_t bytesToSend = min(bytesleft, BLOCK_SIZE);
+
 #if DEBUG
+    // Serial.print("bytesToSend: "); Serial.println(bytesToSend);
+    // Serial.print("packetGlitch: "); Serial.println(packetGlitch);
+
     Serial.print(F("(T) Packet: "));
     Serial.print(xmodem.getPacketNumber());
-    Serial.print("\t");
+    Serial.print("\tStatus: ");
     Serial.print(xmodem.getStatus());
-    Serial.print("\t");
+    Serial.print(" State ");
     Serial.print(xmodem.getState());
-    Serial.print("\tSP\t");
+    Serial.print(" SP ");
     Serial.print(startPos);
-    Serial.print("\tBL:\t");
+    Serial.print(" BL: ");
     Serial.println(bytesleft);
 #endif
 
-    xmodem.nextTransmit(&longMessage[startPos], bytesleft);
+    xmodem.nextTransmit(&longMessage[startPos], bytesToSend);
     if (lastPacket != xmodem.getPacketNumber()) {
       ctr += 1;
     }
     lastPacket = xmodem.getPacketNumber();
+
+    if (kk-- == 0) {
+      //      while (true)
+      ;
+    }
   }
 
   Serial.print(F("Status: "));
@@ -627,38 +661,43 @@ void receiveNewXmodem(IoSerial remote, int offset) {
 
 void TestOldtoOld() {
   if (isBoardMaster) {
-    sendOldXmodem(serialHardware1, 0);
+    sendOldXmodem(serialRemoteLink, 0);
   }
 
   if (!isBoardMaster) {
-    receiveOldXmodem(serialHardware1, 0);
+    receiveOldXmodem(serialRemoteLink, 0);
   }
 }
 
 void sendNewToOld(int offset) {
   if (isBoardMaster) {
-    sendNewXmodem(serialHardware1, offset);
+    sendNewXmodem(serialRemoteLink, offset, -3  /* NO_PACKAGE_GLITCH */);
   }
   if (!isBoardMaster) {
-    receiveOldXmodem(serialHardware1, offset);
+    receiveOldXmodem(serialRemoteLink, offset);
   }
 }
 
 void sendOldToNew(int offset) {
   if (isBoardMaster) {
-    receiveNewXmodem(serialHardware1, offset);
+    receiveNewXmodem(serialRemoteLink, offset);
   }
   if (!isBoardMaster) {
-    sendOldXmodem(serialHardware1, offset);
+    sendOldXmodem(serialRemoteLink, offset);
   }
 }
 
 void sendNewToNew(int offset) {
-  if (isBoardMaster) {
-    sendNewXmodem(serialHardware1, offset);
-  }
+  for (int glitchCount = -2; glitchCount < 2; glitchCount++) {
+    if (!is_passing) {
+      return;
+    }
+    if (isBoardMaster) {
+      sendNewXmodem(serialRemoteLink, offset, 1);
+    }
 
-  if (!isBoardMaster) {
-    receiveNewXmodem(serialHardware1, offset);
+    if (!isBoardMaster) {
+      receiveNewXmodem(serialRemoteLink, offset);
+    }
   }
 }
