@@ -48,7 +48,7 @@ const int masterSelectPin = A2;
 const int clearToSend = 7;
 const int requestToSend = 6;
 
-IoSerial serialHardware1;
+IoSerial serialRemoteLink;
 
 #ifdef TEST_SERIAL_LOOPBACK
 IoSerial serialLoopbackA;
@@ -92,7 +92,7 @@ void setup() {
     Serial.println(F("Slave board"));
   }
 
-  serialHardware1.begin(&Serial1);
+  serialRemoteLink.begin(&Serial1);
 
 #ifdef TEST_SERIAL_LOOPBACK
   serialLoopbackA.begin(&Serial2);
@@ -101,7 +101,7 @@ void setup() {
 
   waitForSync();
 
-  initSerial(serialHardware1);
+  initSerial(serialRemoteLink);
 
   waitForSync();
 
@@ -213,10 +213,13 @@ void runTests() {
   if (is_passing) TestOldtoOld();
 
   for (int offset = -5; offset <= 5; offset++) {
-    if (is_passing) sendNewToOld(offset);
-    if (is_passing) sendOldToNew(offset);
-    if (is_passing) sendNewToNew(offset);
+    // if (is_passing) sendNewToOld(offset);
+    // if (is_passing) sendOldToNew(offset);
+    // if (is_passing) sendNewToNew(offset);
   }
+
+  if (is_passing) sendNewToNew(0);
+
   if (!is_passing) {
     Serial.println(F("FAILED"));
   }
