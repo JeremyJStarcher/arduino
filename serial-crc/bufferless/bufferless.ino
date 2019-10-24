@@ -213,8 +213,8 @@ void runTests() {
   if (is_passing) ioSerialPushTest(serialLoopbackA) ;
 #endif
 
-  if (is_passing) waitForSync();
-  if (is_passing) TestOldtoOld();
+  // if (is_passing) waitForSync();
+  // if (is_passing) TestOldtoOld();
 
   int offset = 0;
   //for (int offset = -5; offset <= 5; offset++) {
@@ -224,11 +224,10 @@ void runTests() {
   //serialRemoteLink.flush();
   //if (is_passing) sendOldToNew(offset);
 
-
-  //if (is_passing) waitForSync();
-  //serialRemoteLink.flush();
-  //if (is_passing) sendNewToNew(offset);
-  //serialRemoteLink.flush();
+  if (is_passing) waitForSync();
+  serialRemoteLink.flush();
+  if (is_passing) sendNewToNew(offset);
+  serialRemoteLink.flush();
   //}
 
   if (!is_passing) {
