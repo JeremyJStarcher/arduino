@@ -1,7 +1,9 @@
 #include "xmodem-crc.h"
 #define OLD_XMODEM_BLOCK 128
-#define DLY_1S XMODEM_TIMEOUT
+#define DLY_1S (XMODEM_TIMEOUT * 10)
 
+#define LOGNL(x) Serial.println(x)
+#define LOG(x) Serial.print(x)
 
 /*
    Copyright 2001-2010 Georges Menie (www.menie.org)
@@ -31,11 +33,11 @@
 */
 
 /* this code needs standard functions memcpy() and memset()
-   and input/output functions _inbyte() and _outbyte().
+   and input/output functions _inbyte(true, ) and _outbyte(true, ).
 
    the prototypes of the input/output functions are:
-     int _inbyte(unsigned short timeout); // msec timeout
-     void _outbyte(int c);
+     int _inbyte(true, unsigned short timeout); // msec timeout
+     void _outbyte(true, int c);
 
 */
 
@@ -63,8 +65,8 @@ class XmodemOld {
     bool usedCrc();
   private:
     IoLine *serial;
-    void _outbyte(int b);
-    int _inbyte(int t);
+    void _outbyte(bool doLog, int b);
+    int _inbyte(bool doLog, int t);
     void flushinput(void);
     static int check(int crc, const unsigned char *buf, int sz);
 };
@@ -89,8 +91,8 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
 
   for (;;) {
     for ( retry = 0; retry < 16; ++retry) {
-      if (trychar) _outbyte(trychar);
-      if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
+      if (trychar) _outbyte(true, trychar);
+      if ((c = _inbyte(true, (DLY_1S) << 1)) >= 0) {
         switch (c) {
           case XMODEM_SOH:
             bufsz = OLD_XMODEM_BLOCK;
@@ -100,12 +102,12 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
             goto start_recv;
           case XMODEM_EOT:
             flushinput();
-            _outbyte(XMODEM_ACK);
+            _outbyte(true, XMODEM_ACK);
             return len; /* normal end */
           case XMODEM_CAN:
-            if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
+            if ((c = _inbyte(true, DLY_1S)) == XMODEM_CAN) {
               flushinput();
-              _outbyte(XMODEM_ACK);
+              _outbyte(true, XMODEM_ACK);
               return -1; /* canceled by remote */
             }
             break;
@@ -119,9 +121,9 @@ int XmodemOld::xmodemReceive(unsigned char *dest, int destsz)
       continue;
     }
     flushinput();
-    _outbyte(XMODEM_CAN);
-    _outbyte(XMODEM_CAN);
-    _outbyte(XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
     return -2; /* sync error */
 
 start_recv:
@@ -129,10 +131,14 @@ start_recv:
     trychar = 0;
     p = xbuff;
     *p++ = c;
+    LOG("<in buffer>");
     for (i = 0;  i < (bufsz + (crc ? 1 : 0) + 3); ++i) {
-      if ((c = _inbyte(DLY_1S)) < 0) goto reject;
+      if ((c = _inbyte(false, DLY_1S)) < 0) goto reject;
+      LOG(c);
+      LOG(" ");
       *p++ = c;
     }
+    LOGNL("");
 
     if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
         (xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
@@ -149,26 +155,33 @@ start_recv:
       }
       if (--retrans <= 0) {
         flushinput();
-        _outbyte(XMODEM_CAN);
-        _outbyte(XMODEM_CAN);
-        _outbyte(XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
         return -3; /* too many retry error */
       }
-      _outbyte(XMODEM_ACK);
+      _outbyte(true, XMODEM_ACK);
       continue;
     }
 reject:
     flushinput();
-    _outbyte(XMODEM_NAK);
+    _outbyte(true, XMODEM_NAK);
   }
 }
 
 
-int XmodemOld::_inbyte(int t) {
-  return this->serial->readbyte(t);
+int XmodemOld::_inbyte(bool doLog, int t) {
+  int ch = this->serial->readbyte(t);
+  if (doLog) {
+    LOG("<in>\t"); LOGNL(ch);
+  }
+  return ch;
 }
 
-void XmodemOld::_outbyte(int b) {
+void XmodemOld::_outbyte(bool doLog, int b) {
+  if (doLog) {
+    LOG("<out>\t"); LOGNL(b);
+  }
   this->serial->writebyte(b);
 }
 
@@ -178,8 +191,6 @@ unsigned short crc16_ccitt(const void *buf, int len)
   unsigned short crc = 0;
   while ( len-- ) {
     int i;
-
-    char kk = *(char *)buf;
 
     crc ^= *(char *)buf++ << 8;
     for ( i = 0; i < 8; ++i ) {
@@ -215,15 +226,14 @@ static int XmodemOld::check(int crc, const unsigned char *buf, int sz)
 
 void XmodemOld::flushinput(void)
 {
-  while (_inbyte(((DLY_1S) * 3) >> 1) >= 0)
+  LOGNL("<flush input>");
+  while (_inbyte(false, ((DLY_1S) * 3) >> 1) >= 0)
     ;
 }
 
 int XmodemOld::xmodemTransmit(
   unsigned char *src,
-  int srcsz //,
-  //int tmpsz,
-  //void (*getsrc)()
+  int srcsz
 )
 {
   unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
@@ -231,11 +241,10 @@ int XmodemOld::xmodemTransmit(
   unsigned char packetno = 1;
   int i, c, len = 0;
   int retry;
-  //int offset; // EXTRA
 
   for (;;) {
     for ( retry = 0; retry < 16; ++retry) {
-      if ((c = _inbyte((DLY_1S) << 1)) >= 0) {
+      if ((c = _inbyte(true, (DLY_1S) << 1)) >= 0) {
         switch (c) {
           case 'C':
             crc = 1;
@@ -244,8 +253,8 @@ int XmodemOld::xmodemTransmit(
             crc = 0;
             goto start_trans;
           case XMODEM_CAN:
-            if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
-              _outbyte(XMODEM_ACK);
+            if ((c = _inbyte(true, DLY_1S)) == XMODEM_CAN) {
+              _outbyte(true, XMODEM_ACK);
               flushinput();
               return -1; /* canceled by remote */
             }
@@ -255,9 +264,9 @@ int XmodemOld::xmodemTransmit(
         }
       }
     }
-    _outbyte(XMODEM_CAN);
-    _outbyte(XMODEM_CAN);
-    _outbyte(XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
+    _outbyte(true, XMODEM_CAN);
     flushinput();
     return -2; /* no sync */
 
@@ -269,18 +278,8 @@ start_trans:
       c = srcsz - len;
       if (c > bufsz) c = bufsz;
       if (c >= 0) {
-        // IF YOU HAVE THE WHOLE BUFFER AT ONCE
         memset (&xbuff[3], 0, bufsz);
 
-        //offset = len % tmpsz;
-        //if (offset == 0) {
-        //  getsrc();
-        //}
-        //memcpy (&xbuff[3], &src[offset], c);
-
-        // JJS:
-        // According to specs, the buffer should really be padded
-        // out with the controlZ, not just a single one stuck on.
         if (c == 0) {
           xbuff[3] = XMODEM_CTRLZ;
         }
@@ -301,21 +300,25 @@ start_trans:
           }
           xbuff[bufsz + 3] = ccks;
         }
+        LOG("<outbuffer>");
         for (retry = 0; retry < MAXRETRANS; ++retry) {
           int bytesInPacket = bufsz + 4 + (crc ? 1 : 0);
           for (i = 0; i < bytesInPacket; ++i) {
-            _outbyte(xbuff[i]);
+            _outbyte(false, xbuff[i]);
+            LOG(xbuff[i]);
+            LOG(" ");
           }
+          LOGNL("");
 
-          if ((c = _inbyte(DLY_1S)) >= 0 ) {
+          if ((c = _inbyte(true, DLY_1S)) >= 0 ) {
             switch (c) {
               case XMODEM_ACK:
                 ++packetno;
                 len += bufsz;
                 goto start_trans;
               case XMODEM_CAN:
-                if ((c = _inbyte(DLY_1S)) == XMODEM_CAN) {
-                  _outbyte(XMODEM_ACK);
+                if ((c = _inbyte(true, DLY_1S)) == XMODEM_CAN) {
+                  _outbyte(true, XMODEM_ACK);
                   flushinput();
                   return -1; /* canceled by remote */
                 }
@@ -326,17 +329,17 @@ start_trans:
             }
           }
         }
-        _outbyte(XMODEM_CAN);
-        _outbyte(XMODEM_CAN);
-        _outbyte(XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
+        _outbyte(true, XMODEM_CAN);
         flushinput();
         return -4; /* xmit error */
       }
 
       else {
         for (retry = 0; retry < 10; ++retry) {
-          _outbyte(XMODEM_EOT);
-          if ((c = _inbyte((DLY_1S) << 1)) == XMODEM_ACK) break;
+          _outbyte(true, XMODEM_EOT);
+          if ((c = _inbyte(true, (DLY_1S) << 1)) == XMODEM_ACK) break;
         }
         flushinput();
         return (c == XMODEM_ACK) ? len : -5;

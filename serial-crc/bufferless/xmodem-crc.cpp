@@ -3,7 +3,14 @@
 #include "ioline.h"
 #include "xmodem-crc.h"
 
-#define MAXRETRANS 16
+//Sending: bufSize 128
+//ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZKL⸮ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0
+//ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZKL⸮ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0
+
+//eceiving: bufSize 128
+
+
+#define MAXRETRANS 6
 //* Control bytes passed back and forth
 #define SOH_128 0x01  // 128 byte packet.
 #define SOH_1024 0x02 // 1024 byte packet(unused)
@@ -159,15 +166,20 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
     isRejected = true;
   }
 
+  Serial.print("R_FRAME: bufSize ");
+  Serial.print(bufSize);
+  Serial.print(" ");
+
   for (int i = 0; i < bufSize; i++)
   {
     int ch = _inbyte(XMODEM_TIMEOUT);
-
+    Serial.print((char) ch);
     if (i < bytes) {
       buf[i] = ch;
     }
     calcRunningChecksum(ch);
   }
+  Serial.println("");
 
   if (this->useCrc) {
     int crcHigh =  _inbyte(XMODEM_TIMEOUT);
@@ -176,7 +188,10 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
     int crc = (crcHigh * 256) + crcLow;
 
     if (crc != this->crc) {
-      Serial.println("CRC CHECK FAILED");
+      Serial.print("CHECK CRC CHECK FAILED: ");
+      Serial.print(crcHigh);
+      Serial.print(" ");
+      Serial.println(crcLow);
       isRejected = true;
     }
   } else {
@@ -286,17 +301,22 @@ void XmodemCrc::t_frame(char *buf, size_t bytes) {
   _outbyte(this->packetNumber);
   _outbyte(~this->packetNumber);
 
+  Serial.print("T_FRAME buffsize ");
+  Serial.print(bufSize);
   for (int i = 0; i < this->bufSize; i++)
   {
     unsigned char ch = (i <= bytes) ? buf[i] : CODE_PADDING;
+    Serial.print((char) ch);
     calcRunningChecksum(ch);
     if (XMODEM_SEND_EAT_CHARS > 0) {
       Serial.println("Eating characters");
       XMODEM_SEND_EAT_CHARS -= 1;
     } else {
+
       _outbyte(ch);
     }
   }
+  Serial.println("");
 
   while (XMODEM_SEND_EXTRA_CHARS > 0) {
     Serial.print("SENDING EXTRA CHAR #");
@@ -379,10 +399,10 @@ int XmodemCrc::flushinput(void)
   int count = 0;
   int c;
   while ((c = this->_inbyte(((XMODEM_TIMEOUT) * 3) >> 1)) >= 0) {
-    Serial.print("flushed ");
-    Serial.println(c);
     count++;
   }
+  Serial.print("flushed (bytes) ");
+  Serial.println(count);
   return count;
 }
 

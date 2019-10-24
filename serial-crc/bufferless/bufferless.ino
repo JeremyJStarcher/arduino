@@ -167,10 +167,12 @@ void initSerialInner(IoSerial remote, int snd, int rcv) {
 }
 
 void waitForSync() {
+
   digitalWrite(requestToSend, HIGH);
   while (digitalRead(clearToSend) == LOW) {
-    // idle
+    ;
   }
+
   digitalWrite(requestToSend, LOW);
 }
 
@@ -212,17 +214,22 @@ void runTests() {
 #endif
 
   if (is_passing) waitForSync();
-  // if (is_passing) TestOldtoOld();
+  if (is_passing) TestOldtoOld();
 
   int offset = 0;
   //for (int offset = -5; offset <= 5; offset++) {
   // if (is_passing) sendNewToOld(offset);
-  // if (is_passing) sendOldToNew(offset);
-  // if (is_passing) sendNewToNew(offset);
-  //}
 
-  //if (is_passing) sendNewToOld(offset);
-  if (is_passing) sendNewToNew(0);
+  //if (is_passing) waitForSync();
+  //serialRemoteLink.flush();
+  //if (is_passing) sendOldToNew(offset);
+
+
+  //if (is_passing) waitForSync();
+  //serialRemoteLink.flush();
+  //if (is_passing) sendNewToNew(offset);
+  //serialRemoteLink.flush();
+  //}
 
   if (!is_passing) {
     Serial.println(F("FAILED"));
@@ -355,7 +362,6 @@ void ioSerialFlushTest(
     serialB.writebyte(value3);
   }
 
-  serialA.flush();
   serialB.flush();
 
   signed int c1 = serialA.readbyte(READ_TIMEOUT);
@@ -685,7 +691,7 @@ void sendNewToOld(int offset) {
 
 void sendOldToNew(int offset) {
   Serial.println("=================================================");
-  Serial.println("                    NEW TO NEW                   ");
+  Serial.println("                    OLD TO NEW                   ");
   Serial.println("=================================================");
   if (isBoardMaster) {
     receiveNewXmodem(serialRemoteLink, offset);
@@ -696,6 +702,9 @@ void sendOldToNew(int offset) {
 }
 
 void sendNewToNew(int offset) {
+  Serial.println("=================================================");
+  Serial.println("                    NEW TO NEW                   ");
+  Serial.println("=================================================");
   if (!is_passing) {
     return;
   }
