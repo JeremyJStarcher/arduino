@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "ioline.h"
 
-#define XMODEM_TIMEOUT (1000 * 1)
+#define XMODEM_TIMEOUT (1000 * 10)
 
 #define XMODEM_STATUS_RUNNING 0
 
@@ -55,9 +55,9 @@ class XmodemCrc {
     void r_frame(char *buf, size_t bytes);
 
     void calcRunningChecksum(unsigned char ch);
-    void _outbyte(int b);
-    int _inbyte(int t);
-    int flushinput(void);
+    void _outbyte(bool doLog, int b);
+    int _inbyte(bool doLog, int t);
+    void flushinput(void);
 
     unsigned char state;
     signed char status;

@@ -1,4 +1,4 @@
-#define USB_BAUD 9600
+#define USB_BAUD 115200
 #define UART_BAUD 19200
 
 #define FILL_BYTE 0xA0

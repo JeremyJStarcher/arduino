@@ -213,21 +213,25 @@ void runTests() {
   if (is_passing) ioSerialPushTest(serialLoopbackA) ;
 #endif
 
-  // if (is_passing) waitForSync();
-  // if (is_passing) TestOldtoOld();
+  if (is_passing) waitForSync();
+  serialRemoteLink.flush();
+  if (is_passing) TestOldtoOld();
 
   int offset = 0;
-  //for (int offset = -5; offset <= 5; offset++) {
-  // if (is_passing) sendNewToOld(offset);
 
-  //if (is_passing) waitForSync();
-  //serialRemoteLink.flush();
-  //if (is_passing) sendOldToNew(offset);
+  if (is_passing) waitForSync();
+  serialRemoteLink.flush();
+  if (is_passing) sendNewToOld(offset);
+
+  if (is_passing) waitForSync();
+  serialRemoteLink.flush();
+  if (is_passing) sendOldToNew(offset);
 
   if (is_passing) waitForSync();
   serialRemoteLink.flush();
   if (is_passing) sendNewToNew(offset);
-  serialRemoteLink.flush();
+
+  //serialRemoteLink.flush();
   //}
 
   if (!is_passing) {
@@ -424,11 +428,6 @@ void fillTmp(char *tmp, size_t len, char value) {
 }
 
 bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
-#if DEBUG
-  Serial.print(F("*****"));
-  Serial.println(len);
-#endif
-
   size_t strLen = len + offset;
   size_t errorPosition;
   bool ret = true;
@@ -482,9 +481,6 @@ bool tmpMatch (unsigned char *tmp, unsigned char *str, size_t len, int offset) {
 }
 
 void sendOldXmodem(IoSerial remote, int offset) {
-  Serial.print(F("Sending OLD XModem with offset "));
-  Serial.println(offset);
-
   XmodemOld xmodem;
   xmodem.begin(&remote);
   populateLongMessage();
@@ -523,11 +519,6 @@ void receiveOldXmodem(IoSerial remote, int offset) {
 }
 
 void sendNewXmodem(IoSerial remote, int offset, int packetGlitch) {
-  Serial.print("???????????????"); Serial.println(packetGlitch);
-
-  Serial.print(F("Sending new XModem with offset "));
-  Serial.println(offset);
-
   XmodemCrc xmodem;
   populateLongMessage();
 
@@ -561,22 +552,6 @@ void sendNewXmodem(IoSerial remote, int offset, int packetGlitch) {
 
     size_t bytesToSend = min(bytesleft, BLOCK_SIZE);
 
-#if DEBUG
-    // Serial.print("bytesToSend: "); Serial.println(bytesToSend);
-    // Serial.print("packetGlitch: "); Serial.println(packetGlitch);
-
-    Serial.print(F("(T) Packet: "));
-    Serial.print(xmodem.getPacketNumber());
-    Serial.print("\tStatus: ");
-    Serial.print(xmodem.getStatus());
-    Serial.print(" State ");
-    Serial.print(xmodem.getState());
-    Serial.print(" SP ");
-    Serial.print(startPos);
-    Serial.print(" BL: ");
-    Serial.println(bytesleft);
-#endif
-
     xmodem.nextTransmit(&longMessage[startPos], bytesToSend);
     if (lastPacket != xmodem.getPacketNumber()) {
       ctr += 1;
@@ -604,9 +579,6 @@ void sendNewXmodem(IoSerial remote, int offset, int packetGlitch) {
 }
 
 void receiveNewXmodem(IoSerial remote, int offset) {
-  Serial.print(F("Receive new XModem with offset "));
-  Serial.println(offset);
-
   XmodemCrc xmodem;
   populateLongMessage();
 
@@ -614,9 +586,6 @@ void receiveNewXmodem(IoSerial remote, int offset) {
   fillTmp(tmp, longMessageBufferLen, FILL_BYTE);
 
   size_t mesgLen = longMessageLen + offset;
-#if DEBUG
-  Serial.print("mesgLen = ");  Serial.println(mesgLen);
-#endif
 
   size_t ctr = 0;
   int lastPacket = 1;
@@ -626,19 +595,6 @@ void receiveNewXmodem(IoSerial remote, int offset) {
   while (!xmodem.isDone()) {
     size_t startPos = ctr * BLOCK_SIZE;
     size_t bytesleft = mesgLen - startPos;
-
-#if DEBUG
-    Serial.print(F("(R) Packet:"));
-    Serial.print(xmodem.getPacketNumber());
-    Serial.print("\t");
-    Serial.print(xmodem.getStatus());
-    Serial.print("\t");
-    Serial.print(xmodem.getState());
-    Serial.print("\tSP\t");
-    Serial.print(startPos);
-    Serial.print("\tBL:\t");
-    Serial.println(bytesleft);
-#endif
 
     xmodem.nextRecieve(&tmp[startPos], min(BLOCK_SIZE, bytesleft));
     if (lastPacket != xmodem.getPacketNumber()) {
@@ -666,6 +622,9 @@ void receiveNewXmodem(IoSerial remote, int offset) {
 }
 
 void TestOldtoOld() {
+  Serial.println("=================================================");
+  Serial.println("                    OLD TO OLD                   ");
+  Serial.println("=================================================");
   if (isBoardMaster) {
     sendOldXmodem(serialRemoteLink, 0);
   }
@@ -681,7 +640,7 @@ void sendNewToOld(int offset) {
   Serial.println("=================================================");
 
   if (isBoardMaster) {
-    sendNewXmodem(serialRemoteLink, offset, -3  /* NO_PACKAGE_GLITCH */);
+    sendNewXmodem(serialRemoteLink, offset, 0 /* NO_PACKAGE_GLITCH */);
   }
   if (!isBoardMaster) {
     receiveOldXmodem(serialRemoteLink, offset);

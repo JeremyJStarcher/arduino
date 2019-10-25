@@ -3,11 +3,13 @@
 #include "ioline.h"
 #include "xmodem-crc.h"
 
-//Sending: bufSize 128
-//ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZKL⸮ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0
-//ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZKL⸮ABCDEFGHIJKLMNOPQRSTUVWXYZ012345670ABCDEFGHIJKLMNOPQRSTUVWXYZ0
-
-//eceiving: bufSize 128
+#if 1
+#define LOGNL(x) Serial.println(x)
+#define LOG(x) Serial.print("");Serial.print(x);Serial.print("")
+#else
+#define LOGNL(x)
+#define LOG(x)
+#endif
 
 
 #define MAXRETRANS 6
@@ -39,9 +41,6 @@ bool XmodemCrc::isDone() {
 }
 
 void XmodemCrc::nextTransmit(char *buf, size_t bytes) {
-  Serial.print("nextTransmit::state ");
-  Serial.println(this->state);
-
   switch (this->state)
   {
     case XMODEM_STATE_T_INIT_TRANSMISSION:
@@ -86,9 +85,9 @@ void XmodemCrc::receive(IoLine *_serial, size_t packetSize) {
 void XmodemCrc::r_sync() {
   this->triesLeft--;
   if (this->triesLeft == 0) {
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
     flushinput();
     this->status = -2;
     return;
@@ -102,9 +101,9 @@ void XmodemCrc::r_sync() {
 
   signed int c;
 
-  if (this->tryChar) _outbyte(this->tryChar);
+  if (this->tryChar) _outbyte(true, this->tryChar);
 
-  if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
+  if ((c = _inbyte(true, (XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
       case SOH_128:
         this->state = XMODEM_STATE_R_PACKET;
@@ -116,13 +115,13 @@ void XmodemCrc::r_sync() {
 #endif
       case CODE_EOT:
         flushinput();
-        _outbyte(CODE_ACK);
+        _outbyte(true, CODE_ACK);
         this->status = 1;
         break;
       case CODE_CAN:
-        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
+        if ((c = _inbyte(true, XMODEM_TIMEOUT)) == CODE_CAN) {
           flushinput();
-          _outbyte(CODE_ACK);
+          _outbyte(true, CODE_ACK);
           this->status = -1;/* canceled by remote */
         }
         break;
@@ -133,12 +132,11 @@ void XmodemCrc::r_sync() {
 }
 
 void XmodemCrc::r_frame(char *buf, size_t bytes) {
-  Serial.println("R_FRAME()");
   this->triesLeft--;
   if (!this->triesLeft) {
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
     flushinput();
     this->status = -4; /* xmit error */
     return;
@@ -150,71 +148,54 @@ void XmodemCrc::r_frame(char *buf, size_t bytes) {
 
   bool isRejected = false;
 
-  int packetNumber = _inbyte(XMODEM_TIMEOUT);
-  int complimentPacketNumber = _inbyte(XMODEM_TIMEOUT);
-
-  Serial.print("Packet ");
-  Serial.print(packetNumber);
-  Serial.print(" ");
-  Serial.println(~complimentPacketNumber);
+  int packetNumber = _inbyte(true, XMODEM_TIMEOUT);
+  int complimentPacketNumber = _inbyte(true, XMODEM_TIMEOUT);
 
   if (packetNumber == -1) isRejected = true;
   if (complimentPacketNumber == -1) isRejected = true;
 
   if (packetNumber != this->packetNumber) {
-    Serial.println("Rejected - wrong packet number");
     isRejected = true;
   }
 
-  Serial.print("R_FRAME: bufSize ");
-  Serial.print(bufSize);
-  Serial.print(" ");
+  LOG("<inbuffer>");
 
   for (int i = 0; i < bufSize; i++)
   {
-    int ch = _inbyte(XMODEM_TIMEOUT);
-    Serial.print((char) ch);
+    int ch = _inbyte(false, XMODEM_TIMEOUT);
     if (i < bytes) {
       buf[i] = ch;
     }
+    LOG(ch); LOG(" ");
     calcRunningChecksum(ch);
   }
-  Serial.println("");
+  LOG("<outbuffer>");
 
   if (this->useCrc) {
-    int crcHigh =  _inbyte(XMODEM_TIMEOUT);
-    int crcLow =  _inbyte(XMODEM_TIMEOUT);
+    int crcHigh =  _inbyte(true, XMODEM_TIMEOUT);
+    int crcLow =  _inbyte(true, XMODEM_TIMEOUT);
 
     int crc = (crcHigh * 256) + crcLow;
 
     if (crc != this->crc) {
-      Serial.print("CHECK CRC CHECK FAILED: ");
-      Serial.print(crcHigh);
-      Serial.print(" ");
-      Serial.println(crcLow);
       isRejected = true;
     }
   } else {
-    int ccks = _inbyte(XMODEM_TIMEOUT);
+    int ccks = _inbyte(true, XMODEM_TIMEOUT);
     if (ccks != this->ccks) isRejected = true;
   }
 
-  Serial.println("Major buffer flush");
-  int flushCount = flushinput();
-  Serial.println(flushCount);
+  flushinput();
 
   if (isRejected) {
-    delay(1000);
-    Serial.println("SENT NAK");
-    _outbyte(CODE_NAK);
+    _outbyte(true, CODE_NAK);
     this->hasData = false;
     this->state = XMODEM_STATE_R_SYNC;
 
     this->init_frame(INIT_FRAME_RETRY);
   } else {
-    Serial.println("SENT ACK");
     this->hasData = true;
-    _outbyte(CODE_ACK);
+    _outbyte(true, CODE_ACK);
 
     this->state = XMODEM_STATE_R_SYNC;
     this->init_frame(INIT_FRAME_NEW);
@@ -235,16 +216,16 @@ void XmodemCrc::transmit(IoLine *_serial, size_t packetSize) {
 void XmodemCrc::t_init_transmission() {
   this->triesLeft--;
   if (this->triesLeft == 0) {
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
     flushinput();
     this->status = -2;
     return;
   }
 
   signed int c;
-  if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) >= 0) {
+  if ((c = _inbyte(true, (XMODEM_TIMEOUT) << 1)) >= 0) {
     switch (c) {
       case CHECKSOME_CRC:
         this->useCrc = true;
@@ -255,8 +236,8 @@ void XmodemCrc::t_init_transmission() {
         this->state = XMODEM_STATE_T_PACKET;
         break;
       case CODE_CAN:
-        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
-          _outbyte(CODE_ACK);
+        if ((c = _inbyte(true, XMODEM_TIMEOUT)) == CODE_CAN) {
+          _outbyte(true, CODE_ACK);
           flushinput();
           this->status = -1; /* canceled by remote */
         }
@@ -284,53 +265,46 @@ void XmodemCrc::init_frame(char initMode) {
 }
 
 void XmodemCrc::t_frame(char *buf, size_t bytes) {
-  Serial.print("Transmitting frame. Tries left = ");
-  Serial.println(triesLeft);
-
   this->triesLeft--;
   if (!this->triesLeft) {
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
-    _outbyte(CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
+    _outbyte(true, CODE_CAN);
     flushinput();
     this->status = -4; /* xmit error */
     return;
   }
 
-  _outbyte(SOH_128);
-  _outbyte(this->packetNumber);
-  _outbyte(~this->packetNumber);
+  _outbyte(true, SOH_128);
+  _outbyte(true, this->packetNumber);
+  _outbyte(true, ~this->packetNumber);
 
-  Serial.print("T_FRAME buffsize ");
-  Serial.print(bufSize);
+  LOG("<outbuffer>");
   for (int i = 0; i < this->bufSize; i++)
   {
     unsigned char ch = (i <= bytes) ? buf[i] : CODE_PADDING;
-    Serial.print((char) ch);
     calcRunningChecksum(ch);
     if (XMODEM_SEND_EAT_CHARS > 0) {
-      Serial.println("Eating characters");
       XMODEM_SEND_EAT_CHARS -= 1;
     } else {
-
-      _outbyte(ch);
+      _outbyte(false, ch);
+      LOG(ch);
+      LOG(" ");
     }
   }
-  Serial.println("");
+  LOGNL("<outbuffer>");
 
   while (XMODEM_SEND_EXTRA_CHARS > 0) {
-    Serial.print("SENDING EXTRA CHAR #");
-    Serial.println(XMODEM_SEND_EXTRA_CHARS);
-
     XMODEM_SEND_EXTRA_CHARS -= 1;
-    _outbyte(0);
+    LOG("<0>");
+    _outbyte(true, 0);
   }
 
   if (this->useCrc) {
-    _outbyte((this->crc >> 8) & 0xFF);
-    _outbyte(this->crc & 0xFF);
+    _outbyte(true, (this->crc >> 8) & 0xFF);
+    _outbyte(true, this->crc & 0xFF);
   } else {
-    _outbyte(this->ccks);
+    _outbyte(true, this->ccks);
   }
   this->state = XMODEM_STATE_T_WAIT_REPLY;
 }
@@ -339,33 +313,35 @@ void XmodemCrc::t_frame(char *buf, size_t bytes) {
 void XmodemCrc::t_waitReply(size_t bytes) {
   signed int c;
 
-  if ((c = _inbyte(XMODEM_TIMEOUT)) > 0) {
-    Serial.print("Wait reply c = ");
-    Serial.println(c);
-
+  if ((c = _inbyte(true, XMODEM_TIMEOUT)) > 0) {
     switch (c) {
+        Serial.print("Waiting for reply");
+        Serial.println(c);
+
       case CODE_ACK:
-        Serial.print("RECEIVED ACK");
+        Serial.print("ACK! ");
+        Serial.print(bytes);
+        Serial.print(" ");
+        Serial.println(this->bufSize);
+
         this->state = XMODEM_STATE_T_PACKET;
-        if (bytes < this->bufSize) {
+        if (bytes <= this->bufSize) {
           this->state = XMODEM_STATE_T_EOT;
         }
         this->init_frame(INIT_FRAME_NEW);
         flushinput();
         return;
       case CODE_CAN:
-        if ((c = _inbyte(XMODEM_TIMEOUT)) == CODE_CAN) {
-          _outbyte(CODE_ACK);
+        if ((c = _inbyte(true, XMODEM_TIMEOUT)) == CODE_CAN) {
+          _outbyte(true, CODE_ACK);
           flushinput();
           this->status = -1; /* canceled by remote */
         }
         return;
       case CODE_NAK:
-        Serial.println("RECEIVED NAK");
         this->state = XMODEM_STATE_T_PACKET;
         this->init_frame(INIT_FRAME_RETRY);
         flushinput();
-        delay(10000);
         return;
       default:
         break;
@@ -377,33 +353,42 @@ void XmodemCrc::t_eot() {
   signed int c;
 
   for (int retry = 0; retry < MAXRETRANS; ++retry) {
-    _outbyte(CODE_EOT);
-    if ((c = _inbyte((XMODEM_TIMEOUT) << 1)) == CODE_ACK) break;
+    _outbyte(true, CODE_EOT);
+    if ((c = _inbyte(true, (XMODEM_TIMEOUT) << 1)) == CODE_ACK) break;
   }
   flushinput();
+  Serial.print("Final character was ");
+  Serial.println(c);
   this->status = (c == CODE_ACK) ? 1 : -5;
 }
 
 // Raw IO routines
 
-int XmodemCrc::_inbyte(int t) {
-  return this->serial->readbyte(t);
+int XmodemCrc::_inbyte(bool doLog, int t) {
+  int ch = this->serial->readbyte(t);
+  if (doLog) {
+    LOG("<in>\t"); LOGNL(ch);
+  }
+  return ch;
 }
 
-void XmodemCrc::_outbyte(int b) {
+void XmodemCrc::_outbyte(bool doLog, int b) {
+  if (doLog) {
+    LOG("<out>\t"); LOGNL(b);
+  }
   this->serial->writebyte(b);
 }
 
-int XmodemCrc::flushinput(void)
+void XmodemCrc::flushinput(void)
 {
+  LOG("<flushing buffer>");
   int count = 0;
   int c;
-  while ((c = this->_inbyte(((XMODEM_TIMEOUT) * 3) >> 1)) >= 0) {
+  while ((c = this->_inbyte(false, ((XMODEM_TIMEOUT) * 3) >> 1)) >= 0) {
     count++;
+    LOG(c); LOG(" ");
   }
-  Serial.print("flushed (bytes) ");
-  Serial.println(count);
-  return count;
+  LOG("Flushed: "); LOGNL(count);
 }
 
 unsigned short XmodemCrc::crc16_ccitt(unsigned short crc, unsigned char ch)

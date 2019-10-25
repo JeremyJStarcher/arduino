@@ -2,8 +2,13 @@
 #define OLD_XMODEM_BLOCK 128
 #define DLY_1S (XMODEM_TIMEOUT * 10)
 
+#if 1
 #define LOGNL(x) Serial.println(x)
-#define LOG(x) Serial.print(x)
+#define LOG(x) Serial.print("<old>");Serial.print(x);Serial.print("</old>");
+#else
+#define LOGNL(x)
+#define LOG(x)
+#endif
 
 /*
    Copyright 2001-2010 Georges Menie (www.menie.org)
@@ -169,7 +174,6 @@ reject:
   }
 }
 
-
 int XmodemOld::_inbyte(bool doLog, int t) {
   int ch = this->serial->readbyte(t);
   if (doLog) {
@@ -227,8 +231,15 @@ static int XmodemOld::check(int crc, const unsigned char *buf, int sz)
 void XmodemOld::flushinput(void)
 {
   LOGNL("<flush input>");
-  while (_inbyte(false, ((DLY_1S) * 3) >> 1) >= 0)
-    ;
+  int count = 0;
+  int ch; 
+  while (ch = _inbyte(false, ((DLY_1S) * 3) >> 1) >= 0) {
+    LOG(ch); LOG(" ");
+    count++;
+  }
+
+  LOG("Flushed: "); LOGNL(count);
+
 }
 
 int XmodemOld::xmodemTransmit(
@@ -337,7 +348,9 @@ start_trans:
       }
 
       else {
+        
         for (retry = 0; retry < 10; ++retry) {
+          LOGNL("<SENDING EOT>");
           _outbyte(true, XMODEM_EOT);
           if ((c = _inbyte(true, (DLY_1S) << 1)) == XMODEM_ACK) break;
         }
