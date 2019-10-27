@@ -7,7 +7,12 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#define DISPLAY_STRING
+void _outbyte(int ch);
+int _inbyte(long ms);
+
+#include "../xmodem.h"
+
+int comportFD;
 
 long long timeInMilliseconds(void)
 {
@@ -17,7 +22,14 @@ long long timeInMilliseconds(void)
     return (((long long)tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
 }
 
-int readByte(int fd, long ms)
+void _outbyte(int ch)
+{
+    char buf[1];
+    buf[0] = ch;
+    write(comportFD, buf, 1);
+}
+
+int _inbyte(long ms)
 {
     char buf[1];
     long long now = timeInMilliseconds();
@@ -26,7 +38,7 @@ int readByte(int fd, long ms)
 
     while (1)
     {
-        rdlen = read(fd, buf, 1);
+        rdlen = read(comportFD, buf, 1);
         if (rdlen > 0)
         {
             return buf[0];
@@ -38,6 +50,7 @@ int readByte(int fd, long ms)
         }
     }
 }
+
 
 int set_interface_attribs(int fd, int speed)
 {
@@ -96,16 +109,17 @@ void set_mincount(int fd, int mcount)
 int main()
 {
 #ifdef MASTER
-    char *portname = MASTER_DEVICE;
+    const char *portname = MASTER_DEVICE;
     printf("MASTER\n");
 #endif
 
 #ifdef SLAVE
-    char *portname = SLAVE_DEVICE;
+    const char *portname = SLAVE_DEVICE;
     printf("SLAVE\n");
 #endif
 
     int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC | O_NONBLOCK);
+    comportFD = fd;
     if (fd < 0)
     {
         printf("Error opening %s: %s\n", portname, strerror(errno));
@@ -113,9 +127,8 @@ int main()
     }
     /*baudrate 115200, 8 bits, no parity, 1 stop bit */
     set_interface_attribs(fd, B9600);
-//set_mincount(fd, 0);                /* set to pure timed read */
 
- write(fd, "Message from the other side\n", 28);
+    write(fd, "Message from the other side\n", 28);
 
     tcdrain(fd); /* delay for output */
 
@@ -125,7 +138,7 @@ int main()
         unsigned char buf[2];
         int rdlen;
 
-        int jj = readByte(fd, 1000);
+        int jj = _inbyte(1000);
         if (jj == -1)
         {
             rdlen = 0;
@@ -146,7 +159,7 @@ int main()
             //    printf("Error from read: %d: %s\n", rdlen, strerror(errno));
         }
         else
-        {   /* rdlen == 0 */
+        { /* rdlen == 0 */
             //  printf("Timeout from read\n");
         }
         /* repeat read to get full message */

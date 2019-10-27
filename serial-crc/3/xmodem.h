@@ -34,6 +34,9 @@
 
  */
 
+#include <iostream>
+using namespace std;
+
 #define SOH  0x01
 #define STX  0x02
 #define EOT  0x04
@@ -45,10 +48,14 @@
 #define DLY_1S 1000
 #define MAXRETRANS 25
 
-#define LOG(x) Serial.print(x)
-#define LOGLN(x) Serial.println(x);
+//#define LOG(x) Serial.print(x)
+//#define LOGLN(x) Serial.println(x);
 
-unsigned short crc16_ccitt( const void *buf, int len )
+#define LOG(x) cout << (x)
+#define LOGLN(x) cout << (x); cout << "\n"
+
+
+unsigned short crc16_ccitt(const unsigned char *buf, int len )
 {
   unsigned short crc = 0;
   while( len-- ) {
