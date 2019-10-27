@@ -4,7 +4,7 @@
 
 #if 1
 #define LOGNL(x) Serial.println(x)
-#define LOG(x) Serial.print("<old>");Serial.print(x);Serial.print("</old>");
+#define LOG(x) Serial.print("");Serial.print(x);Serial.print("");
 #else
 #define LOGNL(x)
 #define LOG(x)

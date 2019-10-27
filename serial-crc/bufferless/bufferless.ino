@@ -549,10 +549,15 @@ void sendNewXmodem(IoSerial remote, int offset, int packetGlitch) {
   while (!xmodem.isDone()) {
     size_t startPos = ctr * BLOCK_SIZE;
     size_t bytesleft = mesgLen - startPos;
-
     size_t bytesToSend = min(bytesleft, BLOCK_SIZE);
+    bool isEot = bytesleft < BLOCK_SIZE;
 
-    xmodem.nextTransmit(&longMessage[startPos], bytesToSend);
+    Serial.print("Packet\t"); Serial.print(xmodem.getPacketNumber());
+    Serial.print("\tbytesleft\t"); Serial.print(bytesleft);
+    Serial.print("\tBLOCK_SIZE\t"); Serial.print(BLOCK_SIZE);
+    Serial.print("\tIsEOT\t"); Serial.println(isEot);
+
+    xmodem.nextTransmit(&longMessage[startPos], bytesToSend, isEot);
     if (lastPacket != xmodem.getPacketNumber()) {
       ctr += 1;
     }

@@ -40,17 +40,17 @@ bool XmodemCrc::isDone() {
   return this->status != 0;
 }
 
-void XmodemCrc::nextTransmit(char *buf, size_t bytes) {
+void XmodemCrc::nextTransmit(char *buf, size_t bytes, bool isEot) {
   switch (this->state)
   {
     case XMODEM_STATE_T_INIT_TRANSMISSION:
       this->t_init_transmission();
       break;
     case XMODEM_STATE_T_PACKET:
-      this->t_frame(buf, bytes);
+      this->t_frame(buf, bytes, isEot);
       break;
     case XMODEM_STATE_T_WAIT_REPLY:
-      this->t_waitReply(bytes);
+      this->t_waitReply(bytes, isEot);
       break;
     case XMODEM_STATE_T_EOT:
       this->t_eot();
@@ -264,7 +264,7 @@ void XmodemCrc::init_frame(char initMode) {
   }
 }
 
-void XmodemCrc::t_frame(char *buf, size_t bytes) {
+void XmodemCrc::t_frame(char *buf, size_t bytes, bool isEot) {
   this->triesLeft--;
   if (!this->triesLeft) {
     _outbyte(true, CODE_CAN);
@@ -310,7 +310,7 @@ void XmodemCrc::t_frame(char *buf, size_t bytes) {
 }
 
 
-void XmodemCrc::t_waitReply(size_t bytes) {
+void XmodemCrc::t_waitReply(size_t bytes, bool isEot) {
   signed int c;
 
   if ((c = _inbyte(true, XMODEM_TIMEOUT)) > 0) {
@@ -325,7 +325,7 @@ void XmodemCrc::t_waitReply(size_t bytes) {
         Serial.println(this->bufSize);
 
         this->state = XMODEM_STATE_T_PACKET;
-        if (bytes <= this->bufSize) {
+        if (isEot) {
           this->state = XMODEM_STATE_T_EOT;
         }
         this->init_frame(INIT_FRAME_NEW);

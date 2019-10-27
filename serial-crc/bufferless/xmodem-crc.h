@@ -33,7 +33,7 @@ class XmodemCrc {
 
     // If bytes < packetSize then it ends the transmission
     // if bytes > packetSize then it panics.
-    void nextTransmit(char *buf, size_t bytes);
+    void nextTransmit(char *buf, size_t bytes, bool isEot);
     void nextRecieve(char *buf, size_t bytes);
 
     bool isDone();
@@ -47,8 +47,8 @@ class XmodemCrc {
     void init_frame(char initMode);
 
     void t_init_transmission();
-    void t_frame(char *buf, size_t  bytes);
-    void t_waitReply(size_t bytes);
+    void t_frame(char *buf, size_t  bytes, bool isEot);
+    void t_waitReply(size_t bytes, bool isEot);
     void t_eot();
 
     void r_sync();
