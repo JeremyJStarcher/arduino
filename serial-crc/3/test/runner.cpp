@@ -7,10 +7,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-void _outbyte(int ch);
-int _inbyte(long ms);
+#include "tests.h"
 
-#include "../xmodem.h"
+unsigned char handshakeMessage[] = "Message from the other side.\n|||\n";
 
 int comportFD;
 
@@ -31,9 +30,8 @@ void _outbyte(int ch)
 
 int _inbyte(long ms)
 {
-    char buf[1];
-    long long now = timeInMilliseconds();
-    long long tar = now + ms;
+    char buf[10];
+    long long target = timeInMilliseconds() + ms;
     int rdlen;
 
     while (1)
@@ -41,16 +39,16 @@ int _inbyte(long ms)
         rdlen = read(comportFD, buf, 1);
         if (rdlen > 0)
         {
-            return buf[0];
+            unsigned char k = buf[0];
+            return k;
         }
 
-        if (timeInMilliseconds() > tar)
+        if (timeInMilliseconds() > target)
         {
             return -1;
         }
     }
 }
-
 
 int set_interface_attribs(int fd, int speed)
 {
@@ -118,6 +116,14 @@ int main()
     printf("SLAVE\n");
 #endif
 
+#ifndef MASTER
+#ifndef SLAVE
+    const char *portname = "NONE";
+#endif
+#endif
+
+    int counter = 0;
+
     int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC | O_NONBLOCK);
     comportFD = fd;
     if (fd < 0)
@@ -128,7 +134,7 @@ int main()
     /*baudrate 115200, 8 bits, no parity, 1 stop bit */
     set_interface_attribs(fd, B9600);
 
-    write(fd, "Message from the other side\n", 28);
+    write(fd, handshakeMessage, sizeof handshakeMessage);
 
     tcdrain(fd); /* delay for output */
 
@@ -147,6 +153,21 @@ int main()
         {
             rdlen = 1;
             buf[0] = jj;
+            if (jj == '|')
+            {
+                counter++;
+                if (counter == 3)
+                {
+                    printf("FLAG FOUND. READY TO START TESTS\n");
+                    testAll();
+
+                    printf("Busy loop\n");
+                    while (1)
+                    {
+                        ; // Do nothing
+                    }
+                }
+            }
         }
 
         if (rdlen > 0)

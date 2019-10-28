@@ -10,8 +10,8 @@ DEFINES="-DBAUD=B${BAUD} -DSLAVE_DEVICE=${SLAVE_DEVICE} -DMASTER_DEVICE=${MASTER
 
 GCC_ARGS="-g3 -Wall "
 
-g++ ${GCC_ARGS} runner.cpp ${DEFINES} -DMASTER -o /tmp/master
-g++ ${GCC_ARGS} runner.cpp ${DEFINES} -DSLAVE -o /tmp/slave
+g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DMASTER -o /tmp/master
+g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DSLAVE -o /tmp/slave
 
-xterm -e /tmp/master &
-xterm -e /tmp/slave &
+xterm -e /tmp/master -sb +j 2000 &
+xterm -e /tmp/slave -sb +j 2000 &
