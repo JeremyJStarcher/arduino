@@ -34,9 +34,6 @@
 
  */
 
-#include <iostream>
-using namespace std;
-
 #define SOH 0x01
 #define STX 0x02
 #define EOT 0x04
