@@ -1,4 +1,4 @@
-/*	
+/*
  * Copyright 2001-2010 Georges Menie (www.menie.org)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,8 @@
 #define CTRLZ 0x1A
 
 #define DLY_1S (1000)
+#define DELAY_LONG (1000 * 10)
+
 #define MAXRETRANS 25
 
 unsigned short crc16_ccitt(const unsigned char *buf, int len)
@@ -70,7 +72,10 @@ static int check(int crc, const unsigned char *buf, int sz)
 		unsigned short crc = crc16_ccitt(buf, sz);
 		unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
 		if (crc == tcrc)
+		{
+			fprintf(logFile, "CRC Check... passed\n");
 			return 1;
+		}
 	}
 	else
 	{
@@ -81,16 +86,22 @@ static int check(int crc, const unsigned char *buf, int sz)
 			cks += buf[i];
 		}
 		if (cks == buf[sz])
+		{
+			fprintf(logFile, "Checksome passed\n");
 			return 1;
+		}
 	}
-
+	fprintf(logFile, "CRC/Checksome failed\n");
 	return 0;
 }
 
 static void flushinput(void)
 {
+	unsigned int cnt = 0;
 	while (_inbyte(((DLY_1S)*3) >> 1) >= 0)
-		;
+		cnt++;
+
+	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
 }
 
 int xmodemReceive(unsigned char *dest, int destsz)
@@ -108,28 +119,26 @@ int xmodemReceive(unsigned char *dest, int destsz)
 		for (retry = 0; retry < 16; ++retry)
 		{
 			if (trychar)
+			{
+				fprintf(logFile, "CRC/Checksome start %d\n", trychar);
 				_outbyte(trychar);
+			}
 			if ((c = _inbyte((DLY_1S) << 1)) >= 0)
 			{
-				LOG("[receive] header byte: ");
-				LOGLN(c);
+				fprintf(logFile, "CRC/Checksome received: %d\n", c);
 				switch (c)
 				{
 				case SOH:
-					LOGLN("HEADER SOH");
 					bufsz = 128;
 					goto start_recv;
 				case STX:
-					LOGLN("HEADER STX");
 					bufsz = 1024;
 					goto start_recv;
 				case EOT:
-					LOGLN("HEADER EOT");
 					flushinput();
 					_outbyte(ACK);
 					return len; /* normal end */
 				case CAN:
-					LOGLN("HEADER CAN");
 					if ((c = _inbyte(DLY_1S)) == CAN)
 					{
 						flushinput();
@@ -144,9 +153,11 @@ int xmodemReceive(unsigned char *dest, int destsz)
 		}
 		if (trychar == 'C')
 		{
+			fprintf(logFile, "Trying to start in checksome mode..\n");
 			trychar = NAK;
 			continue;
 		}
+		fprintf(logFile, "Sync error\n");
 		flushinput();
 		_outbyte(CAN);
 		_outbyte(CAN);
@@ -154,7 +165,12 @@ int xmodemReceive(unsigned char *dest, int destsz)
 		return -2; /* sync error */
 
 	start_recv:
-		LOGLN("[receive] Start of receive mode:");
+		LOG("Receiving packet ");
+		LOG((int)packetno);
+		LOG(" retries ");
+		LOGLN(retrans);
+
+		fprintf(logFile, "Start receive packet: %d\n", packetno);
 		if (trychar == 'C')
 		{
 			crc = 1;
@@ -163,23 +179,27 @@ int xmodemReceive(unsigned char *dest, int destsz)
 		p = xbuff;
 		*p++ = c;
 
-		LOGLN("Receiving packet");
 		for (i = 0; i < (bufsz + (crc ? 1 : 0) + 3); ++i)
 		{
-			if ((c = _inbyte(DLY_1S)) < 0) {
-				LOGLN("Receive took too long. bailing");
+			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
+			if ((c = _inbyte(DLY_1S)) < 0)
+			{
+				fprintf(logFile, "read timeout. rejecting\n");
 				goto reject;
 			}
 			*p++ = c;
 		}
-		LOGLN("Received packet");
+		fprintf(logFile, "Entire packet read\n");
 
 		if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
 			(xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
 			check(crc, &xbuff[3], bufsz))
 		{
+			fprintf(logFile, "Passed check #1\n");
+
 			if (xbuff[1] == packetno)
 			{
+				fprintf(logFile, "Passed check #2\n");
 				register int count = destsz - len;
 				if (count > bufsz)
 					count = bufsz;
@@ -191,6 +211,7 @@ int xmodemReceive(unsigned char *dest, int destsz)
 				++packetno;
 				retrans = MAXRETRANS + 1;
 			}
+			fprintf(logFile, "Retries left %d\n", retrans);
 			if (--retrans <= 0)
 			{
 				flushinput();
@@ -199,10 +220,12 @@ int xmodemReceive(unsigned char *dest, int destsz)
 				_outbyte(CAN);
 				return -3; /* too many retry error */
 			}
+			fprintf(logFile, "Packet accepted\n");
 			_outbyte(ACK);
 			continue;
 		}
 	reject:
+		fprintf(logFile, "Packet rejected\n");
 		flushinput();
 		_outbyte(NAK);
 	}
@@ -218,25 +241,27 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 
 	for (;;)
 	{
+		fprintf(logFile, "Start of forever loop\n");
 		for (retry = 0; retry < 16; ++retry)
 		{
-			if ((c = _inbyte((DLY_1S) << 1)) >= 0)
+			fprintf(logFile, "Start of retry loop\n");
+			if ((c = _inbyte((DLY_1S) << 1)) < 0)
 			{
-				LOG("[transmit] Transmit header received: ");
-				LOGLN(c);
+				fprintf(logFile, "No reply to packet %d\n", c);
+			}
+			else
+			{
+				fprintf(logFile, "Transmit header received %d\n", c);
 
 				switch (c)
 				{
 				case 'C':
-					LOGLN("'C' for CRC");
 					crc = 1;
 					goto start_trans;
 				case NAK:
-					LOGLN("NAK for Checksum");
 					crc = 0;
 					goto start_trans;
 				case CAN:
-					LOGLN("CANCEL");
 					if ((c = _inbyte(DLY_1S)) == CAN)
 					{
 						_outbyte(ACK);
@@ -249,6 +274,7 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 				}
 			}
 		}
+		fprintf(logFile, "No sync, cancelling\n");
 		_outbyte(CAN);
 		_outbyte(CAN);
 		_outbyte(CAN);
@@ -258,7 +284,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 		for (;;)
 		{
 		start_trans:
-			LOGLN("[transmit] START OF TRANSMIT");
+			LOG("Preparing packet ");
+			LOGLN((int)packetno);
+
+			fprintf(logFile, "Preparing %d\n", packetno);
 
 			xbuff[0] = SOH;
 			bufsz = 128;
@@ -295,26 +324,31 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 					}
 					xbuff[bufsz + 3] = ccks;
 				}
+
 				for (retry = 0; retry < MAXRETRANS; ++retry)
 				{
+					LOG("Transmitting packet ");
+					LOGLN((int)packetno);
+
+					fprintf(logFile, "Transmitting %d\n", packetno);
+
 					for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i)
 					{
+						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
 						_outbyte(xbuff[i]);
 					}
-					if ((c = _inbyte(DLY_1S)) >= 0)
+
+					if ((c = _inbyte(DELAY_LONG)) >= 0)
 					{
-						LOG("[transmit] reply: ");
-						LOGLN(c);
+						fprintf(logFile, "Reply to packet transmission %d\n", c);
 
 						switch (c)
 						{
 						case ACK:
-							LOGLN("ACK");
 							++packetno;
 							len += bufsz;
 							goto start_trans;
 						case CAN:
-							LOGLN("CAN");
 							if ((c = _inbyte(DLY_1S)) == CAN)
 							{
 								_outbyte(ACK);
@@ -324,11 +358,12 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 							break;
 						case NAK:
 						default:
-							LOGLN("NAK or default");
 							break;
 						}
 					}
 				}
+				fprintf(logFile, "Transmission error\n");
+
 				_outbyte(CAN);
 				_outbyte(CAN);
 				_outbyte(CAN);
@@ -337,11 +372,16 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 			}
 			else
 			{
+				fprintf(logFile, "End of file\n");
 				for (retry = 0; retry < 10; ++retry)
 				{
+					fprintf(logFile, "Transmitting EOT\n");
 					_outbyte(EOT);
 					if ((c = _inbyte((DLY_1S) << 1)) == ACK)
+					{
+						fprintf(logFile, "ACK received\n");
 						break;
+					}
 				}
 				flushinput();
 				return (c == ACK) ? len : -5;
@@ -349,50 +389,3 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 		}
 	}
 }
-
-#ifdef TEST_XMODEM_RECEIVE
-int main(void)
-{
-	int st;
-
-	printf("Send data using the xmodem protocol from your terminal emulator now...\n");
-	/* the following should be changed for your environment:
-	   0x30000 is the download address,
-	   65536 is the maximum size to be written at this address
-	 */
-	st = xmodemReceive((char *)0x30000, 65536);
-	if (st < 0)
-	{
-		printf("Xmodem receive error: status: %d\n", st);
-	}
-	else
-	{
-		printf("Xmodem successfully received %d bytes\n", st);
-	}
-
-	return 0;
-}
-#endif
-#ifdef TEST_XMODEM_SEND
-int main(void)
-{
-	int st;
-
-	printf("Prepare your terminal emulator to receive data now...\n");
-	/* the following should be changed for your environment:
-	   0x30000 is the download address,
-	   12000 is the maximum size to be send from this address
-	 */
-	st = xmodemTransmit((char *)0x30000, 12000);
-	if (st < 0)
-	{
-		printf("Xmodem transmit error: status: %d\n", st);
-	}
-	else
-	{
-		printf("Xmodem successfully transmitted %d bytes\n", st);
-	}
-
-	return 0;
-}
-#endif

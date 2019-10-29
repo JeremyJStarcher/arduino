@@ -1,6 +1,8 @@
 killall xterm
 rm /tmp/master
 rm /tmp/slave
+rm master.txt
+rm slave.txt
 
  SLAVE_DEVICE="\"/dev/ttyUSB1\""
 MASTER_DEVICE="\"/dev/ttyUSB0\""

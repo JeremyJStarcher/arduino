@@ -8,60 +8,63 @@ using namespace std;
 
 void _outbyte(int ch);
 int _inbyte(long ms);
+extern FILE *logFile;
 
 #define LOG(x) cout << x
-#define LOGLN(x) cout << x; cout << "\n"
+#define LOGLN(x) \
+    cout << x;   \
+    cout << "\n"
 
 #include "../xmodem.h"
 
-
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 2048 // 128*2
 static unsigned char buffer[BUFFER_SIZE];
-
 
 bool isPassing;
 unsigned char getBufferByte(size_t idx)
 {
-  return idx & 0xFF;
+    static unsigned char txt[] = "The quick brown fox";
+    return txt[idx % sizeof(txt)];
+    // return idx & 0xFF;
 }
-
 
 bool compareBuffer(unsigned char *buffer, size_t s)
 {
-  LOG("compareBuffer size: ");
-  LOGLN(s);
+    LOG("compareBuffer size: ");
+    LOGLN(s);
 
-  for (size_t i = 0; i < s; i++)
-  {
-    int actual = buffer[i];
-    int expected = getBufferByte(i);
+    for (size_t i = 0; i < s; i++)
+    {
+        int actual = buffer[i];
+        int expected = getBufferByte(i);
 
-    if (actual != expected) {
-      LOG("idx ");
-      LOG(i);
-      LOG("\tActual: ");
-      LOG(actual);
-      LOG("\tExpected: ");
-      LOG(expected);
-      LOGLN("");
+        if (actual != expected)
+        {
+            LOG("idx ");
+            LOG(i);
+            LOG("\tActual: ");
+            LOG(actual);
+            LOG("\tExpected: ");
+            LOG(expected);
+            LOGLN("");
 
-      return false;
+            return false;
+        }
     }
-  }
-  LOGLN("Compare buffer passed.");
-  return true;
+    LOGLN("Compare buffer passed.");
+    return true;
 }
-
 
 void fillBuffer(unsigned char *buffer, size_t s)
 {
-  LOG("fillBuffer size: ");
-  LOGLN(s);
+    LOG("fillBuffer size: ");
+    LOGLN(s);
 
-  for (size_t i = 0; i < s; i++)
-  {
-    buffer[i] = getBufferByte(i);
-  }
+    for (size_t i = 0; i < s; i++)
+    {
+        buffer[i] = getBufferByte(i);
+        LOG((char) buffer[i]);
+    }
 }
 
 void testAll()
