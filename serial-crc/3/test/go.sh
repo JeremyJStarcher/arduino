@@ -12,5 +12,9 @@ GCC_ARGS="-g3 -Wall "
 g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DMASTER -o /tmp/master
 g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DSLAVE -o /tmp/slave
 
-xterm -e /tmp/master -sb +j 2000 &
-xterm -e /tmp/slave -sb +j 2000 &
+XTERM_OPTIONS="-fa 'Monospace' -fs 14 "
+
+xterm ${XTERM_OPTIONS} -e /tmp/master  &
+xterm ${XTERM_OPTIONS} -e /tmp/slave  &
+
+
