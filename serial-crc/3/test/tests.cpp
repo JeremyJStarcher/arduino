@@ -67,6 +67,41 @@ void fillBuffer(unsigned char *buffer, size_t s)
     }
 }
 
+class XM_ZeroGlitches : public XMTestBase
+{
+    public:
+    static void MasterAction()
+    {
+        LOGLN("Sending...");
+        fillBuffer(buffer, BUFFER_SIZE);
+        int ret = xmodemTransmit(buffer, BUFFER_SIZE, serial_write, serial_read);
+        LOG("Transmit result: ");
+        LOGLN(ret);
+        if (ret < 0)
+        {
+            isPassing = false;
+        }
+    };
+
+    static void SlaveAction()
+    {
+        LOGLN("Receiving...");
+        int ret = xmodemReceive(buffer, BUFFER_SIZE, serial_write, serial_read);
+        LOG("Receive result: ");
+        LOGLN(ret);
+        if (ret < 0)
+        {
+            isPassing = false;
+        }
+
+        if (!compareBuffer(buffer, BUFFER_SIZE))
+        {
+            LOGLN("Buffer compare failed");
+            isPassing = false;
+        }
+    }
+};
+
 void testAll()
 {
     isPassing = true;
@@ -77,31 +112,10 @@ void testAll()
     }
 
 #ifdef MASTER
-    LOGLN("Sending...");
-    fillBuffer(buffer, BUFFER_SIZE);
-    int ret = xmodemTransmit(buffer, BUFFER_SIZE, serial_write, serial_read);
-    LOG("Transmit result: ");
-    LOGLN(ret);
-    if (ret < 0)
-    {
-        isPassing = false;
-    }
+    XM_ZeroGlitches::MasterAction();
 #endif
 
 #ifdef SLAVE
-    LOGLN("Receiving...");
-    int ret = xmodemReceive(buffer, BUFFER_SIZE, serial_write, serial_read);
-    LOG("Receive result: ");
-    LOGLN(ret);
-    if (ret < 0)
-    {
-        isPassing = false;
-    }
-
-    if (!compareBuffer(buffer, BUFFER_SIZE))
-    {
-        LOGLN("Buffer compare failed");
-        isPassing = false;
-    }
+    XM_ZeroGlitches::SlaveAction();
 #endif
 }

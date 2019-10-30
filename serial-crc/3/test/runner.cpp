@@ -14,8 +14,6 @@ unsigned char handshakeMessage[] = "Message from the other side.\n|||\n";
 FILE *logFile;
 
 int comportFD;
-long sendCount = 0;
-long receiveCount = 0;
 
 long long timeInMilliseconds(void)
 {
@@ -25,28 +23,13 @@ long long timeInMilliseconds(void)
     return (((long long)tv.tv_sec) * 1000) + (tv.tv_usec / 1000);
 }
 
-const int glitchbyte = 128 + 10;
-
 void serial_write(int ch)
 {
     char buf[1];
     buf[0] = ch;
-    sendCount++;
 
-    if (sendCount == glitchbyte)
-    {
-        printf("\nMANGLE PACKET\n");
-        buf[0] = ch + 2;
-        fprintf(logFile, "w: %u\n", ch);
-        write(comportFD, buf, 1);
-        fprintf(logFile, "w: %u\n", ch);
-        write(comportFD, buf, 1);
-    }
-    else
-    {
-        fprintf(logFile, "w: %u\n", ch);
-        write(comportFD, buf, 1);
-    }
+    fprintf(logFile, "w: %u\n", ch);
+    write(comportFD, buf, 1);
 
     tcdrain(comportFD);
 }
@@ -62,13 +45,7 @@ int serial_read(long ms)
         rdlen = read(comportFD, buf, 1);
         if (rdlen > 0)
         {
-            receiveCount++;
             unsigned char k = buf[0];
-            //if (receiveCount > glitchbyte - 5 and receiveCount < glitchbyte + 5)
-            //{
-            //    printf("===RECEIVED %d %u\n", receiveCount, k);
-            //}
-
             fprintf(logFile, "r: %u\n", k);
             return k;
         }
@@ -221,8 +198,6 @@ int main()
                 if (counter == 3)
                 {
                     printf("FLAG FOUND. READY TO START TESTS\n");
-                    receiveCount = 0;
-                    sendCount = 0;
 
                     while (serial_read(1000) != -1)
                     {
