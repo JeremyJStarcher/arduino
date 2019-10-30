@@ -26,11 +26,11 @@
  */
 
 /* this code needs standard functions memcpy() and memset()
-   and input/output functions _inbyte() and _outbyte().
+   and input/output functions serial_read() and (*out_ch)().
 
    the prototypes of the input/output functions are:
-     int _inbyte(unsigned short timeout); // msec timeout
-     void _outbyte(int c);
+     int serial_read(unsigned short timeout); // msec timeout
+     void (*out_ch)(int c);
 
  */
 
@@ -95,16 +95,20 @@ static int check(int crc, const unsigned char *buf, int sz)
 	return 0;
 }
 
-static void flushinput(void)
+static void flushinput(int (*in_ch)(long int ms))
 {
 	unsigned int cnt = 0;
-	while (_inbyte(((DLY_1S)*3) >> 1) >= 0)
+	while (in_ch(((DLY_1S)*3) >> 1) >= 0)
 		cnt++;
 
 	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
 }
 
-int xmodemReceive(unsigned char *dest, int destsz)
+int xmodemReceive(
+	unsigned char *dest,
+	int destsz,
+	void (*out_ch)(int ch),
+	int (*in_ch)(long int ms))
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	unsigned char *p;
@@ -121,9 +125,9 @@ int xmodemReceive(unsigned char *dest, int destsz)
 			if (trychar)
 			{
 				fprintf(logFile, "CRC/Checksome start %d\n", trychar);
-				_outbyte(trychar);
+				(*out_ch)(trychar);
 			}
-			if ((c = _inbyte((DLY_1S) << 1)) >= 0)
+			if ((c = serial_read((DLY_1S) << 1)) >= 0)
 			{
 				fprintf(logFile, "CRC/Checksome received: %d\n", c);
 				switch (c)
@@ -135,14 +139,14 @@ int xmodemReceive(unsigned char *dest, int destsz)
 					bufsz = 1024;
 					goto start_recv;
 				case EOT:
-					flushinput();
-					_outbyte(ACK);
+					flushinput(in_ch);
+					(*out_ch)(ACK);
 					return len; /* normal end */
 				case CAN:
-					if ((c = _inbyte(DLY_1S)) == CAN)
+					if ((c = serial_read(DLY_1S)) == CAN)
 					{
-						flushinput();
-						_outbyte(ACK);
+						flushinput(in_ch);
+						(*out_ch)(ACK);
 						return -1; /* canceled by remote */
 					}
 					break;
@@ -158,10 +162,10 @@ int xmodemReceive(unsigned char *dest, int destsz)
 			continue;
 		}
 		fprintf(logFile, "Sync error\n");
-		flushinput();
-		_outbyte(CAN);
-		_outbyte(CAN);
-		_outbyte(CAN);
+		flushinput(in_ch);
+		(*out_ch)(CAN);
+		(*out_ch)(CAN);
+		(*out_ch)(CAN);
 		return -2; /* sync error */
 
 	start_recv:
@@ -182,7 +186,7 @@ int xmodemReceive(unsigned char *dest, int destsz)
 		for (i = 0; i < (bufsz + (crc ? 1 : 0) + 3); ++i)
 		{
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
-			if ((c = _inbyte(DLY_1S)) < 0)
+			if ((c = serial_read(DLY_1S)) < 0)
 			{
 				fprintf(logFile, "read timeout. rejecting\n");
 				goto reject;
@@ -214,24 +218,27 @@ int xmodemReceive(unsigned char *dest, int destsz)
 			fprintf(logFile, "Retries left %d\n", retrans);
 			if (--retrans <= 0)
 			{
-				flushinput();
-				_outbyte(CAN);
-				_outbyte(CAN);
-				_outbyte(CAN);
+				flushinput(in_ch);
+				(*out_ch)(CAN);
+				(*out_ch)(CAN);
+				(*out_ch)(CAN);
 				return -3; /* too many retry error */
 			}
 			fprintf(logFile, "Packet accepted\n");
-			_outbyte(ACK);
+			(*out_ch)(ACK);
 			continue;
 		}
 	reject:
 		fprintf(logFile, "Packet rejected\n");
-		flushinput();
-		_outbyte(NAK);
+		flushinput(in_ch);
+		(*out_ch)(NAK);
 	}
 }
 
-int xmodemTransmit(unsigned char *src, int srcsz)
+int xmodemTransmit(unsigned char *src,
+				   int srcsz,
+				   void (*out_ch)(int ch),
+				   int (*in_ch)(long int ms))
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	int bufsz, crc = -1;
@@ -245,7 +252,7 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 		for (retry = 0; retry < 16; ++retry)
 		{
 			fprintf(logFile, "Start of retry loop\n");
-			if ((c = _inbyte((DLY_1S) << 1)) < 0)
+			if ((c = serial_read((DLY_1S) << 1)) < 0)
 			{
 				fprintf(logFile, "No reply to packet %d\n", c);
 			}
@@ -262,10 +269,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 					crc = 0;
 					goto start_trans;
 				case CAN:
-					if ((c = _inbyte(DLY_1S)) == CAN)
+					if ((c = serial_read(DLY_1S)) == CAN)
 					{
-						_outbyte(ACK);
-						flushinput();
+						(*out_ch)(ACK);
+						flushinput(in_ch);
 						return -1; /* canceled by remote */
 					}
 					break;
@@ -275,10 +282,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 			}
 		}
 		fprintf(logFile, "No sync, cancelling\n");
-		_outbyte(CAN);
-		_outbyte(CAN);
-		_outbyte(CAN);
-		flushinput();
+		(*out_ch)(CAN);
+		(*out_ch)(CAN);
+		(*out_ch)(CAN);
+		flushinput(in_ch);
 		return -2; /* no sync */
 
 		for (;;)
@@ -335,10 +342,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 					for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i)
 					{
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
-						_outbyte(xbuff[i]);
+						(*out_ch)(xbuff[i]);
 					}
 
-					if ((c = _inbyte(DELAY_LONG)) >= 0)
+					if ((c = serial_read(DELAY_LONG)) >= 0)
 					{
 						fprintf(logFile, "Reply to packet transmission %d\n", c);
 
@@ -349,10 +356,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 							len += bufsz;
 							goto start_trans;
 						case CAN:
-							if ((c = _inbyte(DLY_1S)) == CAN)
+							if ((c = serial_read(DLY_1S)) == CAN)
 							{
-								_outbyte(ACK);
-								flushinput();
+								(*out_ch)(ACK);
+								flushinput(in_ch);
 								return -1; /* canceled by remote */
 							}
 							break;
@@ -364,10 +371,10 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 				}
 				fprintf(logFile, "Transmission error\n");
 
-				_outbyte(CAN);
-				_outbyte(CAN);
-				_outbyte(CAN);
-				flushinput();
+				(*out_ch)(CAN);
+				(*out_ch)(CAN);
+				(*out_ch)(CAN);
+				flushinput(in_ch);
 				return -4; /* xmit error */
 			}
 			else
@@ -376,14 +383,14 @@ int xmodemTransmit(unsigned char *src, int srcsz)
 				for (retry = 0; retry < 10; ++retry)
 				{
 					fprintf(logFile, "Transmitting EOT\n");
-					_outbyte(EOT);
-					if ((c = _inbyte((DLY_1S) << 1)) == ACK)
+					(*out_ch)(EOT);
+					if ((c = serial_read((DLY_1S) << 1)) == ACK)
 					{
 						fprintf(logFile, "ACK received\n");
 						break;
 					}
 				}
-				flushinput();
+				flushinput(in_ch);
 				return (c == ACK) ? len : -5;
 			}
 		}

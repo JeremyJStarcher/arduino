@@ -27,7 +27,7 @@ long long timeInMilliseconds(void)
 
 const int glitchbyte = 128 + 10;
 
-void _outbyte(int ch)
+void serial_write(int ch)
 {
     char buf[1];
     buf[0] = ch;
@@ -51,7 +51,7 @@ void _outbyte(int ch)
     tcdrain(comportFD);
 }
 
-int _inbyte(long ms)
+int serial_read(long ms)
 {
     char buf[10];
     long long target = timeInMilliseconds() + ms;
@@ -206,7 +206,7 @@ int main()
         unsigned char buf[2];
         int rdlen;
 
-        int jj = _inbyte(1000);
+        int jj = serial_read(1000);
         if (jj == -1)
         {
             rdlen = 0;
@@ -224,7 +224,7 @@ int main()
                     receiveCount = 0;
                     sendCount = 0;
 
-                    while (_inbyte(1000) != -1)
+                    while (serial_read(1000) != -1)
                     {
                         // Idle
                     }

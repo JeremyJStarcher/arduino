@@ -6,8 +6,8 @@
 #include "tests.h"
 using namespace std;
 
-void _outbyte(int ch);
-int _inbyte(long ms);
+void serial_write(int ch);
+int serial_read(long ms);
 extern FILE *logFile;
 
 #define LOG(x) cout << x
@@ -63,7 +63,7 @@ void fillBuffer(unsigned char *buffer, size_t s)
     for (size_t i = 0; i < s; i++)
     {
         buffer[i] = getBufferByte(i);
-        LOG((char) buffer[i]);
+        LOG((char)buffer[i]);
     }
 }
 
@@ -79,7 +79,7 @@ void testAll()
 #ifdef MASTER
     LOGLN("Sending...");
     fillBuffer(buffer, BUFFER_SIZE);
-    int ret = xmodemTransmit(buffer, BUFFER_SIZE);
+    int ret = xmodemTransmit(buffer, BUFFER_SIZE, serial_write, serial_read);
     LOG("Transmit result: ");
     LOGLN(ret);
     if (ret < 0)
@@ -90,7 +90,7 @@ void testAll()
 
 #ifdef SLAVE
     LOGLN("Receiving...");
-    int ret = xmodemReceive(buffer, BUFFER_SIZE);
+    int ret = xmodemReceive(buffer, BUFFER_SIZE, serial_write, serial_read);
     LOG("Receive result: ");
     LOGLN(ret);
     if (ret < 0)
