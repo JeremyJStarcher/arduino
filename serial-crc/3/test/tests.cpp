@@ -96,7 +96,7 @@ void fillBuffer(unsigned char *buffer, size_t s)
     for (size_t i = 0; i < s; i++)
     {
         buffer[i] = getBufferByte(i);
-        LOG((char)buffer[i]);
+        // LOG((char)buffer[i]);
     }
 }
 
@@ -116,13 +116,18 @@ void tweak_write(int ch)
             case ALTER_RULE_DELETE:
                 // Do nothing;
                 handled = 1;
-                printf("******DELETED BYTE\n");
+                LOG("****** DELETED BYTE at ");
+                LOGLN(r.position);
                 break;
             case ALTER_RULE_CHANGE:
+                LOG("****** CHANGED BYTE at ");
+                LOGLN(r.position);
                 (*serial_write)(r.value);
                 handled = 1;
                 break;
             case ALTER_RULE_INSERT:
+                LOG("****** INSERTED BYTE at ");
+                LOGLN(r.position);
                 (*serial_write)(ch);
                 (*serial_write)(r.value);
                 handled = 1;
@@ -176,9 +181,9 @@ public:
 
 void testNoGlitches()
 {
-    printf("--------------------------------\n");
-    printf("-           NO GLITCHES        -\n");
-    printf("--------------------------------\n");
+    LOGLN("--------------------------------");
+    LOGLN("-           NO GLITCHES        -");
+    LOGLN("--------------------------------");
 
     resetAlterRules();
 
@@ -193,9 +198,9 @@ void testNoGlitches()
 
 void testMissingDataByte()
 {
-    printf("--------------------------------\n");
-    printf("-     testMissingDataByte      -\n");
-    printf("--------------------------------\n");
+    LOGLN("--------------------------------");
+    LOGLN("-     testMissingDataByte      -");
+    LOGLN("--------------------------------");
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_DELETE;
@@ -210,16 +215,72 @@ void testMissingDataByte()
 #endif
 }
 
+void testExtraDataByte()
+{
+    LOGLN("--------------------------------");
+    LOGLN("-      testExtraDataByte       -");
+    LOGLN("--------------------------------");
+
+    resetAlterRules();
+    alter_rules[0].action = ALTER_RULE_INSERT;
+    alter_rules[0].position = 17;
+    alter_rules[0].value = 0xFF;
+
+#ifdef MASTER
+    XM_ShouldSucceed::MasterAction(alter_rules);
+#endif
+
+#ifdef SLAVE
+    XM_ShouldSucceed::SlaveAction();
+#endif
+}
+
+void testChangedByteInPayload()
+{
+    LOGLN("--------------------------------");
+    LOGLN("-   testChangedByteInPayload   -");
+    LOGLN("--------------------------------");
+
+    resetAlterRules();
+    alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].position = 17;
+    alter_rules[0].value = 0xFF;
+
+#ifdef MASTER
+    XM_ShouldSucceed::MasterAction(alter_rules);
+#endif
+
+#ifdef SLAVE
+    XM_ShouldSucceed::SlaveAction();
+#endif
+}
+
 void testAll()
 {
     isPassing = true;
 
-    testNoGlitches();
+    if (isPassing)
+        testNoGlitches();
 
-    testMissingDataByte();
+    if (isPassing)
+        testMissingDataByte();
 
-    if (!isPassing)
+    if (isPassing)
+        testExtraDataByte();
+
+    if (isPassing)
+        testChangedByteInPayload();
+
+    if (isPassing)
     {
-        return;
+        LOGLN("--------------------------------");
+        LOGLN("-********** Success ********** -");
+        LOGLN("--------------------------------");
+    }
+    else
+    {
+        LOGLN("--------------------------------");
+        LOGLN("- ======= Tests Failed ======= -");
+        LOGLN("--------------------------------");
     }
 }

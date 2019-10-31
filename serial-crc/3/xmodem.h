@@ -291,8 +291,8 @@ int xmodemTransmit(unsigned char *src,
 		for (;;)
 		{
 		start_trans:
-			LOG("Preparing packet ");
-			LOGLN((int)packetno);
+			// LOG("Preparing packet ");
+			// LOGLN((int)packetno);
 
 			fprintf(logFile, "Preparing %d\n", packetno);
 
