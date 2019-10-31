@@ -24,10 +24,35 @@ extern int comportFD;
 
 #include "../xmodem.h"
 
-#define BUFFER_SIZE 2048 // 128*2
+#define BUFFER_SIZE 2048
 static unsigned char buffer[BUFFER_SIZE];
 
+struct alter_rule
+{
+    int position;
+    int action;
+    int value;
+};
+
+#define ALTER_RULE_MAX 5
+#define ALTER_RULE_NONE 0
+#define ALTER_RULE_INSERT 1
+#define ALTER_RULE_DELETE 2
+#define ALTER_RULE_CHANGE 3
+
+alter_rule alter_rules[ALTER_RULE_MAX];
+
 bool isPassing;
+
+void resetAlterRules()
+{
+    for (int i = 0; i < ALTER_RULE_MAX; i++)
+    {
+        alter_rules[i].action = ALTER_RULE_NONE;
+        alter_rules[i].position = -1;
+        alter_rules[i].value = -1;
+    }
+}
 
 unsigned char getBufferByte(size_t idx)
 {
@@ -75,14 +100,53 @@ void fillBuffer(unsigned char *buffer, size_t s)
     }
 }
 
-class XM_ZeroGlitches : public XMTestBase
+int send_index;
+void tweak_write(int ch)
+{
+    char handled = 0;
+
+    for (int i = 0; i < ALTER_RULE_MAX; i++)
+    {
+        alter_rule r = alter_rules[i];
+
+        if (r.position == send_index)
+        {
+            switch (r.action)
+            {
+            case ALTER_RULE_DELETE:
+                // Do nothing;
+                handled = 1;
+                printf("******DELETED BYTE\n");
+                break;
+            case ALTER_RULE_CHANGE:
+                (*serial_write)(r.value);
+                handled = 1;
+                break;
+            case ALTER_RULE_INSERT:
+                (*serial_write)(ch);
+                (*serial_write)(r.value);
+                handled = 1;
+                break;
+            }
+            break;
+        }
+    }
+    if (!handled)
+    {
+        (*serial_write)(ch);
+    }
+    send_index++;
+}
+
+class XM_ShouldSucceed : public XMTestBase
 {
 public:
-    static void MasterAction()
+    static void MasterAction(alter_rule *alter_rules)
     {
+        send_index = 0;
         LOGLN("Sending...");
         fillBuffer(buffer, BUFFER_SIZE);
-        int ret = xmodemTransmit(buffer, BUFFER_SIZE, serial_write, serial_read);
+        int ret = xmodemTransmit(buffer, BUFFER_SIZE, tweak_write, serial_read);
         LOG("Transmit result: ");
         LOGLN(ret);
         if (ret < 0)
@@ -110,17 +174,49 @@ public:
     }
 };
 
+void testNoGlitches()
+{
+    printf("--------------------------------\n");
+    printf("-           NO GLITCHES        -\n");
+    printf("--------------------------------\n");
+
+    resetAlterRules();
+
+#ifdef MASTER
+    XM_ShouldSucceed::MasterAction(alter_rules);
+#endif
+
+#ifdef SLAVE
+    XM_ShouldSucceed::SlaveAction();
+#endif
+}
+
+void testMissingDataByte()
+{
+    printf("--------------------------------\n");
+    printf("-     testMissingDataByte      -\n");
+    printf("--------------------------------\n");
+
+    resetAlterRules();
+    alter_rules[0].action = ALTER_RULE_DELETE;
+    alter_rules[0].position = 17;
+
+#ifdef MASTER
+    XM_ShouldSucceed::MasterAction(alter_rules);
+#endif
+
+#ifdef SLAVE
+    XM_ShouldSucceed::SlaveAction();
+#endif
+}
+
 void testAll()
 {
     isPassing = true;
 
-#ifdef MASTER
-    XM_ZeroGlitches::MasterAction();
-#endif
+    testNoGlitches();
 
-#ifdef SLAVE
-    XM_ZeroGlitches::SlaveAction();
-#endif
+    testMissingDataByte();
 
     if (!isPassing)
     {

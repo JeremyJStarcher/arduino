@@ -130,13 +130,13 @@ int main()
 {
 #ifdef MASTER
     printf("MASTER\n");
-    logFile = fopen("master.txt", "w");
+    logFile = fopen("/tmp/master.txt", "w");
     const char *portname = MASTER_DEVICE;
 #endif
 
 #ifdef SLAVE
     printf("SLAVE\n");
-    logFile = fopen("slave.txt", "w");
+    logFile = fopen("/tmp/slave.txt", "w");
     const char *portname = SLAVE_DEVICE;
 #endif
 
@@ -153,7 +153,7 @@ int main()
         return -1;
     }
     /*baudrate 115200, 8 bits, no parity, 1 stop bit */
-    set_interface_attribs(fd, B9600);
+    set_interface_attribs(fd, B115200);
 
     testAll();
 

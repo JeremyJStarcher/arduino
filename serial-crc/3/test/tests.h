@@ -4,11 +4,11 @@
 class XMTestBase
 {
 public:
-    static void MasterAction() {
+    static void MasterAction(){
 
     };
 
-    static void SlaveAction() {
+    static void SlaveAction(){
 
     };
 };

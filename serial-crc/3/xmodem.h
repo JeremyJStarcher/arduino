@@ -26,11 +26,11 @@
  */
 
 /* this code needs standard functions memcpy() and memset()
-   and input/output functions serial_read() and (*out_ch)().
+   and input/output functions serial_read() and (*serial_write)().
 
    the prototypes of the input/output functions are:
      int serial_read(unsigned short timeout); // msec timeout
-     void (*out_ch)(int c);
+     void (*serial_write)(int c);
 
  */
 
@@ -95,10 +95,10 @@ static int check(int crc, const unsigned char *buf, int sz)
 	return 0;
 }
 
-static void flushinput(int (*in_ch)(long int ms))
+static void flushinput(int (*serial_read)(long int ms))
 {
 	unsigned int cnt = 0;
-	while (in_ch(((DLY_1S)*3) >> 1) >= 0)
+	while (serial_read(((DLY_1S)*3) >> 1) >= 0)
 		cnt++;
 
 	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
@@ -107,8 +107,8 @@ static void flushinput(int (*in_ch)(long int ms))
 int xmodemReceive(
 	unsigned char *dest,
 	int destsz,
-	void (*out_ch)(int ch),
-	int (*in_ch)(long int ms))
+	void (*serial_write)(int ch),
+	int (*serial_read)(long int ms))
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	unsigned char *p;
@@ -125,7 +125,7 @@ int xmodemReceive(
 			if (trychar)
 			{
 				fprintf(logFile, "CRC/Checksome start %d\n", trychar);
-				(*out_ch)(trychar);
+				(*serial_write)(trychar);
 			}
 			if ((c = serial_read((DLY_1S) << 1)) >= 0)
 			{
@@ -139,14 +139,14 @@ int xmodemReceive(
 					bufsz = 1024;
 					goto start_recv;
 				case EOT:
-					flushinput(in_ch);
-					(*out_ch)(ACK);
+					flushinput(serial_read);
+					(*serial_write)(ACK);
 					return len; /* normal end */
 				case CAN:
 					if ((c = serial_read(DLY_1S)) == CAN)
 					{
-						flushinput(in_ch);
-						(*out_ch)(ACK);
+						flushinput(serial_read);
+						(*serial_write)(ACK);
 						return -1; /* canceled by remote */
 					}
 					break;
@@ -162,10 +162,10 @@ int xmodemReceive(
 			continue;
 		}
 		fprintf(logFile, "Sync error\n");
-		flushinput(in_ch);
-		(*out_ch)(CAN);
-		(*out_ch)(CAN);
-		(*out_ch)(CAN);
+		flushinput(serial_read);
+		(*serial_write)(CAN);
+		(*serial_write)(CAN);
+		(*serial_write)(CAN);
 		return -2; /* sync error */
 
 	start_recv:
@@ -218,27 +218,27 @@ int xmodemReceive(
 			fprintf(logFile, "Retries left %d\n", retrans);
 			if (--retrans <= 0)
 			{
-				flushinput(in_ch);
-				(*out_ch)(CAN);
-				(*out_ch)(CAN);
-				(*out_ch)(CAN);
+				flushinput(serial_read);
+				(*serial_write)(CAN);
+				(*serial_write)(CAN);
+				(*serial_write)(CAN);
 				return -3; /* too many retry error */
 			}
 			fprintf(logFile, "Packet accepted\n");
-			(*out_ch)(ACK);
+			(*serial_write)(ACK);
 			continue;
 		}
 	reject:
 		fprintf(logFile, "Packet rejected\n");
-		flushinput(in_ch);
-		(*out_ch)(NAK);
+		flushinput(serial_read);
+		(*serial_write)(NAK);
 	}
 }
 
 int xmodemTransmit(unsigned char *src,
 				   int srcsz,
-				   void (*out_ch)(int ch),
-				   int (*in_ch)(long int ms))
+				   void (*serial_write)(int ch),
+				   int (*serial_read)(long int ms))
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	int bufsz, crc = -1;
@@ -271,8 +271,8 @@ int xmodemTransmit(unsigned char *src,
 				case CAN:
 					if ((c = serial_read(DLY_1S)) == CAN)
 					{
-						(*out_ch)(ACK);
-						flushinput(in_ch);
+						(*serial_write)(ACK);
+						flushinput(serial_read);
 						return -1; /* canceled by remote */
 					}
 					break;
@@ -282,10 +282,10 @@ int xmodemTransmit(unsigned char *src,
 			}
 		}
 		fprintf(logFile, "No sync, cancelling\n");
-		(*out_ch)(CAN);
-		(*out_ch)(CAN);
-		(*out_ch)(CAN);
-		flushinput(in_ch);
+		(*serial_write)(CAN);
+		(*serial_write)(CAN);
+		(*serial_write)(CAN);
+		flushinput(serial_read);
 		return -2; /* no sync */
 
 		for (;;)
@@ -342,7 +342,7 @@ int xmodemTransmit(unsigned char *src,
 					for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i)
 					{
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
-						(*out_ch)(xbuff[i]);
+						(*serial_write)(xbuff[i]);
 					}
 
 					if ((c = serial_read(DELAY_LONG)) >= 0)
@@ -358,8 +358,8 @@ int xmodemTransmit(unsigned char *src,
 						case CAN:
 							if ((c = serial_read(DLY_1S)) == CAN)
 							{
-								(*out_ch)(ACK);
-								flushinput(in_ch);
+								(*serial_write)(ACK);
+								flushinput(serial_read);
 								return -1; /* canceled by remote */
 							}
 							break;
@@ -371,10 +371,10 @@ int xmodemTransmit(unsigned char *src,
 				}
 				fprintf(logFile, "Transmission error\n");
 
-				(*out_ch)(CAN);
-				(*out_ch)(CAN);
-				(*out_ch)(CAN);
-				flushinput(in_ch);
+				(*serial_write)(CAN);
+				(*serial_write)(CAN);
+				(*serial_write)(CAN);
+				flushinput(serial_read);
 				return -4; /* xmit error */
 			}
 			else
@@ -383,14 +383,14 @@ int xmodemTransmit(unsigned char *src,
 				for (retry = 0; retry < 10; ++retry)
 				{
 					fprintf(logFile, "Transmitting EOT\n");
-					(*out_ch)(EOT);
+					(*serial_write)(EOT);
 					if ((c = serial_read((DLY_1S) << 1)) == ACK)
 					{
 						fprintf(logFile, "ACK received\n");
 						break;
 					}
 				}
-				flushinput(in_ch);
+				flushinput(serial_read);
 				return (c == ACK) ? len : -5;
 			}
 		}
