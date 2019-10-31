@@ -9,8 +9,6 @@
 
 #include "tests.h"
 
-unsigned char handshakeMessage[] = "Message from the other side.\n|||\n";
-
 FILE *logFile;
 
 int comportFD;
@@ -130,7 +128,6 @@ void set_mincount(int fd, int mcount)
 
 int main()
 {
-    char cmdBuf[80];
 #ifdef MASTER
     printf("MASTER\n");
     logFile = fopen("master.txt", "w");
@@ -148,9 +145,6 @@ int main()
     const char *portname = "NONE";
 #endif
 #endif
-
-    int counter = 0;
-
     int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC | O_NONBLOCK);
     comportFD = fd;
     if (fd < 0)
@@ -161,73 +155,12 @@ int main()
     /*baudrate 115200, 8 bits, no parity, 1 stop bit */
     set_interface_attribs(fd, B9600);
 
-#ifdef MASTER
-    //sprintf(cmdBuf, "stty -F%s 9600 raw -echo", MASTER_DEVICE);
-    //system(cmdBuf);
-#endif
+    testAll();
 
-#ifdef SLAVE
-    // sprintf(cmdBuf, "stty -F%s 9600 raw -echo", SLAVE_DEVICE);
-    // system(cmdBuf);
-#endif
-
-    printf("Configur comm port: \n%s\n", cmdBuf);
-
-    write(fd, handshakeMessage, sizeof handshakeMessage);
-
-    tcdrain(fd); /* delay for output */
-
-    /* simple noncanonical input */
-    do
+    printf("Busy loop\n");
+    while (1)
     {
-        unsigned char buf[2];
-        int rdlen;
+        ; // Do nothing
+    }
 
-        int jj = serial_read(1000);
-        if (jj == -1)
-        {
-            rdlen = 0;
-        }
-        else
-        {
-            rdlen = 1;
-            buf[0] = jj;
-            if (jj == '|')
-            {
-                counter++;
-                if (counter == 3)
-                {
-                    printf("FLAG FOUND. READY TO START TESTS\n");
-
-                    while (serial_read(1000) != -1)
-                    {
-                        // Idle
-                    }
-
-                    testAll();
-
-                    printf("Busy loop\n");
-                    while (1)
-                    {
-                        ; // Do nothing
-                    }
-                }
-            }
-        }
-
-        if (rdlen > 0)
-        {
-            buf[rdlen] = 0;
-            printf("%s", buf);
-        }
-        else if (rdlen < 0)
-        {
-            //    printf("Error from read: %d: %s\n", rdlen, strerror(errno));
-        }
-        else
-        { /* rdlen == 0 */
-            //  printf("Timeout from read\n");
-        }
-        /* repeat read to get full message */
-    } while (1);
 }

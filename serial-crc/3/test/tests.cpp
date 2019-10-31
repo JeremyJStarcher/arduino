@@ -3,12 +3,19 @@
 #include <array>
 #include <iostream>
 
+#include <termios.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+
 #include "tests.h"
 using namespace std;
 
+long long timeInMilliseconds(void);
 void serial_write(int ch);
 int serial_read(long ms);
 extern FILE *logFile;
+extern int comportFD;
 
 #define LOG(x) cout << x
 #define LOGLN(x) \
@@ -21,6 +28,7 @@ extern FILE *logFile;
 static unsigned char buffer[BUFFER_SIZE];
 
 bool isPassing;
+
 unsigned char getBufferByte(size_t idx)
 {
     static unsigned char txt[] = "The quick brown fox";
@@ -69,7 +77,7 @@ void fillBuffer(unsigned char *buffer, size_t s)
 
 class XM_ZeroGlitches : public XMTestBase
 {
-    public:
+public:
     static void MasterAction()
     {
         LOGLN("Sending...");
@@ -106,11 +114,6 @@ void testAll()
 {
     isPassing = true;
 
-    if (!isPassing)
-    {
-        return;
-    }
-
 #ifdef MASTER
     XM_ZeroGlitches::MasterAction();
 #endif
@@ -118,4 +121,9 @@ void testAll()
 #ifdef SLAVE
     XM_ZeroGlitches::SlaveAction();
 #endif
+
+    if (!isPassing)
+    {
+        return;
+    }
 }
