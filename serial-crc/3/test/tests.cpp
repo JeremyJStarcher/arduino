@@ -103,6 +103,8 @@ void fillBuffer(unsigned char *buffer, size_t s)
 int send_index;
 void tweak_write(int ch)
 {
+    fprintf(logFile, "send_index = %d\n", send_index);
+
     char handled = 0;
 
     for (int i = 0; i < ALTER_RULE_MAX; i++)

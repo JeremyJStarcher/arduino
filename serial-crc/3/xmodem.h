@@ -337,7 +337,7 @@ int xmodemTransmit(unsigned char *src,
 					LOG("Transmitting packet ");
 					LOGLN((int)packetno);
 
-					fprintf(logFile, "Transmitting %d\n", packetno);
+					// fprintf(logFile, "Transmitting %d\n", packetno);
 
 					for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i)
 					{
