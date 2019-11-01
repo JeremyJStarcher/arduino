@@ -42,8 +42,11 @@
 #define CAN 0x18
 #define CTRLZ 0x1A
 
-#define DLY_1S (1000)
+#define DELAY_1000 (1000)
 #define DELAY_LONG (1000 * 10)
+#define DELAY_1500 (1500)
+#define DELAY_2000 (2000)
+
 
 #define MAXRETRANS 25
 
@@ -98,7 +101,7 @@ static int check(int crc, const unsigned char *buf, int sz)
 static void flushinput(int (*serial_read)(long int ms))
 {
 	unsigned int cnt = 0;
-	while (serial_read(((DLY_1S)*3) >> 1) >= 0)
+	while (serial_read(DELAY_1500) >= 0)
 		cnt++;
 
 	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
@@ -127,7 +130,7 @@ int xmodemReceive(
 				fprintf(logFile, "CRC/Checksome start %d\n", trychar);
 				(*serial_write)(trychar);
 			}
-			if ((c = serial_read((DLY_1S) << 1)) >= 0)
+			if ((c = serial_read(DELAY_2000)) >= 0)
 			{
 				fprintf(logFile, "CRC/Checksome received: %d\n", c);
 				switch (c)
@@ -143,7 +146,7 @@ int xmodemReceive(
 					(*serial_write)(ACK);
 					return len; /* normal end */
 				case CAN:
-					if ((c = serial_read(DLY_1S)) == CAN)
+					if ((c = serial_read(DELAY_1000)) == CAN)
 					{
 						flushinput(serial_read);
 						(*serial_write)(ACK);
@@ -186,7 +189,7 @@ int xmodemReceive(
 		for (i = 0; i < (bufsz + (crc ? 1 : 0) + 3); ++i)
 		{
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
-			if ((c = serial_read(DLY_1S)) < 0)
+			if ((c = serial_read(DELAY_1000)) < 0)
 			{
 				fprintf(logFile, "read timeout. rejecting\n");
 				goto reject;
@@ -252,7 +255,7 @@ int xmodemTransmit(unsigned char *src,
 		for (retry = 0; retry < 16; ++retry)
 		{
 			fprintf(logFile, "Start of retry loop\n");
-			if ((c = serial_read((DLY_1S) << 1)) < 0)
+			if ((c = serial_read(DELAY_1500)) < 0)
 			{
 				fprintf(logFile, "No reply to packet %d\n", c);
 			}
@@ -269,7 +272,7 @@ int xmodemTransmit(unsigned char *src,
 					crc = 0;
 					goto start_trans;
 				case CAN:
-					if ((c = serial_read(DLY_1S)) == CAN)
+					if ((c = serial_read(DELAY_1000)) == CAN)
 					{
 						(*serial_write)(ACK);
 						flushinput(serial_read);
@@ -356,7 +359,7 @@ int xmodemTransmit(unsigned char *src,
 							len += bufsz;
 							goto start_trans;
 						case CAN:
-							if ((c = serial_read(DLY_1S)) == CAN)
+							if ((c = serial_read(DELAY_1000)) == CAN)
 							{
 								(*serial_write)(ACK);
 								flushinput(serial_read);
@@ -384,7 +387,7 @@ int xmodemTransmit(unsigned char *src,
 				{
 					fprintf(logFile, "Transmitting EOT\n");
 					(*serial_write)(EOT);
-					if ((c = serial_read((DLY_1S) << 1)) == ACK)
+					if ((c = serial_read(DELAY_2000)) == ACK)
 					{
 						fprintf(logFile, "ACK received\n");
 						break;
