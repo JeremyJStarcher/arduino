@@ -11,8 +11,8 @@ DEFINES="-DBAUD=B${BAUD} -DSLAVE_DEVICE=${SLAVE_DEVICE} -DMASTER_DEVICE=${MASTER
 
 GCC_ARGS="-g3 -Wall "
 
-g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DMASTER -o /tmp/master
-g++ ${GCC_ARGS} runner.cpp tests.cpp ${DEFINES} -DSLAVE -o /tmp/slave
+g++ ${GCC_ARGS} runner.cpp tests.cpp ../xmodem.cpp ${DEFINES} -DMASTER -o /tmp/master
+g++ ${GCC_ARGS} runner.cpp tests.cpp ../xmodem.cpp ${DEFINES} -DSLAVE -o /tmp/slave
 
 XTERM_OPTIONS="-fa 'Monospace' -fs 14 "
 

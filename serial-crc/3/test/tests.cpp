@@ -7,9 +7,9 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+using namespace std;
 
 #include "tests.h"
-using namespace std;
 
 long long timeInMilliseconds(void);
 void serial_write(int ch);
@@ -150,10 +150,12 @@ class XM_ShouldSucceed : public XMTestBase
 public:
     static void MasterAction(alter_rule *alter_rules)
     {
+        Xmodem xmodem(serial_read, tweak_write);
         send_index = 0;
+
         LOGLN("Sending...");
         fillBuffer(buffer, BUFFER_SIZE);
-        int ret = xmodemTransmit(buffer, BUFFER_SIZE, tweak_write, serial_read);
+        int ret = xmodem.transmit(buffer, BUFFER_SIZE);
         LOG("Transmit result: ");
         LOGLN(ret);
         if (ret < 0)
@@ -164,8 +166,10 @@ public:
 
     static void SlaveAction()
     {
+        Xmodem xmodem(serial_read, serial_write);
+
         LOGLN("Receiving...");
-        int ret = xmodemReceive(buffer, BUFFER_SIZE, serial_write, serial_read);
+        int ret = xmodem.receive(buffer, BUFFER_SIZE);
         LOG("Receive result: ");
         LOGLN(ret);
         if (ret < 0)
