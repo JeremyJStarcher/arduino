@@ -43,9 +43,12 @@ class Xmodem
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
 	int receive(unsigned char *dest, int destsz);
-	int transmit(unsigned char *src, int srcsz);
+	int transmit(unsigned char *src, size_t srcsz);
+	void accumulateCrc(unsigned char ch);
 
 private:
+	unsigned short packetCrc;
+	unsigned char packetChecksome;
 	bool useCrc = false;
 	void (*serial_write)(int ch);
 	int (*serial_read)(long int ms);

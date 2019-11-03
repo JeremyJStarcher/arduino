@@ -74,6 +74,21 @@ Xmodem::Xmodem(
 	this->serial_write = _serial_write;
 }
 
+void Xmodem::accumulateCrc(unsigned char ch)
+{
+	int i;
+	this->packetCrc ^= ch << 8;
+	for (i = 0; i < 8; ++i)
+	{
+		if (this->packetCrc & 0x8000)
+			this->packetCrc = (this->packetCrc << 1) ^ 0x1021;
+		else
+			this->packetCrc = this->packetCrc << 1;
+	}
+
+	this->packetChecksome += ch;
+}
+
 unsigned short crc16_ccitt(const unsigned char *buf, int len)
 {
 	unsigned short crc = 0;
@@ -222,6 +237,9 @@ int Xmodem::receive(
 			useCrc = true;
 		}
 
+		this->packetChecksome = 0;
+		this->packetCrc = 0;
+
 		trychar = 0;
 		p = xbuff;
 		*p++ = c;
@@ -296,9 +314,9 @@ int Xmodem::receive(
 	}
 }
 
-int Xmodem::transmit(unsigned char *src, int srcsz)
+int Xmodem::transmit(unsigned char *src, size_t srcsz)
 {
-	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
+	// unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	int bufsz;
 	unsigned char packetno = 1;
 	int i, c, len = 0;
@@ -365,42 +383,15 @@ int Xmodem::transmit(unsigned char *src, int srcsz)
 			fprintf(logFile, "Preparing %d\n", packetno);
 #endif
 
-			xbuff[0] = SOH;
 			bufsz = 128;
-			xbuff[1] = packetno;
-			xbuff[2] = ~packetno;
 			c = srcsz - len;
 			if (c > bufsz)
+			{
 				c = bufsz;
+			}
+
 			if (c >= 0)
 			{
-				memset(&xbuff[3], 0, bufsz);
-				if (c == 0)
-				{
-					xbuff[3] = CTRLZ;
-				}
-				else
-				{
-					memcpy(&xbuff[3], &src[len], c);
-					if (c < bufsz)
-						xbuff[3 + c] = CTRLZ;
-				}
-				if (this->useCrc)
-				{
-					unsigned short ccrc = crc16_ccitt(&xbuff[3], bufsz);
-					xbuff[bufsz + 3] = (ccrc >> 8) & 0xFF;
-					xbuff[bufsz + 4] = ccrc & 0xFF;
-				}
-				else
-				{
-					unsigned char ccks = 0;
-					for (i = 3; i < bufsz + 3; ++i)
-					{
-						ccks += xbuff[i];
-					}
-					xbuff[bufsz + 3] = ccks;
-				}
-
 				for (retry = 0; retry < MAXRETRANS; ++retry)
 				{
 					LOG("Transmitting packet ");
@@ -408,12 +399,34 @@ int Xmodem::transmit(unsigned char *src, int srcsz)
 
 					// fprintf(logFile, "Transmitting %d\n", packetno);
 
-					for (i = 0; i < bufsz + 4 + (this->useCrc ? 1 : 0); ++i)
+					(*serial_write)(SOH);
+					(*serial_write)(packetno);
+					(*serial_write)((unsigned char)(~packetno));
+
+					this->packetChecksome = 0;
+					this->packetCrc = 0;
+
+					for (i = 0; i < bufsz; ++i)
 					{
 #if WRITE_LOG
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
 #endif
-						(*serial_write)(xbuff[i]);
+						size_t indx = len + i;
+
+						unsigned char ch = (indx < srcsz) ? src[indx] : CTRLZ;
+
+						(*serial_write)(ch);
+						this->accumulateCrc(ch);
+					}
+
+					if (this->useCrc)
+					{
+						(*serial_write)((this->packetCrc & 0xFF00) >> 8);
+						(*serial_write)(this->packetCrc & 0xFF);
+					}
+					else
+					{
+						(*serial_write)(this->packetChecksome);
 					}
 
 					if ((c = serial_read(DELAY_LONG)) >= 0)
