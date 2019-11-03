@@ -34,6 +34,12 @@
 
  */
 
+
+#define LOG(x) cout << x
+#define LOGLN(x) \
+    cout << x;   \
+    cout << "\n"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -237,14 +243,29 @@ int Xmodem::receive(
 			useCrc = true;
 		}
 
-		this->packetChecksome = 0;
-		this->packetCrc = 0;
-
 		trychar = 0;
 		p = xbuff;
 		*p++ = c;
 
-		for (i = 0; i < (bufsz + (useCrc ? 1 : 0) + 3); ++i)
+		this->packetChecksome = 0;
+		this->packetCrc = 0;
+
+		unsigned char incomingPacketNumber;
+		unsigned char incomingPacketNumber2;
+		unsigned short incomingCrc;
+		unsigned char incomingChecksome;
+
+		incomingPacketNumber = serial_read(DELAY_1000);
+		*p++ = incomingPacketNumber;
+		if (c == -1)
+			goto reject;
+
+		incomingPacketNumber2 = serial_read(DELAY_1000);
+		*p++ = incomingPacketNumber2;
+		if (c == -1)
+			goto reject;
+
+		for (i = 0; i < (bufsz + (useCrc ? 2 : 1)); ++i)
 		{
 #if WRITE_LOG
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
@@ -262,8 +283,8 @@ int Xmodem::receive(
 		fprintf(logFile, "Entire packet read\n");
 #endif
 
-		if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
-			(xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
+		if (incomingPacketNumber == (unsigned char)(~incomingPacketNumber2) &&
+			(incomingPacketNumber == packetno || incomingPacketNumber == (unsigned char)packetno - 1) &&
 			check(useCrc, &xbuff[3], bufsz))
 		{
 #if WRITE_LOG
