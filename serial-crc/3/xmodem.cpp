@@ -34,11 +34,15 @@
 
  */
 
+#define LOG(x) cout << x
+#define LOGLN(x) \
+	cout << x;   \
+	cout << "\n"
 
 #define LOG(x) cout << x
 #define LOGLN(x) \
-    cout << x;   \
-    cout << "\n"
+	cout << x;   \
+	cout << "\n"
 
 #include <stdio.h>
 #include <string.h>
@@ -113,42 +117,6 @@ unsigned short crc16_ccitt(const unsigned char *buf, int len)
 	return crc;
 }
 
-static int check(int crc, const unsigned char *buf, int sz)
-{
-	if (crc)
-	{
-		unsigned short crc = crc16_ccitt(buf, sz);
-		unsigned short tcrc = (buf[sz] << 8) + buf[sz + 1];
-		if (crc == tcrc)
-		{
-#if WRITE_LOG
-			fprintf(logFile, "CRC Check... passed\n");
-#endif
-			return 1;
-		}
-	}
-	else
-	{
-		int i;
-		unsigned char cks = 0;
-		for (i = 0; i < sz; ++i)
-		{
-			cks += buf[i];
-		}
-		if (cks == buf[sz])
-		{
-#if WRITE_LOG
-			fprintf(logFile, "Checksome passed\n");
-#endif
-			return 1;
-		}
-	}
-#if WRITE_LOG
-	fprintf(logFile, "CRC/Checksome failed\n");
-#endif
-	return 0;
-}
-
 static void flushinput(int (*serial_read)(long int ms))
 {
 	unsigned int cnt = 0;
@@ -163,8 +131,6 @@ int Xmodem::receive(
 	unsigned char *dest,
 	int destsz)
 {
-	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
-	unsigned char *p;
 	int bufsz;
 	unsigned char trychar = 'C';
 	unsigned char packetno = 1;
@@ -244,28 +210,26 @@ int Xmodem::receive(
 		}
 
 		trychar = 0;
-		p = xbuff;
-		*p++ = c;
 
 		this->packetChecksome = 0;
 		this->packetCrc = 0;
 
 		unsigned char incomingPacketNumber;
 		unsigned char incomingPacketNumber2;
-		unsigned short incomingCrc;
+		unsigned char incomingCrcHigh;
+		unsigned char incomingCrcLow;
+
 		unsigned char incomingChecksome;
 
 		incomingPacketNumber = serial_read(DELAY_1000);
-		*p++ = incomingPacketNumber;
 		if (c == -1)
 			goto reject;
 
 		incomingPacketNumber2 = serial_read(DELAY_1000);
-		*p++ = incomingPacketNumber2;
 		if (c == -1)
 			goto reject;
 
-		for (i = 0; i < (bufsz + (useCrc ? 2 : 1)); ++i)
+		for (i = 0; i < bufsz; ++i)
 		{
 #if WRITE_LOG
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
@@ -277,55 +241,85 @@ int Xmodem::receive(
 #endif
 				goto reject;
 			}
-			*p++ = c;
+			this->accumulateCrc(c);
+			dest[len + i] = c;
 		}
+
+		if (this->useCrc)
+		{
+			incomingCrcHigh = serial_read(DELAY_1000);
+			if (c == -1)
+				goto reject;
+			incomingCrcLow = serial_read(DELAY_1000);
+			if (c == -1)
+				goto reject;
+		}
+		else
+		{
+			incomingChecksome = serial_read(DELAY_1000);
+			if (c == -1)
+				goto reject;
+		}
+
 #if WRITE_LOG
 		fprintf(logFile, "Entire packet read\n");
 #endif
+		if (incomingPacketNumber != (unsigned char)(~incomingPacketNumber2))
+			goto reject;
 
-		if (incomingPacketNumber == (unsigned char)(~incomingPacketNumber2) &&
-			(incomingPacketNumber == packetno || incomingPacketNumber == (unsigned char)packetno - 1) &&
-			check(useCrc, &xbuff[3], bufsz))
+		if (!(incomingPacketNumber == packetno || incomingPacketNumber == (unsigned char)packetno - 1))
+			goto reject;
+
+		if (this->useCrc)
+		{
+			unsigned short crc = (incomingCrcHigh * 256) + incomingCrcLow;
+			if (crc != this->packetCrc)
+				goto reject;
+		}
+		else
+		{
+			if (incomingChecksome != this->packetChecksome)
+				goto reject;
+		}
+
+#if WRITE_LOG
+		fprintf(logFile, "Passed check #1\n");
+#endif
+
+		if (incomingPacketNumber == packetno)
 		{
 #if WRITE_LOG
-			fprintf(logFile, "Passed check #1\n");
+			fprintf(logFile, "Passed check #2\n");
 #endif
-
-			if (xbuff[1] == packetno)
+			register int count = destsz - len;
+			if (count > bufsz)
+				count = bufsz;
+			if (count > 0)
 			{
-#if WRITE_LOG
-				fprintf(logFile, "Passed check #2\n");
-#endif
-				register int count = destsz - len;
-				if (count > bufsz)
-					count = bufsz;
-				if (count > 0)
-				{
-					memcpy(&dest[len], &xbuff[3], count);
-					len += count;
-				}
-				++packetno;
-				retrans = MAXRETRANS + 1;
+				len += count;
 			}
-#if WRITE_LOG
-			fprintf(logFile, "Retries left %d\n", retrans);
-#endif
-
-			if (--retrans <= 0)
-			{
-				flushinput(serial_read);
-				(*serial_write)(CAN);
-				(*serial_write)(CAN);
-				(*serial_write)(CAN);
-				return -3; /* too many retry error */
-			}
-#if WRITE_LOG
-			fprintf(logFile, "Packet accepted\n");
-#endif
-
-			(*serial_write)(ACK);
-			continue;
+			++packetno;
+			retrans = MAXRETRANS + 1;
 		}
+#if WRITE_LOG
+		fprintf(logFile, "Retries left %d\n", retrans);
+#endif
+
+		if (--retrans <= 0)
+		{
+			flushinput(serial_read);
+			(*serial_write)(CAN);
+			(*serial_write)(CAN);
+			(*serial_write)(CAN);
+			return -3; /* too many retry error */
+		}
+#if WRITE_LOG
+		fprintf(logFile, "Packet accepted\n");
+#endif
+
+		(*serial_write)(ACK);
+		continue;
+
 	reject:
 #if WRITE_LOG
 		fprintf(logFile, "Packet rejected\n");
@@ -337,7 +331,6 @@ int Xmodem::receive(
 
 int Xmodem::transmit(unsigned char *src, size_t srcsz)
 {
-	// unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	int bufsz;
 	unsigned char packetno = 1;
 	int i, c, len = 0;
