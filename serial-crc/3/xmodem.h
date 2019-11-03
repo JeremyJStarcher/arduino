@@ -36,6 +36,8 @@
 
 #ifndef SERIAL_CRC_H
 #define SERIAL_CRC_H
+#include <stdbool.h>
+
 class Xmodem
 {
 public:
@@ -44,6 +46,7 @@ public:
 	int transmit(unsigned char *src, int srcsz);
 
 private:
+	bool useCrc = false;
 	void (*serial_write)(int ch);
 	int (*serial_read)(long int ms);
 };

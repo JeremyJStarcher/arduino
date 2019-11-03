@@ -36,6 +36,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+
 #include <iostream>
 
 using namespace std;
@@ -142,7 +144,7 @@ int Xmodem::receive(
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
 	unsigned char *p;
-	int bufsz, crc = 0;
+	int bufsz;
 	unsigned char trychar = 'C';
 	unsigned char packetno = 1;
 	int i, c, len = 0;
@@ -217,13 +219,14 @@ int Xmodem::receive(
 
 		if (trychar == 'C')
 		{
-			crc = 1;
+			useCrc = true;
 		}
+
 		trychar = 0;
 		p = xbuff;
 		*p++ = c;
 
-		for (i = 0; i < (bufsz + (crc ? 1 : 0) + 3); ++i)
+		for (i = 0; i < (bufsz + (useCrc ? 1 : 0) + 3); ++i)
 		{
 #if WRITE_LOG
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
@@ -243,7 +246,7 @@ int Xmodem::receive(
 
 		if (xbuff[1] == (unsigned char)(~xbuff[2]) &&
 			(xbuff[1] == packetno || xbuff[1] == (unsigned char)packetno - 1) &&
-			check(crc, &xbuff[3], bufsz))
+			check(useCrc, &xbuff[3], bufsz))
 		{
 #if WRITE_LOG
 			fprintf(logFile, "Passed check #1\n");
@@ -296,7 +299,7 @@ int Xmodem::receive(
 int Xmodem::transmit(unsigned char *src, int srcsz)
 {
 	unsigned char xbuff[1030]; /* 1024 for XModem 1k + 3 head chars + 2 crc + nul */
-	int bufsz, crc = -1;
+	int bufsz;
 	unsigned char packetno = 1;
 	int i, c, len = 0;
 	int retry;
@@ -325,10 +328,10 @@ int Xmodem::transmit(unsigned char *src, int srcsz)
 				switch (c)
 				{
 				case 'C':
-					crc = 1;
+					this->useCrc = true;
 					goto start_trans;
 				case NAK:
-					crc = 0;
+					this->useCrc = false;
 					goto start_trans;
 				case CAN:
 					if ((c = serial_read(DELAY_1000)) == CAN)
@@ -382,7 +385,7 @@ int Xmodem::transmit(unsigned char *src, int srcsz)
 					if (c < bufsz)
 						xbuff[3 + c] = CTRLZ;
 				}
-				if (crc)
+				if (this->useCrc)
 				{
 					unsigned short ccrc = crc16_ccitt(&xbuff[3], bufsz);
 					xbuff[bufsz + 3] = (ccrc >> 8) & 0xFF;
@@ -405,7 +408,7 @@ int Xmodem::transmit(unsigned char *src, int srcsz)
 
 					// fprintf(logFile, "Transmitting %d\n", packetno);
 
-					for (i = 0; i < bufsz + 4 + (crc ? 1 : 0); ++i)
+					for (i = 0; i < bufsz + 4 + (this->useCrc ? 1 : 0); ++i)
 					{
 #if WRITE_LOG
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
