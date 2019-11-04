@@ -1,4 +1,4 @@
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 2048
 static unsigned char buffer[BUFFER_SIZE];
 
 #include "./util.h"
@@ -70,16 +70,18 @@ void setup()
   initSerial(Serial1);
   Serial.println("External serial line clear");
 
-
   isPassing = true;
   test();
 
-  if (isPassing) {
+  if (isPassing)
+  {
     Serial.println("--------------------------------------------------");
     Serial.println("                  SUCCESS!!!                      ");
-    Serial.println("--------------------------------------------------");    
+    Serial.println("--------------------------------------------------");
     blinkSuccess();
-  } else {
+  }
+  else
+  {
     Serial.println("--------------------------------------------------");
     Serial.println("                    Failure                       ");
     Serial.println("--------------------------------------------------");
@@ -92,48 +94,72 @@ void loop()
   // put your main code here, to run repeatedly:
 }
 
-bool compareBuffer(char *buffer, size_t s)
+bool compareBuffer(unsigned char *buffer, size_t s)
 {
-  Serial.print("compareBuffer size: ");
-  Serial.println(s);
-
   for (size_t i = 0; i < s; i++)
   {
     int actual = buffer[i];
     int expected = getBufferByte(i);
 
-    if (actual != expected) {
-      Serial.print("idx ");
-      Serial.print(i);
-      Serial.print("\tActual: ");
-      Serial.print(actual);
-      Serial.print("\tExpected: ");
-      Serial.print(expected);
-      Serial.println("");
-
+    if (actual != expected)
+    {
       return false;
     }
   }
-  Serial.println("Compare buffer passed.");
   return true;
+}
+
+int serial_read(long int ms)
+{
+  const long long t = millis() + ms;
+  int ch;
+  while (1)
+  {
+    ch = Serial1.read();
+    if (ch >= 0)
+    {
+      Serial.print("(read ");
+      Serial.print(ch);
+      Serial.println(") ");
+      return ch;
+    }
+
+    if (millis() > t)
+    {
+      return -1;
+    }
+  }
+}
+
+void serial_write(int ch)
+{
+  Serial1.write(ch);
+  Serial.print("(write ");
+  Serial.print(ch);
+  Serial.println(") ");
+  delay(10);
 }
 
 void test()
 {
-  if(!isPassing) {
+  if (!isPassing)
+  {
     return;
   }
-  
+
   waitForSync();
+
+  Xmodem xmodem(serial_read, serial_write);
 
   if (isBoardMaster)
   {
     Serial.println("Sending...");
     fillBuffer(buffer, BUFFER_SIZE);
-    int ret = xmodemTransmit(buffer, BUFFER_SIZE);
+    int ret = xmodem.transmit(buffer, BUFFER_SIZE);
     Serial.print("Transmit result: ");
     Serial.println(ret);
-    if (ret < 0) {
+    if (ret < 0)
+    {
       isPassing = false;
     }
   }
@@ -141,14 +167,16 @@ void test()
   if (!isBoardMaster)
   {
     Serial.println("Receiving...");
-    int ret = xmodemReceive(buffer, BUFFER_SIZE);
+    int ret = xmodem.receive(buffer, BUFFER_SIZE);
     Serial.print("Receive result: ");
     Serial.println(ret);
-    if (ret < 0) {
+    if (ret < 0)
+    {
       isPassing = false;
     }
 
-    if (!compareBuffer(buffer, BUFFER_SIZE)) {
+    if (!compareBuffer(buffer, BUFFER_SIZE))
+    {
       Serial.println("Buffer compare failed");
       isPassing = false;
     }

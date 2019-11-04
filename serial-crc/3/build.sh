@@ -1,7 +1,8 @@
 killall minicom
 
-SLAVE_DEVICE=/dev/tty2yyACM0
-MASTER_DEVICE=/dev/ttyUSB0
+MASTER_DEVICE=/dev/ttyACM0
+SLAVE_DEVICE=/dev/ttyACM1
+
 UPLOAD_FLAGS="--verify --verbose"
 DEFINES=
 arduino-cli compile --fqbn arduino:avr:mega `pwd`
