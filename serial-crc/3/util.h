@@ -13,9 +13,9 @@ const int masterSelectPin = A2;
 const int clearToSendPin = 7;
 const int requestToSendPin = 6;
 
-char getBufferByte(size_t idx)
+unsigned char getBufferByte(size_t idx)
 {
-  return idx & 0xFF;
+  return idx % 13;
 }
 
 void fillBuffer(char *buffer, size_t s)

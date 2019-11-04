@@ -253,7 +253,11 @@ int Xmodem::receive(
 				goto reject;
 			}
 			this->accumulateCrc(c);
-			dest[len + i] = c;
+			size_t p = len + i;
+			if (p < destsz)
+			{
+				dest[p] = c;
+			}
 		}
 
 		if (this->useCrc)

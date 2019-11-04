@@ -1,4 +1,4 @@
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 2000
 static unsigned char buffer[BUFFER_SIZE];
 
 #include "./util.h"
@@ -103,6 +103,13 @@ bool compareBuffer(unsigned char *buffer, size_t s)
 
     if (actual != expected)
     {
+      Serial.print("COMPARE FAILURE AT POSITION ");
+      Serial.print(i);
+      Serial.print(" Expected ");
+      Serial.print(expected);
+      Serial.print(" actual ");
+      Serial.println(actual);
+
       return false;
     }
   }
@@ -118,9 +125,9 @@ int serial_read(long int ms)
     ch = Serial1.read();
     if (ch >= 0)
     {
-      Serial.print("(read ");
-      Serial.print(ch);
-      Serial.println(") ");
+      //Serial.print("(read ");
+      //Serial.print(ch);
+      //Serial.println(") ");
       return ch;
     }
 
@@ -133,10 +140,10 @@ int serial_read(long int ms)
 
 void serial_write(int ch)
 {
+  //Serial.print("(write ");
+  //Serial.print(ch);
+  //Serial.println(") ");
   Serial1.write(ch);
-  Serial.print("(write ");
-  Serial.print(ch);
-  Serial.println(") ");
   delay(10);
 }
 
