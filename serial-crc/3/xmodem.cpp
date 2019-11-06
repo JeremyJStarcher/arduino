@@ -34,6 +34,13 @@
 
 */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+using namespace std;
+
+#include "xmodem.h"
 
 #ifndef XMODEM_CRC_FAST
 #ifndef XMODEM_CRC_SLOW
@@ -42,9 +49,9 @@
 #endif
 
 
-#define XMODEM_LOG_NULL 0
-#define XMODEM_LOG_IOSTREAM 0
-#define XMODEM_LOG_SERIAL0 1
+// #define XMODEM_LOG_IOSTREAM 0
+
+
 
 #if XMODEM_LOG_SERIAL0
 #include <Arduino.h>
@@ -72,14 +79,6 @@
 	cout << x;   \
 	cout << "\n"
 #endif
-
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-
-using namespace std;
-
-#include "xmodem.h"
 
 //enum class XMODEM_SIGNALS : unsigned char
 //{

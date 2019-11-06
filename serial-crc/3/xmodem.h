@@ -53,4 +53,13 @@ private:
 	void (*serial_write)(int ch);
 	int (*serial_read)(long int ms);
 };
+
+#ifndef XMODEM_LOG_NULL
+#ifndef XMODEM_LOG_IOSTREAM
+#ifndef XMODEM_LOG_SERIAL0
+#define XMODEM_LOG_NULL 1
+#endif
+#endif
+#endif
+
 #endif
