@@ -77,11 +77,6 @@ using namespace std;
 	cout << "\n"
 #endif
 
-//enum class XMODEM_SIGNALS : unsigned char
-//{
-//  SOH = 0x01
-//};
-
 #define SOH 0x01
 #define STX 0x02
 #define EOT 0x04
@@ -176,7 +171,7 @@ static void flushinput(int (*serial_read)(long int ms))
 #endif
 }
 
-int Xmodem::receive(
+XMODEM_ERRORS Xmodem::receive(
 	unsigned char *dest,
 	xmodem_t destsz)
 {
@@ -218,14 +213,14 @@ int Xmodem::receive(
 					LOGLN("RECIEVED EOT");
 					flushinput(serial_read);
 					(*serial_write)(ACK);
-					return this->packetOffset; /* normal end */
+					return XMODEM_ERRORS::NONE;
 				case CAN:
 					LOGLN("RECIEVED CAN");
 					if ((c = serial_read(DELAY_1000)) == CAN)
 					{
 						flushinput(serial_read);
 						(*serial_write)(ACK);
-						return -1; /* canceled by remote */
+						return XMODEM_ERRORS::CANCELED_BY_REMOTE;
 					}
 					break;
 				default:
@@ -248,7 +243,7 @@ int Xmodem::receive(
 		(*serial_write)(CAN);
 		(*serial_write)(CAN);
 		(*serial_write)(CAN);
-		return -2; /* sync error */
+		return XMODEM_ERRORS::SYNC_ERROR;
 
 	start_recv:
 		LOG("Receiving packet ");
@@ -401,7 +396,7 @@ int Xmodem::receive(
 			(*serial_write)(CAN);
 			(*serial_write)(CAN);
 			(*serial_write)(CAN);
-			return -3; /* too many retry error */
+			return XMODEM_ERRORS::TOO_MANY_RETRIES;
 		}
 #if WRITE_LOG
 		fprintf(logFile, "Packet accepted\n");
@@ -421,7 +416,7 @@ int Xmodem::receive(
 	}
 }
 
-int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
+XMODEM_ERRORS Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 {
 	int bufsz;
 	unsigned char packetno = 1;
@@ -466,7 +461,7 @@ int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 					{
 						(*serial_write)(ACK);
 						flushinput(serial_read);
-						return -1; /* canceled by remote */
+						return XMODEM_ERRORS::CANCELED_BY_REMOTE;
 					}
 					break;
 				default:
@@ -481,7 +476,7 @@ int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 		(*serial_write)(CAN);
 		(*serial_write)(CAN);
 		flushinput(serial_read);
-		return -2; /* no sync */
+		return XMODEM_ERRORS::SYNC_ERROR;
 
 		for (;;)
 		{
@@ -558,7 +553,7 @@ int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 							{
 								(*serial_write)(ACK);
 								flushinput(serial_read);
-								return -1; /* canceled by remote */
+								return XMODEM_ERRORS::CANCELED_BY_REMOTE;
 							}
 							break;
 						case NAK:
@@ -578,7 +573,7 @@ int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 				(*serial_write)(CAN);
 				(*serial_write)(CAN);
 				flushinput(serial_read);
-				return -4; /* xmit error */
+				return XMODEM_ERRORS::TRANSMIT_ERROR;
 			}
 			else
 			{
@@ -600,7 +595,7 @@ int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 					}
 				}
 				flushinput(serial_read);
-				return (c == ACK) ? this->packetOffset : -5;
+				return (c == ACK) ? XMODEM_ERRORS::NONE : XMODEM_ERRORS::NO_EOT_REPLY;
 			}
 		}
 	}

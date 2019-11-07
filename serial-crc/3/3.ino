@@ -1,7 +1,7 @@
 #define BUFFER_SIZE 2000
 static unsigned char buffer[BUFFER_SIZE];
 
-#include "./util.h"
+#include "util.h"
 
 #include "xmodem.h"
 
@@ -163,10 +163,10 @@ void test()
   {
     Serial.println("Sending...");
     fillBuffer(buffer, BUFFER_SIZE);
-    int ret = xmodem.transmit(buffer, BUFFER_SIZE);
+    XMODEM_ERRORS ret = xmodem.transmit(buffer, BUFFER_SIZE);
     Serial.print("Transmit result: ");
-    Serial.println(ret);
-    if (ret < 0)
+    //Serial.println(ret);
+    if (ret != XMODEM_ERRORS::NONE)
     {
       isPassing = false;
     }
@@ -175,10 +175,10 @@ void test()
   if (!isBoardMaster)
   {
     Serial.println("Receiving...");
-    int ret = xmodem.receive(buffer, BUFFER_SIZE);
+    XMODEM_ERRORS ret = xmodem.receive(buffer, BUFFER_SIZE);
     Serial.print("Receive result: ");
-    Serial.println(ret);
-    if (ret < 0)
+    //Serial.println(ret);
+    if (ret != XMODEM_ERRORS::NONE)
     {
       isPassing = false;
     }

@@ -38,13 +38,25 @@
 #define SERIAL_CRC_H
 #include <stdbool.h>
 
+
+enum class XMODEM_ERRORS : signed char
+{
+	NONE = 0,
+	CANCELED_BY_REMOTE = -1,
+	SYNC_ERROR = -2,
+	TOO_MANY_RETRIES = -3,
+	TRANSMIT_ERROR = -4,
+	NO_EOT_REPLY = -5,
+};
+
+
 typedef unsigned long xmodem_t;
 class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
-	int receive(unsigned char *dest, xmodem_t destsz);
-	int transmit(unsigned char *src, xmodem_t srcsz);
+	XMODEM_ERRORS receive(unsigned char *dest, xmodem_t destsz);
+	XMODEM_ERRORS transmit(unsigned char *src, xmodem_t srcsz);
 	void accumulateCrc(unsigned char ch);
 
 private:
