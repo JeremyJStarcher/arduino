@@ -48,10 +48,7 @@ using namespace std;
 #endif
 #endif
 
-
 // #define XMODEM_LOG_IOSTREAM 0
-
-
 
 #if XMODEM_LOG_SERIAL0
 #include <Arduino.h>
@@ -181,13 +178,15 @@ static void flushinput(int (*serial_read)(long int ms))
 
 int Xmodem::receive(
 	unsigned char *dest,
-	int destsz)
+	xmodem_t destsz)
 {
 	int bufsz;
 	unsigned char trychar = 'C';
 	unsigned char packetno = 1;
-	int i, c, len = 0;
+	int i, c;
 	int retry, retrans = MAXRETRANS;
+	this->packetCrc = 0;
+	this->packetOffset = 0;
 
 	for (;;)
 	{
@@ -219,7 +218,7 @@ int Xmodem::receive(
 					LOGLN("RECIEVED EOT");
 					flushinput(serial_read);
 					(*serial_write)(ACK);
-					return len; /* normal end */
+					return this->packetOffset; /* normal end */
 				case CAN:
 					LOGLN("RECIEVED CAN");
 					if ((c = serial_read(DELAY_1000)) == CAN)
@@ -305,7 +304,7 @@ int Xmodem::receive(
 				goto reject;
 			}
 			this->accumulateCrc(c);
-			size_t p = len + i;
+			xmodem_t p = this->packetOffset + i;
 			if (p < destsz)
 			{
 				dest[p] = c;
@@ -382,12 +381,12 @@ int Xmodem::receive(
 #if WRITE_LOG
 			fprintf(logFile, "Passed check #2\n");
 #endif
-			register int count = destsz - len;
+			register int count = destsz - this->packetOffset;
 			if (count > bufsz)
 				count = bufsz;
 			if (count > 0)
 			{
-				len += count;
+				this->packetOffset += count;
 			}
 			++packetno;
 			retrans = MAXRETRANS + 1;
@@ -422,12 +421,13 @@ int Xmodem::receive(
 	}
 }
 
-int Xmodem::transmit(unsigned char *src, size_t srcsz)
+int Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 {
 	int bufsz;
 	unsigned char packetno = 1;
-	int i, c, len = 0;
+	int i, c;
 	int retry;
+	this->packetOffset = 0;
 
 	for (;;)
 	{
@@ -494,7 +494,7 @@ int Xmodem::transmit(unsigned char *src, size_t srcsz)
 #endif
 
 			bufsz = 128;
-			c = srcsz - len;
+			c = srcsz - this->packetOffset;
 			if (c > bufsz)
 			{
 				c = bufsz;
@@ -521,7 +521,7 @@ int Xmodem::transmit(unsigned char *src, size_t srcsz)
 #if WRITE_LOG
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
 #endif
-						size_t indx = len + i;
+						xmodem_t indx = this->packetOffset + i;
 
 						unsigned char ch = (indx < srcsz) ? src[indx] : CTRLZ;
 
@@ -550,7 +550,7 @@ int Xmodem::transmit(unsigned char *src, size_t srcsz)
 						case ACK:
 							LOGLN("RECIEVER SENT ACK");
 							++packetno;
-							len += bufsz;
+							this->packetOffset += bufsz;
 							goto start_trans;
 						case CAN:
 							LOGLN("RECIEVER SENT CAN");
@@ -600,7 +600,7 @@ int Xmodem::transmit(unsigned char *src, size_t srcsz)
 					}
 				}
 				flushinput(serial_read);
-				return (c == ACK) ? len : -5;
+				return (c == ACK) ? this->packetOffset : -5;
 			}
 		}
 	}

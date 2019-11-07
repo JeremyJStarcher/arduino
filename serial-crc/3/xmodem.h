@@ -38,15 +38,17 @@
 #define SERIAL_CRC_H
 #include <stdbool.h>
 
+typedef unsigned long xmodem_t;
 class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
-	int receive(unsigned char *dest, int destsz);
-	int transmit(unsigned char *src, size_t srcsz);
+	int receive(unsigned char *dest, xmodem_t destsz);
+	int transmit(unsigned char *src, xmodem_t srcsz);
 	void accumulateCrc(unsigned char ch);
 
 private:
+	xmodem_t packetOffset;
 	unsigned short packetCrc;
 	unsigned char packetChecksome;
 	bool useCrc = false;
