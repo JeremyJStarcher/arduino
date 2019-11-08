@@ -54,6 +54,7 @@ class Xmodem
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
 	XMODEM_ERRORS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
+	XMODEM_ERRORS receiveCharacterMode(void (*put_char)(xmodem_t pos, unsigned char ch));
 	XMODEM_ERRORS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
 	XMODEM_ERRORS transmitCharacterMode(int (*get_char)(xmodem_t pos));
 

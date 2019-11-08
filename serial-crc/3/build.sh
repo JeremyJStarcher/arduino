@@ -1,7 +1,7 @@
 killall minicom
 
-MASTER_DEVICE=/dev/ttyACM0
-SLAVE_DEVICE=/dev/ttyACM1
+MASTER_DEVICE=/dev/ttyACM1
+SLAVE_DEVICE=/dev/ttyACM2
 
 UPLOAD_FLAGS="--verify --verbose"
 DEFINES=
@@ -16,5 +16,5 @@ arduino-cli upload --port ${MASTER_DEVICE} --fqbn arduino:avr:mega `pwd` ${UPLOA
 rm *.elf
 rm *.hex
 
-minicom --device ${MASTER_DEVICE} --baud 9600  --capturefile /tmp/master.cap
-#minicom --device ${SLAVE_DEVICE} --baud 9600 --capturefile /tmp/slave.cap
+#minicom --device ${MASTER_DEVICE} --baud 9600  --capturefile /tmp/master.cap
+minicom --device ${SLAVE_DEVICE} --baud 9600 --capturefile /tmp/slave.cap

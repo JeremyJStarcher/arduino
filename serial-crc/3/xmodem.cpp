@@ -109,6 +109,14 @@ int getCharFromBuf(xmodem_t pos)
 	}
 }
 
+int putCharInBuf(xmodem_t pos, unsigned char ch)
+{
+	if (pos < xbufsz)
+	{
+		xbuf[pos] = ch;
+	}
+}
+
 static void flushinput(int (*serial_read)(long int ms))
 {
 	unsigned int cnt = 0;
@@ -189,6 +197,15 @@ void Xmodem::accumulateCrc(unsigned char ch)
 XMODEM_ERRORS Xmodem::receiveFullBuffer(
 	unsigned char *dest,
 	xmodem_t destsz)
+{
+	xbuf = dest;
+	xbufsz = destsz;
+
+	return receiveCharacterMode(putCharInBuf);
+}
+
+XMODEM_ERRORS Xmodem::receiveCharacterMode(
+	void (*put_char)(xmodem_t pos, unsigned char ch))
 {
 	int bufsz;
 	unsigned char trychar = 'C';
@@ -315,10 +332,7 @@ XMODEM_ERRORS Xmodem::receiveFullBuffer(
 			}
 			this->accumulateCrc(c);
 			xmodem_t p = this->packetOffset + i;
-			if (p < destsz)
-			{
-				dest[p] = c;
-			}
+			(*put_char)(p, c);
 		}
 
 		if (this->useCrc)
@@ -391,13 +405,7 @@ XMODEM_ERRORS Xmodem::receiveFullBuffer(
 #if WRITE_LOG
 			fprintf(logFile, "Passed check #2\n");
 #endif
-			register int count = destsz - this->packetOffset;
-			if (count > bufsz)
-				count = bufsz;
-			if (count > 0)
-			{
-				this->packetOffset += count;
-			}
+			this->packetOffset += bufsz;
 			++packetno;
 			retrans = MAXRETRANS + 1;
 		}
