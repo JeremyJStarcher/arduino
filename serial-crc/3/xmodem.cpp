@@ -42,6 +42,9 @@ using namespace std;
 
 #include "xmodem.h"
 
+unsigned char *xbuf;
+size_t xbufsz;
+
 #ifndef XMODEM_CRC_FAST
 #ifndef XMODEM_CRC_SLOW
 #define XMODEM_CRC_SLOW 1
@@ -93,6 +96,28 @@ using namespace std;
 #define MAXRETRANS 25
 
 #define WRITE_LOG 0
+
+int getCharFromBuf(xmodem_t pos)
+{
+	if (pos < xbufsz)
+	{
+		return xbuf[pos];
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+static void flushinput(int (*serial_read)(long int ms))
+{
+	unsigned int cnt = 0;
+	while (serial_read(DELAY_1500) >= 0)
+		cnt++;
+#if WRITE_LOG
+	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
+#endif
+}
 
 Xmodem::Xmodem(
 	int (*_serial_read)(long int ms),
@@ -161,17 +186,7 @@ void Xmodem::accumulateCrc(unsigned char ch)
 }
 #endif
 
-static void flushinput(int (*serial_read)(long int ms))
-{
-	unsigned int cnt = 0;
-	while (serial_read(DELAY_1500) >= 0)
-		cnt++;
-#if WRITE_LOG
-	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
-#endif
-}
-
-XMODEM_ERRORS Xmodem::receive(
+XMODEM_ERRORS Xmodem::receiveFullBuffer(
 	unsigned char *dest,
 	xmodem_t destsz)
 {
@@ -416,12 +431,20 @@ XMODEM_ERRORS Xmodem::receive(
 	}
 }
 
-XMODEM_ERRORS Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
+XMODEM_ERRORS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t srcsz)
+{
+	xbufsz = srcsz;
+	xbuf = src;
+	return this->transmitCharacterMode(getCharFromBuf);
+}
+
+XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t pos))
 {
 	int bufsz;
 	unsigned char packetno = 1;
 	int i, c;
 	int retry;
+	bool is_eof = false;
 	this->packetOffset = 0;
 
 	for (;;)
@@ -489,13 +512,8 @@ XMODEM_ERRORS Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 #endif
 
 			bufsz = 128;
-			c = srcsz - this->packetOffset;
-			if (c > bufsz)
-			{
-				c = bufsz;
-			}
 
-			if (c >= 0)
+			if (!is_eof)
 			{
 				for (retry = 0; retry < MAXRETRANS; ++retry)
 				{
@@ -517,8 +535,13 @@ XMODEM_ERRORS Xmodem::transmit(unsigned char *src, xmodem_t srcsz)
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
 #endif
 						xmodem_t indx = this->packetOffset + i;
+						int khar = (*get_char)(indx);
+						if (khar == -1)
+						{
+							is_eof = true;
+						}
 
-						unsigned char ch = (indx < srcsz) ? src[indx] : CTRLZ;
+						unsigned char ch = (khar == -1) ? (CTRLZ) : (unsigned char)khar;
 
 						(*serial_write)(ch);
 						this->accumulateCrc(ch);

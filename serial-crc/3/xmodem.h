@@ -38,7 +38,6 @@
 #define SERIAL_CRC_H
 #include <stdbool.h>
 
-
 enum class XMODEM_ERRORS : signed char
 {
 	NONE = 0,
@@ -49,14 +48,15 @@ enum class XMODEM_ERRORS : signed char
 	NO_EOT_REPLY = -5,
 };
 
-
 typedef unsigned long xmodem_t;
 class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
-	XMODEM_ERRORS receive(unsigned char *dest, xmodem_t destsz);
-	XMODEM_ERRORS transmit(unsigned char *src, xmodem_t srcsz);
+	XMODEM_ERRORS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
+	XMODEM_ERRORS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
+	XMODEM_ERRORS transmitCharacterMode(int (*get_char)(xmodem_t pos));
+
 	void accumulateCrc(unsigned char ch);
 
 private:
@@ -67,6 +67,8 @@ private:
 	void (*serial_write)(int ch);
 	int (*serial_read)(long int ms);
 };
+
+#define XMODEM_LOG_SERIAL0 1
 
 #ifndef XMODEM_LOG_NULL
 #ifndef XMODEM_LOG_IOSTREAM
