@@ -324,7 +324,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		if (trychar == 'C')
 		{
-			useCrc = true;
+			this->useCrc = true;
 		}
 
 		trychar = 0;
