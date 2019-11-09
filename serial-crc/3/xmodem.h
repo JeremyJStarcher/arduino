@@ -37,6 +37,9 @@
 #ifndef SERIAL_CRC_H
 #define SERIAL_CRC_H
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
 
 enum class XMODEM_ERRORS : signed char
 {
@@ -69,8 +72,6 @@ private:
 	int (*serial_read)(long int ms);
 };
 
-#define XMODEM_LOG_SERIAL0 1
-
 #ifndef XMODEM_LOG_NULL
 #ifndef XMODEM_LOG_IOSTREAM
 #ifndef XMODEM_LOG_SERIAL0
@@ -78,13 +79,6 @@ private:
 #endif
 #endif
 #endif
-
-#include <stdio.h>
-#include <string.h>
-
-using namespace std;
-
-#include "xmodem.h"
 
 unsigned char *xbuf;
 size_t xbufsz;
@@ -95,7 +89,7 @@ size_t xbufsz;
 #endif
 #endif
 
-#if XMODEM_LOG_SERIAL0
+#ifdef XMODEM_LOG_SERIAL0
 #include <Arduino.h>
 
 #define LOG(x)              \
@@ -107,12 +101,12 @@ size_t xbufsz;
 
 #endif
 
-#if XMODEM_LOG_NULL
+#ifdef XMODEM_LOG_NULL
 #define LOG(x)
 #define LOGLN(x)
 #endif
 
-#if XMODEM_LOG_IOSTREAM
+#ifdef XMODEM_LOG_IOSTREAM
 
 #include <iostream>
 
