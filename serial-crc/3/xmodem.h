@@ -56,9 +56,9 @@ class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
-	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
+	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t dest_size);
 	XMODEM_TRANSFER_STATUS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch));
-	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
+	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srch);
 	XMODEM_TRANSFER_STATUS transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i));
 
 	void accumulateCrc(unsigned char ch);
@@ -80,8 +80,6 @@ private:
 #endif
 #endif
 
-unsigned char *xbuf;
-size_t xbufsz;
 
 #ifndef XMODEM_CRC_FAST
 #ifndef XMODEM_CRC_SLOW
@@ -131,12 +129,15 @@ size_t xbufsz;
 
 #define MAXRETRANS 25
 
+unsigned char *xmodemBuffer;
+size_t xmodemBuffer_size;
+
 int getCharFromBuf(xmodem_t offset, xmodem_t i)
 {
 	xmodem_t pos = offset + i;
-	 if (pos < xbufsz)
+	 if (pos < xmodemBuffer_size)
 	{
-		return xbuf[pos];
+		return xmodemBuffer[pos];
 	}
 	else
 	{
@@ -147,9 +148,9 @@ int getCharFromBuf(xmodem_t offset, xmodem_t i)
 int putCharInBuf(xmodem_t offset, xmodem_t i, unsigned char ch)
 {
 	xmodem_t pos = offset + i;
-	if (pos < xbufsz)
+	if (pos < xmodemBuffer_size)
 	{
-		xbuf[pos] = ch;
+		xmodemBuffer[pos] = ch;
 	}
 }
 
@@ -232,10 +233,10 @@ void Xmodem::accumulateCrc(unsigned char ch)
 
 XMODEM_TRANSFER_STATUS Xmodem::receiveFullBuffer(
 	unsigned char *dest,
-	xmodem_t destsz)
+	xmodem_t dest_size)
 {
-	xbuf = dest;
-	xbufsz = destsz;
+	xmodemBuffer = dest;
+	xmodemBuffer_size = dest_size;
 
 	return receiveCharacterMode(putCharInBuf);
 }
@@ -243,7 +244,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveFullBuffer(
 XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch))
 {
-	int bufsz;
+	int buffer_size;
 	unsigned char trychar = 'C';
 	unsigned char packetno = 1;
 	int i, c;
@@ -271,11 +272,11 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				{
 				case XMODEM_SOH:
 					LOGLN("RECIEVED XMODEM_SOH (128 byte buffer start)");
-					bufsz = 128;
+					buffer_size = 128;
 					goto start_recv;
 				case XMODEM_STX:
 					LOGLN("RECIEVED XMODEM_STX (1024 byte buffer start)");
-					bufsz = 1024;
+					buffer_size = 1024;
 					goto start_recv;
 				case XMODEM_EOT:
 					LOGLN("RECIEVED XMODEM_EOT");
@@ -353,7 +354,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			goto reject;
 		}
 
-		for (i = 0; i < bufsz; ++i)
+		for (i = 0; i < buffer_size; ++i)
 		{
 #if XMODEM_WRITE_LOG
 			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
@@ -440,7 +441,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 #if XMODEM_WRITE_LOG
 			fprintf(logFile, "Passed check #2\n");
 #endif
-			this->packetOffset += bufsz;
+			this->packetOffset += buffer_size;
 			++packetno;
 			retrans = MAXRETRANS + 1;
 		}
@@ -474,16 +475,16 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	}
 }
 
-XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t srcsz)
+XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t source_size)
 {
-	xbufsz = srcsz;
-	xbuf = src;
+	xmodemBuffer_size = source_size;
+	xmodemBuffer = src;
 	return this->transmitCharacterMode(getCharFromBuf);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i))
 {
-	int bufsz;
+	int buffer_size;
 	unsigned char packetno = 1;
 	int i, c;
 	int retry;
@@ -554,7 +555,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t of
 			fprintf(logFile, "Preparing %d\n", packetno);
 #endif
 
-			bufsz = 128;
+			buffer_size = 128;
 
 			if (!is_eof)
 			{
@@ -572,7 +573,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t of
 					this->packetChecksome = 0;
 					this->packetCrc = 0;
 
-					for (i = 0; i < bufsz; ++i)
+					for (i = 0; i < buffer_size; ++i)
 					{
 #if XMODEM_WRITE_LOG
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
@@ -610,7 +611,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t of
 						case XMODEM_ACK:
 							LOGLN("RECIEVER SENT ACK");
 							++packetno;
-							this->packetOffset += bufsz;
+							this->packetOffset += buffer_size;
 							goto start_trans;
 						case XMODEM_CAN:
 							LOGLN("RECIEVER SENT CAN");
