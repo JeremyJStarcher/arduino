@@ -117,8 +117,10 @@ bool compareBuffer(unsigned char *buffer, size_t s)
   return true;
 }
 
+long kk = 0;
 int serial_read(long int ms)
 {
+
   const long long t = millis() + ms;
   int ch;
   while (1)
@@ -129,6 +131,8 @@ int serial_read(long int ms)
       //Serial.print("(read ");
       //Serial.print(ch);
       //Serial.println(") ");
+      kk += 1;
+      if (kk == 90) continue;
       return ch;
     }
 
