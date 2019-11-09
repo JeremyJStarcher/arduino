@@ -54,9 +54,9 @@ class Xmodem
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
 	XMODEM_ERRORS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
-	XMODEM_ERRORS receiveCharacterMode(void (*put_char)(xmodem_t pos, unsigned char ch));
+	XMODEM_ERRORS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch));
 	XMODEM_ERRORS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
-	XMODEM_ERRORS transmitCharacterMode(int (*get_char)(xmodem_t pos));
+	XMODEM_ERRORS transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i));
 
 	void accumulateCrc(unsigned char ch);
 
@@ -137,10 +137,10 @@ size_t xbufsz;
 
 #define MAXRETRANS 25
 
-
-int getCharFromBuf(xmodem_t pos)
+int getCharFromBuf(xmodem_t offset, xmodem_t i)
 {
-	if (pos < xbufsz)
+	xmodem_t pos = offset + i;
+	 if (pos < xbufsz)
 	{
 		return xbuf[pos];
 	}
@@ -150,8 +150,9 @@ int getCharFromBuf(xmodem_t pos)
 	}
 }
 
-int putCharInBuf(xmodem_t pos, unsigned char ch)
+int putCharInBuf(xmodem_t offset, xmodem_t i, unsigned char ch)
 {
+	xmodem_t pos = offset + i;
 	if (pos < xbufsz)
 	{
 		xbuf[pos] = ch;
@@ -246,7 +247,7 @@ XMODEM_ERRORS Xmodem::receiveFullBuffer(
 }
 
 XMODEM_ERRORS Xmodem::receiveCharacterMode(
-	void (*put_char)(xmodem_t pos, unsigned char ch))
+	void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch))
 {
 	int bufsz;
 	unsigned char trychar = 'C';
@@ -372,8 +373,7 @@ XMODEM_ERRORS Xmodem::receiveCharacterMode(
 				goto reject;
 			}
 			this->accumulateCrc(c);
-			xmodem_t p = this->packetOffset + i;
-			(*put_char)(p, c);
+			(*put_char)(this->packetOffset, i, c);
 		}
 
 		if (this->useCrc)
@@ -487,7 +487,7 @@ XMODEM_ERRORS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t srcsz)
 	return this->transmitCharacterMode(getCharFromBuf);
 }
 
-XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t pos))
+XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i))
 {
 	int bufsz;
 	unsigned char packetno = 1;
@@ -583,8 +583,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t pos))
 #if XMODEM_WRITE_LOG
 						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
 #endif
-						xmodem_t indx = this->packetOffset + i;
-						int khar = (*get_char)(indx);
+						int khar = (*get_char)(this->packetOffset, i);
 						if (khar == -1)
 						{
 							is_eof = true;
