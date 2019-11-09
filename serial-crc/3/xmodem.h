@@ -95,8 +95,6 @@ size_t xbufsz;
 #endif
 #endif
 
-// #define XMODEM_LOG_IOSTREAM 0
-
 #if XMODEM_LOG_SERIAL0
 #include <Arduino.h>
 
@@ -139,7 +137,6 @@ size_t xbufsz;
 
 #define MAXRETRANS 25
 
-#define XMODEM_WRITE_LOG 0
 
 int getCharFromBuf(xmodem_t pos)
 {

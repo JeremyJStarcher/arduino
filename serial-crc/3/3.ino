@@ -3,6 +3,8 @@ static unsigned char buffer[BUFFER_SIZE];
 
 #include "util.h"
 
+#define XMODEM_WRITE_LOG 0
+
 #include "xmodem.h"
 
 /* Wiring between two MEGAs
