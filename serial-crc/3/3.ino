@@ -168,10 +168,10 @@ void test()
   {
     Serial.println("Sending...");
     fillBuffer(buffer, BUFFER_SIZE);
-    XMODEM_ERRORS ret = xmodem.transmitFullBuffer(buffer, BUFFER_SIZE);
+    XMODEM_TRANSFER_STATUS ret = xmodem.transmitFullBuffer(buffer, BUFFER_SIZE);
     Serial.print("Transmit result: ");
     //Serial.println(ret);
-    if (ret != XMODEM_ERRORS::NONE)
+    if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
     {
       isPassing = false;
     }
@@ -180,10 +180,10 @@ void test()
   if (!isBoardMaster)
   {
     Serial.println("Receiving...");
-    XMODEM_ERRORS ret = xmodem.receiveFullBuffer(buffer, BUFFER_SIZE);
+    XMODEM_TRANSFER_STATUS ret = xmodem.receiveFullBuffer(buffer, BUFFER_SIZE);
     Serial.print("Receive result: ");
     //Serial.println(ret);
-    if (ret != XMODEM_ERRORS::NONE)
+    if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
     {
       isPassing = false;
     }

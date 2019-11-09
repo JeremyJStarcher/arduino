@@ -41,9 +41,9 @@
 #include <string.h>
 using namespace std;
 
-enum class XMODEM_ERRORS : signed char
+enum class XMODEM_TRANSFER_STATUS : signed char
 {
-	NONE = 0,
+	SUCCESS = 0,
 	CANCELED_BY_REMOTE = -1,
 	SYNC_ERROR = -2,
 	TOO_MANY_RETRIES = -3,
@@ -56,10 +56,10 @@ class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
-	XMODEM_ERRORS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
-	XMODEM_ERRORS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch));
-	XMODEM_ERRORS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
-	XMODEM_ERRORS transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i));
+	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t destsz);
+	XMODEM_TRANSFER_STATUS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch));
+	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srcsz);
+	XMODEM_TRANSFER_STATUS transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i));
 
 	void accumulateCrc(unsigned char ch);
 
@@ -230,7 +230,7 @@ void Xmodem::accumulateCrc(unsigned char ch)
 }
 #endif
 
-XMODEM_ERRORS Xmodem::receiveFullBuffer(
+XMODEM_TRANSFER_STATUS Xmodem::receiveFullBuffer(
 	unsigned char *dest,
 	xmodem_t destsz)
 {
@@ -240,7 +240,7 @@ XMODEM_ERRORS Xmodem::receiveFullBuffer(
 	return receiveCharacterMode(putCharInBuf);
 }
 
-XMODEM_ERRORS Xmodem::receiveCharacterMode(
+XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch))
 {
 	int bufsz;
@@ -281,14 +281,14 @@ XMODEM_ERRORS Xmodem::receiveCharacterMode(
 					LOGLN("RECIEVED XMODEM_EOT");
 					flushinput(serial_read);
 					(*serial_write)(XMODEM_ACK);
-					return XMODEM_ERRORS::NONE;
+					return XMODEM_TRANSFER_STATUS::SUCCESS;
 				case XMODEM_CAN:
 					LOGLN("RECIEVED CAN");
 					if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
 					{
 						flushinput(serial_read);
 						(*serial_write)(XMODEM_ACK);
-						return XMODEM_ERRORS::CANCELED_BY_REMOTE;
+						return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 					}
 					break;
 				default:
@@ -311,7 +311,7 @@ XMODEM_ERRORS Xmodem::receiveCharacterMode(
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
-		return XMODEM_ERRORS::SYNC_ERROR;
+		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
 
 	start_recv:
 		LOG("Receiving packet ");
@@ -454,7 +454,7 @@ XMODEM_ERRORS Xmodem::receiveCharacterMode(
 			(*serial_write)(XMODEM_CAN);
 			(*serial_write)(XMODEM_CAN);
 			(*serial_write)(XMODEM_CAN);
-			return XMODEM_ERRORS::TOO_MANY_RETRIES;
+			return XMODEM_TRANSFER_STATUS::TOO_MANY_RETRIES;
 		}
 #if XMODEM_WRITE_LOG
 		fprintf(logFile, "Packet accepted\n");
@@ -474,14 +474,14 @@ XMODEM_ERRORS Xmodem::receiveCharacterMode(
 	}
 }
 
-XMODEM_ERRORS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t srcsz)
+XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t srcsz)
 {
 	xbufsz = srcsz;
 	xbuf = src;
 	return this->transmitCharacterMode(getCharFromBuf);
 }
 
-XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i))
+XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i))
 {
 	int bufsz;
 	unsigned char packetno = 1;
@@ -527,7 +527,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmo
 					{
 						(*serial_write)(XMODEM_ACK);
 						flushinput(serial_read);
-						return XMODEM_ERRORS::CANCELED_BY_REMOTE;
+						return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 					}
 					break;
 				default:
@@ -542,7 +542,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmo
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
 		flushinput(serial_read);
-		return XMODEM_ERRORS::SYNC_ERROR;
+		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
 
 		for (;;)
 		{
@@ -618,7 +618,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmo
 							{
 								(*serial_write)(XMODEM_ACK);
 								flushinput(serial_read);
-								return XMODEM_ERRORS::CANCELED_BY_REMOTE;
+								return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 							}
 							break;
 						case XMODEM_NAK:
@@ -638,7 +638,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmo
 				(*serial_write)(XMODEM_CAN);
 				(*serial_write)(XMODEM_CAN);
 				flushinput(serial_read);
-				return XMODEM_ERRORS::TRANSMIT_ERROR;
+				return XMODEM_TRANSFER_STATUS::TRANSMIT_ERROR;
 			}
 			else
 			{
@@ -660,7 +660,7 @@ XMODEM_ERRORS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmo
 					}
 				}
 				flushinput(serial_read);
-				return (c == XMODEM_ACK) ? XMODEM_ERRORS::NONE : XMODEM_ERRORS::NO_EOT_REPLY;
+				return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
 			}
 		}
 	}
