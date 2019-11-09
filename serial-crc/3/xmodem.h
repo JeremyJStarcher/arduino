@@ -132,7 +132,7 @@ private:
 unsigned char *xmodemBuffer;
 size_t xmodemBuffer_size;
 
-int getCharFromBuf(xmodem_t offset, xmodem_t i)
+int getCharFromFullBuffer(xmodem_t offset, xmodem_t i)
 {
 	xmodem_t pos = offset + i;
 	 if (pos < xmodemBuffer_size)
@@ -145,7 +145,7 @@ int getCharFromBuf(xmodem_t offset, xmodem_t i)
 	}
 }
 
-int putCharInBuf(xmodem_t offset, xmodem_t i, unsigned char ch)
+int putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 {
 	xmodem_t pos = offset + i;
 	if (pos < xmodemBuffer_size)
@@ -238,7 +238,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveFullBuffer(
 	xmodemBuffer = dest;
 	xmodemBuffer_size = dest_size;
 
-	return receiveCharacterMode(putCharInBuf);
+	return receiveCharacterMode(putCharInFullBuffer);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
@@ -479,7 +479,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(unsigned char *src, xmodem_t s
 {
 	xmodemBuffer_size = source_size;
 	xmodemBuffer = src;
-	return this->transmitCharacterMode(getCharFromBuf);
+	return this->transmitCharacterMode(getCharFromFullBuffer);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i))
