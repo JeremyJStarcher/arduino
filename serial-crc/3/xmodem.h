@@ -152,9 +152,6 @@ static void flushinput(int (*serial_read)(long int ms))
 	unsigned int cnt = 0;
 	while (serial_read(DELAY_1500) >= 0)
 		cnt++;
-#if XMODEM_WRITE_LOG
-	fprintf(logFile, "Flushinput (%d flushed)\n", cnt);
-#endif
 }
 
 Xmodem::Xmodem(
@@ -264,17 +261,11 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		{
 			if (trychar)
 			{
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "CRC/Checksome start %d\n", trychar);
-#endif
 				(*serial_write)(trychar);
 			}
 
 			if ((c = serial_read(DELAY_2000)) >= 0)
 			{
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "CRC/Checksome received: %d\n", c);
-#endif
 				switch (c)
 				{
 				case XMODEM_SOH:
@@ -302,15 +293,10 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		}
 		if (trychar == 'C')
 		{
-#if XMODEM_WRITE_LOG
-			fprintf(logFile, "Trying to start in checksome mode..\n");
-#endif
 			trychar = XMODEM_NAK;
 			continue;
 		}
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Sync error\n");
-#endif
+
 		flushinput(serial_read);
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
@@ -322,10 +308,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	start_recv:
 		this->packetAction = XMODEM_PACKET_ACTION::Receiving;
 		this->updateStatus(this->packetAction, update_packet);
-
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Start receive packet: %d\n", packetno);
-#endif
 
 		if (trychar == 'C')
 		{
@@ -360,15 +342,9 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		for (i = 0; i < buffer_size; ++i)
 		{
-#if XMODEM_WRITE_LOG
-			fprintf(logFile, "receiving %d byte: %d\n", packetno, i);
-#endif
 			if ((c = serial_read(DELAY_1000)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "read timeout. rejecting\n");
-#endif
 				goto reject;
 			}
 			this->accumulateCrc(c);
@@ -400,9 +376,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			}
 		}
 
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Entire packet read\n");
-#endif
 		if (incomingPacketNumber != (unsigned char)(~incomingPacketNumber2))
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::PacketNumberCorrupt;
@@ -433,17 +406,11 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			}
 		}
 
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Passed check #1\n");
-#endif
 
 		if (incomingPacketNumber == packetno)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Accepted;
 			this->updateStatus(this->packetAction, update_packet);
-#if XMODEM_WRITE_LOG
-			fprintf(logFile, "Passed check #2\n");
-#endif
 			this->packetOffset += buffer_size;
 			++packetno;
 			retrans = MAXRETRANS + 1;
@@ -454,10 +421,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			this->updateStatus(this->packetAction, update_packet);
 		}
 
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Retries left %d\n", retrans);
-#endif
-
 		if (--retrans <= 0)
 		{
 			flushinput(serial_read);
@@ -466,18 +429,12 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			(*serial_write)(XMODEM_CAN);
 			return XMODEM_TRANSFER_STATUS::TOO_MANY_RETRIES;
 		}
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Packet accepted\n");
-#endif
 
 		(*serial_write)(XMODEM_ACK);
 		continue;
 
 	reject:
 		this->updateStatus(this->packetAction, update_packet);
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Packet rejected\n");
-#endif
 		flushinput(serial_read);
 		(*serial_write)(XMODEM_NAK);
 	}
@@ -505,27 +462,16 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 	for (;;)
 	{
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "Start of forever loop\n");
-#endif
 		for (retry = 0; retry < 16; ++retry)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
 			this->updateStatus(this->packetAction, update_packet);
-#if XMODEM_WRITE_LOG
-			fprintf(logFile, "Start of retry loop\n");
-#endif
 			if ((c = serial_read(DELAY_1500)) < 0)
 			{
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "No reply to packet %d\n", c);
-#endif
+				// Logging was here.
 			}
 			else
 			{
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "Transmit header received %d\n", c);
-#endif
 				switch (c)
 				{
 				case 'C':
@@ -547,9 +493,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 				}
 			}
 		}
-#if XMODEM_WRITE_LOG
-		fprintf(logFile, "No sync, cancelling\n");
-#endif
+
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
 		(*serial_write)(XMODEM_CAN);
@@ -562,10 +506,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			this->packetAction = XMODEM_PACKET_ACTION::Sync;
 			this->updateStatus(this->packetAction, update_packet);
 
-#if XMODEM_WRITE_LOG
-			fprintf(logFile, "Preparing %d\n", packetno);
-#endif
-
 			buffer_size = 128;
 
 			if (!is_eof)
@@ -574,8 +514,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 				{
 					this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
 					this->updateStatus(this->packetAction, update_packet);
-
-					// fprintf(logFile, "Transmitting %d\n", packetno);
 
 					(*serial_write)(XMODEM_SOH);
 					(*serial_write)(packetno);
@@ -586,9 +524,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 					for (i = 0; i < buffer_size; ++i)
 					{
-#if XMODEM_WRITE_LOG
-						fprintf(logFile, "Transmitting packet %d byte %d\n", packetno, i);
-#endif
 						int khar = (*get_char)(this->packetOffset, i);
 						if (khar == -1)
 						{
@@ -613,10 +548,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 					if ((c = serial_read(DELAY_LONG)) >= 0)
 					{
-#if XMODEM_WRITE_LOG
-						fprintf(logFile, "Reply to packet transmission %d\n", c);
-#endif
-
 						switch (c)
 						{
 						case XMODEM_ACK:
@@ -644,9 +575,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 						}
 					}
 				}
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "Transmission error\n");
-#endif
 
 				(*serial_write)(XMODEM_CAN);
 				(*serial_write)(XMODEM_CAN);
@@ -656,20 +584,11 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			}
 			else
 			{
-#if XMODEM_WRITE_LOG
-				fprintf(logFile, "End of file\n");
-#endif
 				for (retry = 0; retry < 10; ++retry)
 				{
-#if XMODEM_WRITE_LOG
-					fprintf(logFile, "Transmitting XMODEM_EOT\n");
-#endif
 					(*serial_write)(XMODEM_EOT);
 					if ((c = serial_read(DELAY_2000)) == XMODEM_ACK)
 					{
-#if XMODEM_WRITE_LOG
-						fprintf(logFile, "ACK received\n");
-#endif
 						break;
 					}
 				}
