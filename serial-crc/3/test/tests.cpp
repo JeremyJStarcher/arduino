@@ -17,9 +17,10 @@ int serial_read(long ms);
 extern FILE *logFile;
 extern int comportFD;
 
-#define LOG(x) cout << x
+#define F(x) (x)
+#define LOG(x) cout << (x)
 #define LOGLN(x) \
-    cout << x;   \
+    cout << (x); \
     cout << "\n"
 
 #include "../xmodem.h"
@@ -63,7 +64,7 @@ unsigned char getBufferByte(size_t idx)
 
 bool compareBuffer(unsigned char *buffer, size_t s)
 {
-    LOG("compareBuffer size: ");
+    LOG(F("compareBuffer size: "));
     LOGLN(s);
 
     for (size_t i = 0; i < s; i++)
@@ -73,24 +74,24 @@ bool compareBuffer(unsigned char *buffer, size_t s)
 
         if (actual != expected)
         {
-            LOG("idx ");
+            LOG(F("idx "));
             LOG(i);
-            LOG("\tActual: ");
+            LOG(F("\tActual: "));
             LOG(actual);
-            LOG("\tExpected: ");
+            LOG(F("\tExpected: "));
             LOG(expected);
-            LOGLN("");
+            LOGLN(F(""));
 
             return false;
         }
     }
-    LOGLN("Compare buffer passed.");
+    LOGLN(F("Compare buffer passed."));
     return true;
 }
 
 void fillBuffer(unsigned char *buffer, size_t s)
 {
-    LOG("fillBuffer size: ");
+    LOG(F("fillBuffer size: "));
     LOGLN(s);
 
     for (size_t i = 0; i < s; i++)
@@ -118,17 +119,17 @@ void tweak_write(int ch)
             case ALTER_RULE_DELETE:
                 // Do nothing;
                 handled = 1;
-                LOG("****** DELETED BYTE at ");
+                LOG(F("****** DELETED BYTE at "));
                 LOGLN(r.position);
                 break;
             case ALTER_RULE_CHANGE:
-                LOG("****** CHANGED BYTE at ");
+                LOG(F("****** CHANGED BYTE at "));
                 LOGLN(r.position);
                 (*serial_write)(r.value);
                 handled = 1;
                 break;
             case ALTER_RULE_INSERT:
-                LOG("****** INSERTED BYTE at ");
+                LOG(F("****** INSERTED BYTE at "));
                 LOGLN(r.position);
                 (*serial_write)(ch);
                 (*serial_write)(r.value);
@@ -145,6 +146,65 @@ void tweak_write(int ch)
     send_index++;
 }
 
+void update_packet(XModemPacketStatus status)
+{
+    LOG((int) status.packetNumber);
+    LOG(F("\t"));
+
+    switch (status.action)
+    {
+    case XMODEM_PACKET_ACTION::Receiving:
+        LOG(F("Receiving"));
+        break;
+    case XMODEM_PACKET_ACTION::Timeout:
+        LOG(F("Timeout"));
+        break;
+    case XMODEM_PACKET_ACTION::PacketNumberCorrupt:
+        LOG(F("PacketNumberCorrupt"));
+        break;
+    case XMODEM_PACKET_ACTION::PacketNumberOutOfSequence:
+        LOG(F("PacketNumberOutOfSequence"));
+        break;
+    case XMODEM_PACKET_ACTION::CrcMismatch:
+        LOG(F("CrcMismatch"));
+        break;
+    case XMODEM_PACKET_ACTION::ChecksomeMismatch:
+        LOG(F("ChecksomeMismatch"));
+        break;
+    case XMODEM_PACKET_ACTION::Accepted:
+        LOG(F("Accepted"));
+        break;
+    case XMODEM_PACKET_ACTION::ValidDuplicate:
+        LOG(F("ValidDuplicate"));
+        break;
+    case XMODEM_PACKET_ACTION::ReceiverACK:
+        LOG(F("ReceiverACK"));
+        break;
+    case XMODEM_PACKET_ACTION::ReceiverNAK:
+        LOG(F("ReceiverNAK"));
+        break;
+    case XMODEM_PACKET_ACTION::ReceiverGarbage:
+        LOG(F("ReceiverGarbage"));
+        break;
+    case XMODEM_PACKET_ACTION::Sync:
+        LOG(F("Sync"));
+        break;
+    case XMODEM_PACKET_ACTION::SyncError:
+        LOG(F("SyncError"));
+        break;
+    case XMODEM_PACKET_ACTION::Transmitting:
+        LOG(F("Transmitting"));
+        break;
+    case XMODEM_PACKET_ACTION::WaitingForReceiver:
+        LOG(F("WaitingForReceiver"));
+        break;
+    default:
+        LOG(F("Unknown Action"));
+        break;
+    }
+    LOGLN(F(""));
+}
+
 class XM_ShouldSucceed : public XMTestBase
 {
 public:
@@ -153,12 +213,12 @@ public:
         Xmodem xmodem(serial_read, tweak_write);
         send_index = 0;
 
-        LOGLN("Sending...");
+        LOGLN(F("Sending..."));
         fillBuffer(buffer, BUFFER_SIZE);
-        int ret = xmodem.transmit(buffer, BUFFER_SIZE);
-        LOG("Transmit result: ");
-        LOGLN(ret);
-        if (ret < 0)
+        auto ret = xmodem.transmitFullBuffer(buffer, BUFFER_SIZE, update_packet);
+        LOG(F("Transmit result: "));
+        LOGLN(ret == XMODEM_TRANSFER_STATUS::SUCCESS);
+        if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
         {
             isPassing = false;
         }
@@ -168,18 +228,18 @@ public:
     {
         Xmodem xmodem(serial_read, serial_write);
 
-        LOGLN("Receiving...");
-        int ret = xmodem.receive(buffer, BUFFER_SIZE);
-        LOG("Receive result: ");
-        LOGLN(ret);
-        if (ret < 0)
+        LOGLN(F("Receiving..."));
+        auto ret = xmodem.receiveFullBuffer(buffer, BUFFER_SIZE, update_packet);
+        LOG(F("Receive result: "));
+        LOGLN(ret == XMODEM_TRANSFER_STATUS::SUCCESS);
+        if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
         {
             isPassing = false;
         }
 
         if (!compareBuffer(buffer, BUFFER_SIZE))
         {
-            LOGLN("Buffer compare failed");
+            LOGLN(F("Buffer compare failed"));
             isPassing = false;
         }
     }
@@ -187,9 +247,9 @@ public:
 
 void testNoGlitches()
 {
-    LOGLN("--------------------------------");
-    LOGLN("-           NO GLITCHES        -");
-    LOGLN("--------------------------------");
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-           NO GLITCHES        -"));
+    LOGLN(F("--------------------------------"));
 
     resetAlterRules();
 
@@ -204,9 +264,9 @@ void testNoGlitches()
 
 void testMissingDataByte()
 {
-    LOGLN("--------------------------------");
-    LOGLN("-     testMissingDataByte      -");
-    LOGLN("--------------------------------");
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-     testMissingDataByte      -"));
+    LOGLN(F("--------------------------------"));
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_DELETE;
@@ -223,9 +283,9 @@ void testMissingDataByte()
 
 void testExtraDataByte()
 {
-    LOGLN("--------------------------------");
-    LOGLN("-      testExtraDataByte       -");
-    LOGLN("--------------------------------");
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-      testExtraDataByte       -"));
+    LOGLN(F("--------------------------------"));
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_INSERT;
@@ -243,9 +303,9 @@ void testExtraDataByte()
 
 void testChangedByteInPayload()
 {
-    LOGLN("--------------------------------");
-    LOGLN("-   testChangedByteInPayload   -");
-    LOGLN("--------------------------------");
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-   testChangedByteInPayload   -"));
+    LOGLN(F("--------------------------------"));
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_CHANGE;
@@ -279,14 +339,14 @@ void testAll()
 
     if (isPassing)
     {
-        LOGLN("--------------------------------");
-        LOGLN("-********** Success ********** -");
-        LOGLN("--------------------------------");
+        LOGLN(F("--------------------------------"));
+        LOGLN(F("-********** Success ********** -"));
+        LOGLN(F("--------------------------------"));
     }
     else
     {
-        LOGLN("--------------------------------");
-        LOGLN("- ======= Tests Failed ======= -");
-        LOGLN("--------------------------------");
+        LOGLN(F("--------------------------------"));
+        LOGLN(F("- ======= Tests Failed ======= -"));
+        LOGLN(F("--------------------------------"));
     }
 }
