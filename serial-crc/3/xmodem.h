@@ -405,7 +405,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			}
 		}
 
-
 		if (incomingPacketNumber == packetno)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Accepted;
