@@ -101,45 +101,10 @@ private:
 	int (*serial_read)(long int ms);
 };
 
-#ifndef XMODEM_LOG_NULL
-#ifndef XMODEM_LOG_IOSTREAM
-#ifndef XMODEM_LOG_SERIAL0
-#define XMODEM_LOG_NULL 1
-#endif
-#endif
-#endif
-
 #ifndef XMODEM_CRC_FAST
 #ifndef XMODEM_CRC_SLOW
 #define XMODEM_CRC_SLOW 1
 #endif
-#endif
-
-#ifdef XMODEM_LOG_SERIAL0
-#include <Arduino.h>
-
-#define LOG(x)              \
-	Serial.print("(LOG) "); \
-	Serial.print(x)
-#define LOGLN(x)     \
-	Serial.print(x); \
-	Serial.println("");
-
-#endif
-
-#ifdef XMODEM_LOG_NULL
-#define LOG(x)
-#define LOGLN(x)
-#endif
-
-#ifdef XMODEM_LOG_IOSTREAM
-
-#include <iostream>
-
-#define LOG(x) cout << x
-#define LOGLN(x) \
-	cout << x;   \
-	cout << "\n"
 #endif
 
 #define XMODEM_SOH 0x01
@@ -313,20 +278,16 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				switch (c)
 				{
 				case XMODEM_SOH:
-					LOGLN("RECIEVED XMODEM_SOH (128 byte buffer start)");
 					buffer_size = 128;
 					goto start_recv;
 				case XMODEM_STX:
-					LOGLN("RECIEVED XMODEM_STX (1024 byte buffer start)");
 					buffer_size = 1024;
 					goto start_recv;
 				case XMODEM_EOT:
-					LOGLN("RECIEVED XMODEM_EOT");
 					flushinput(serial_read);
 					(*serial_write)(XMODEM_ACK);
 					return XMODEM_TRANSFER_STATUS::SUCCESS;
 				case XMODEM_CAN:
-					LOGLN("RECIEVED CAN");
 					if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
 					{
 						flushinput(serial_read);
@@ -362,10 +323,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		this->packetAction = XMODEM_PACKET_ACTION::Receiving;
 		this->updateStatus(this->packetAction, update_packet);
 
-		LOG("Receiving packet ");
-		LOG((int)packetno);
-		LOG(" retries ");
-		LOGLN(retrans);
 #if XMODEM_WRITE_LOG
 		fprintf(logFile, "Start receive packet: %d\n", packetno);
 #endif
@@ -391,7 +348,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-			LOGLN("REJECT: incomingPacketNumber timeout");
 			goto reject;
 		}
 
@@ -399,7 +355,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-			LOGLN("REJECT: incomingPacketNumber2 timeout");
 			goto reject;
 		}
 
@@ -411,7 +366,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if ((c = serial_read(DELAY_1000)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				LOGLN("REJECT: payload timeout");
 #if XMODEM_WRITE_LOG
 				fprintf(logFile, "read timeout. rejecting\n");
 #endif
@@ -427,14 +381,12 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				LOGLN("REJECT: crcHigh timeout");
 				goto reject;
 			}
 			incomingCrcLow = serial_read(DELAY_1000);
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				LOGLN("REJECT: crcLow timeout");
 				goto reject;
 			}
 		}
@@ -444,7 +396,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				LOGLN("REJECT: checksome timeout");
 				goto reject;
 			}
 		}
@@ -452,18 +403,15 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 #if XMODEM_WRITE_LOG
 		fprintf(logFile, "Entire packet read\n");
 #endif
-		LOGLN("Read entire packet. Performing checks.");
 		if (incomingPacketNumber != (unsigned char)(~incomingPacketNumber2))
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::PacketNumberCorrupt;
-			LOGLN("REJECT: incomingPacketNumber ~incomingPacketNumber2 mismatch");
 			goto reject;
 		}
 
 		if (!(incomingPacketNumber == packetno || incomingPacketNumber == (unsigned char)packetno - 1))
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::PacketNumberOutOfSequence;
-			LOGLN("REJECT: incomingPacketNumber packetNumber mismatch");
 			goto reject;
 		}
 
@@ -473,7 +421,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (crc != this->packetCrc)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::CrcMismatch;
-				LOGLN("REJECT: packetCrc mismatch");
 				goto reject;
 			}
 		}
@@ -482,12 +429,10 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (incomingChecksome != this->packetChecksome)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::ChecksomeMismatch;
-				LOGLN("REJECT: packetChecksome mismatch");
 				goto reject;
 			}
 		}
 
-		LOGLN("PACKET PASSED ALL CHECKS");
 #if XMODEM_WRITE_LOG
 		fprintf(logFile, "Passed check #1\n");
 #endif
@@ -496,7 +441,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Accepted;
 			this->updateStatus(this->packetAction, update_packet);
-			LOGLN("ACCEPTING PACKET");
 #if XMODEM_WRITE_LOG
 			fprintf(logFile, "Passed check #2\n");
 #endif
@@ -526,7 +470,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		fprintf(logFile, "Packet accepted\n");
 #endif
 
-		LOGLN("SENDING PACKET ACK");
 		(*serial_write)(XMODEM_ACK);
 		continue;
 
@@ -535,7 +478,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 #if XMODEM_WRITE_LOG
 		fprintf(logFile, "Packet rejected\n");
 #endif
-		LOGLN("SENDING PACKET NAK");
 		flushinput(serial_read);
 		(*serial_write)(XMODEM_NAK);
 	}
@@ -587,15 +529,12 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 				switch (c)
 				{
 				case 'C':
-					LOGLN("RECIEVER WANTS CRC");
 					this->useCrc = true;
 					goto start_trans;
 				case XMODEM_NAK:
-					LOGLN("RECIEVER WANTS CHECKSOME");
 					this->useCrc = false;
 					goto start_trans;
 				case XMODEM_CAN:
-					LOGLN("RECIEVER CANCELLED");
 					if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
 					{
 						(*serial_write)(XMODEM_ACK);
@@ -623,9 +562,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			this->packetAction = XMODEM_PACKET_ACTION::Sync;
 			this->updateStatus(this->packetAction, update_packet);
 
-			// LOG("Preparing packet ");
-			// LOGLN((int)packetno);
-
 #if XMODEM_WRITE_LOG
 			fprintf(logFile, "Preparing %d\n", packetno);
 #endif
@@ -638,9 +574,6 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 				{
 					this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
 					this->updateStatus(this->packetAction, update_packet);
-
-					LOG("Transmitting packet ");
-					LOGLN((int)packetno);
 
 					// fprintf(logFile, "Transmitting %d\n", packetno);
 
@@ -689,12 +622,10 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 						case XMODEM_ACK:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverACK;
 							this->updateStatus(this->packetAction, update_packet);
-							LOGLN("RECIEVER SENT ACK");
 							++packetno;
 							this->packetOffset += buffer_size;
 							goto start_trans;
 						case XMODEM_CAN:
-							LOGLN("RECIEVER SENT CAN");
 							if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
 							{
 								(*serial_write)(XMODEM_ACK);
@@ -705,12 +636,10 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 						case XMODEM_NAK:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverNAK;
 							this->updateStatus(this->packetAction, update_packet);
-							LOGLN("RECIEVER SENT NAK");
 							break;
 						default:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverGarbage;
 							this->updateStatus(this->packetAction, update_packet);
-							LOGLN("RECIEVER SENT GARBAGE");
 							break;
 						}
 					}
