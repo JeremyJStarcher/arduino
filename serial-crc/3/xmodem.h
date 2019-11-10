@@ -469,7 +469,8 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			this->updateStatus(this->packetAction, update_packet);
 			if ((c = serial_read(DELAY_1500)) < 0)
 			{
-				// Logging was here.
+				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
+				this->updateStatus(this->packetAction, update_packet);
 			}
 			else
 			{
@@ -574,6 +575,11 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 							this->updateStatus(this->packetAction, update_packet);
 							break;
 						}
+					}
+					else
+					{
+						this->packetAction = XMODEM_PACKET_ACTION::Timeout;
+						this->updateStatus(this->packetAction, update_packet);
 					}
 				}
 
