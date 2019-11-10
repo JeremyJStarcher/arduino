@@ -416,6 +416,9 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		}
 		else
 		{
+			// A ValidDuplicate happens when the receiver received a packet
+			// and sent an ACK, but the ACK got mangled on the way back to the
+			// sender, who sends the packet again.
 			this->packetAction = XMODEM_PACKET_ACTION::ValidDuplicate;
 			this->updateStatus(this->packetAction, update_packet);
 		}
