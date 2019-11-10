@@ -138,7 +138,7 @@ int getCharFromFullBuffer(xmodem_t offset, xmodem_t i)
 	}
 }
 
-int putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
+void putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 {
 	xmodem_t pos = offset + i;
 	if (pos < xmodemBuffer_size)
