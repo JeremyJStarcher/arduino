@@ -16,5 +16,5 @@ arduino-cli upload --port ${MASTER_DEVICE} --fqbn arduino:avr:mega `pwd` ${UPLOA
 rm *.elf
 rm *.hex
 
-#minicom --device ${MASTER_DEVICE} --baud 9600  --capturefile /tmp/master.cap
+minicom --device ${MASTER_DEVICE} --baud 9600  --capturefile /tmp/master.cap
 minicom --device ${SLAVE_DEVICE} --baud 9600 --capturefile /tmp/slave.cap

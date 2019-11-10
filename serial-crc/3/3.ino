@@ -153,6 +153,66 @@ void serial_write(int ch)
   delay(10);
 }
 
+void update_packet(XModemPacketStatus status)
+{
+	Serial.print(status.packetNumber);
+	Serial.print(F("\t"));
+
+	switch (status.action)
+	{
+	case XMODEM_PACKET_ACTION::Receiving:
+		Serial.print(F("Receiving"));
+		break;
+	case XMODEM_PACKET_ACTION::Timeout:
+		Serial.print(F("Timeout"));
+		break;
+	case XMODEM_PACKET_ACTION::PacketNumberCorrupt:
+		Serial.print(F("PacketNumberCorrupt"));
+		break;
+	case XMODEM_PACKET_ACTION::PacketNumberOutOfSequence:
+		Serial.print(F("PacketNumberOutOfSequence"));
+		break;
+	case XMODEM_PACKET_ACTION::CrcMismatch:
+		Serial.print(F("CrcMismatch"));
+		break;
+	case XMODEM_PACKET_ACTION::ChecksomeMismatch:
+		Serial.print(F("ChecksomeMismatch"));
+		break;
+	case XMODEM_PACKET_ACTION::Accepted:
+		Serial.print(F("Accepted"));
+		break;
+	case XMODEM_PACKET_ACTION::ValidDuplicate:
+		Serial.print(F("ValidDuplicate"));
+		break;
+	case XMODEM_PACKET_ACTION::ReceiverACK:
+		Serial.print(F("ReceiverACK"));
+		break;
+	case XMODEM_PACKET_ACTION::ReceiverNAK:
+		Serial.print(F("ReceiverNAK"));
+		break;
+	case XMODEM_PACKET_ACTION::ReceiverGarbage:
+		Serial.print(F("ReceiverGarbage"));
+		break;
+	case XMODEM_PACKET_ACTION::Sync:
+		Serial.print(F("Sync"));
+		break;
+	case XMODEM_PACKET_ACTION::SyncError:
+		Serial.print(F("SyncError"));
+		break;
+	case XMODEM_PACKET_ACTION::Transmitting:
+		Serial.print(F("Transmitting"));
+		break;
+	case XMODEM_PACKET_ACTION::WaitingForReceiver:
+		Serial.print(F("WaitingForReceiver"));
+		break;
+	default:
+		Serial.print(F("Unknown Action"));
+		break;
+	}
+	Serial.println(F(""));
+}
+
+
 void test()
 {
   if (!isPassing)
@@ -168,7 +228,7 @@ void test()
   {
     Serial.println("Sending...");
     fillBuffer(buffer, BUFFER_SIZE);
-    XMODEM_TRANSFER_STATUS ret = xmodem.transmitFullBuffer(buffer, BUFFER_SIZE);
+    XMODEM_TRANSFER_STATUS ret = xmodem.transmitFullBuffer(buffer, BUFFER_SIZE, update_packet);
     Serial.print("Transmit result: ");
     //Serial.println(ret);
     if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
@@ -180,7 +240,7 @@ void test()
   if (!isBoardMaster)
   {
     Serial.println("Receiving...");
-    XMODEM_TRANSFER_STATUS ret = xmodem.receiveFullBuffer(buffer, BUFFER_SIZE);
+    XMODEM_TRANSFER_STATUS ret = xmodem.receiveFullBuffer(buffer, BUFFER_SIZE, update_packet);
     Serial.print("Receive result: ");
     //Serial.println(ret);
     if (ret != XMODEM_TRANSFER_STATUS::SUCCESS)
