@@ -149,9 +149,8 @@ int putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 
 static void flushinput(int (*serial_read)(long int ms))
 {
-	unsigned int cnt = 0;
 	while (serial_read(DELAY_1500) >= 0)
-		cnt++;
+		; // idle
 }
 
 Xmodem::Xmodem(
