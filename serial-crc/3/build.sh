@@ -4,7 +4,7 @@ rm *.elf
 rm *.hex
 
 MASTER_DEVICE=/dev/ttyACM1
-SLAVE_DEVICE=/dev/ttyACM2
+SLAVE_DEVICE=/dev/ttyACM3
 
 UPLOAD_FLAGS="--verify --verbose"
 DEFINES=
