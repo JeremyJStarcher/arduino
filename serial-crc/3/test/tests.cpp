@@ -6,6 +6,8 @@ void serial_write(int ch);
 int serial_read(long ms);
 
 #ifdef ARDUINO_AVR_MEGA2560
+#define LOG(x) Serial.print(x)
+#define LOGLN(x) Serial.println(x)
 #else
 #include <iostream>
 using namespace std;
@@ -237,7 +239,7 @@ public:
     }
 };
 
-void testNoGlitches()
+void testNoGlitches(bool isMaster)
 {
     LOGLN(F("--------------------------------"));
     LOGLN(F("-           NO GLITCHES        -"));
@@ -245,16 +247,17 @@ void testNoGlitches()
 
     resetAlterRules();
 
-#ifdef MASTER
-    XM_ShouldSucceed::MasterAction(alter_rules);
-#endif
-
-#ifdef SLAVE
-    XM_ShouldSucceed::SlaveAction();
-#endif
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
 }
 
-void testMissingDataByte()
+void testMissingDataByte(bool isMaster)
 {
     LOGLN(F("--------------------------------"));
     LOGLN(F("-     testMissingDataByte      -"));
@@ -264,16 +267,17 @@ void testMissingDataByte()
     alter_rules[0].action = ALTER_RULE_DELETE;
     alter_rules[0].position = 17;
 
-#ifdef MASTER
-    XM_ShouldSucceed::MasterAction(alter_rules);
-#endif
-
-#ifdef SLAVE
-    XM_ShouldSucceed::SlaveAction();
-#endif
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
 }
 
-void testExtraDataByte()
+void testExtraDataByte(bool isMaster)
 {
     LOGLN(F("--------------------------------"));
     LOGLN(F("-      testExtraDataByte       -"));
@@ -284,16 +288,17 @@ void testExtraDataByte()
     alter_rules[0].position = 17;
     alter_rules[0].value = 0xFF;
 
-#ifdef MASTER
-    XM_ShouldSucceed::MasterAction(alter_rules);
-#endif
-
-#ifdef SLAVE
-    XM_ShouldSucceed::SlaveAction();
-#endif
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
 }
 
-void testChangedByteInPayload()
+void testChangedByteInPayload(bool isMaster)
 {
     LOGLN(F("--------------------------------"));
     LOGLN(F("-   testChangedByteInPayload   -"));
@@ -304,30 +309,31 @@ void testChangedByteInPayload()
     alter_rules[0].position = 17;
     alter_rules[0].value = 0xFF;
 
-#ifdef MASTER
-    XM_ShouldSucceed::MasterAction(alter_rules);
-#endif
-
-#ifdef SLAVE
-    XM_ShouldSucceed::SlaveAction();
-#endif
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
 }
 
-void testAll()
+void testAll(bool isMaster)
 {
     isPassing = true;
 
     if (isPassing)
-        testNoGlitches();
+        testNoGlitches(isMaster);
 
     if (isPassing)
-        testMissingDataByte();
+        testMissingDataByte(isMaster);
 
     if (isPassing)
-        testExtraDataByte();
+        testExtraDataByte(isMaster);
 
     if (isPassing)
-        testChangedByteInPayload();
+        testChangedByteInPayload(isMaster);
 
     if (isPassing)
     {

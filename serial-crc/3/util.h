@@ -13,22 +13,6 @@ const int masterSelectPin = A2;
 const int clearToSendPin = 7;
 const int requestToSendPin = 6;
 
-unsigned char getBufferByte(size_t idx)
-{
-  return idx % 13;
-}
-
-void fillBuffer(char *buffer, size_t s)
-{
-  Serial.print("fillBuffer size: ");
-  Serial.println(s);
-
-  for (size_t i = 0; i < s; i++)
-  {
-    buffer[i] = getBufferByte(i);
-  }
-}
-
 void waitForSync()
 {
   digitalWrite(requestToSendPin, HIGH);

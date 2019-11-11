@@ -13,7 +13,7 @@ public:
     };
 };
 
-void testAll(void);
+void testAll(bool isMaster);
 extern FILE *logFile;
 
 #endif

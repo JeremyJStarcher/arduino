@@ -12,6 +12,12 @@
 FILE *logFile;
 
 int comportFD;
+#ifdef MASTER
+bool isMaster = true;
+#else
+bool isMaster = false;
+#endif
+
 
 long long timeInMilliseconds(void)
 {
@@ -155,7 +161,7 @@ int main()
     /*baudrate 115200, 8 bits, no parity, 1 stop bit */
     set_interface_attribs(fd, B115200);
 
-    testAll();
+    testAll(isMaster);
 
     printf("Busy loop\n");
     while (1)
