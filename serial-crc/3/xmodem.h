@@ -286,6 +286,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 					}
 					break;
 				default:
+					flushinput(serial_read);
 					break;
 				}
 			}
@@ -358,6 +359,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
 				goto reject;
 			}
+
 			incomingCrcLow = serial_read(DELAY_1000);
 			if (c == -1)
 			{
@@ -467,6 +469,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
 			this->updateStatus(this->packetAction, update_packet);
+
 			if ((c = serial_read(DELAY_1500)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;

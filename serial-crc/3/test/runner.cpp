@@ -18,7 +18,6 @@ bool isMaster = true;
 bool isMaster = false;
 #endif
 
-
 long long timeInMilliseconds(void)
 {
     struct timeval tv;
@@ -32,10 +31,19 @@ void serial_write(int ch)
     char buf[1];
     buf[0] = ch;
 
+    //printf("w: %u %c\n", ch, ch);
+
     fprintf(logFile, "w: %u\n", ch);
     write(comportFD, buf, 1);
 
     tcdrain(comportFD);
+#if 0
+    long long target = timeInMilliseconds() + 10;
+    while (timeInMilliseconds() < target)
+    {
+        ; // Idle
+    }
+#endif
 }
 
 int serial_read(long ms)
@@ -50,12 +58,14 @@ int serial_read(long ms)
         if (rdlen > 0)
         {
             unsigned char k = buf[0];
+            //printf("r: %u %c\n", k, k);
             fprintf(logFile, "r: %u\n", k);
             return k;
         }
 
         if (timeInMilliseconds() > target)
         {
+            //printf("r: <timeout>\n");
             return -1;
         }
     }
@@ -168,5 +178,4 @@ int main()
     {
         ; // Do nothing
     }
-
 }

@@ -23,12 +23,15 @@ using namespace std;
 
 #define BUFFER_SIZE 2048
 static unsigned char buffer[BUFFER_SIZE];
+// static unsigned char currentPacketNumber;
 
 struct alter_rule
 {
+    unsigned char packetNumber;
     int position;
     int action;
     int value;
+    bool isHandled;
 };
 
 #define ALTER_RULE_MAX 5
@@ -46,8 +49,10 @@ void resetAlterRules()
     for (int i = 0; i < ALTER_RULE_MAX; i++)
     {
         alter_rules[i].action = ALTER_RULE_NONE;
+        alter_rules[i].packetNumber = -1;
         alter_rules[i].position = -1;
         alter_rules[i].value = -1;
+        alter_rules[i].isHandled = false;
     }
 }
 
@@ -97,7 +102,9 @@ void fillBuffer(unsigned char *buffer, size_t s)
     }
 }
 
-int send_index;
+static int currentPacketNumber = 0;
+static int send_index = 0;
+
 void tweak_write(int ch)
 {
     char handled = 0;
@@ -106,8 +113,12 @@ void tweak_write(int ch)
     {
         alter_rule r = alter_rules[i];
 
-        if (r.position == send_index)
+        if (
+            (r.position == send_index) &&
+            (r.packetNumber == currentPacketNumber) &&
+            (!r.isHandled))
         {
+
             switch (r.action)
             {
             case ALTER_RULE_DELETE:
@@ -118,7 +129,10 @@ void tweak_write(int ch)
                 break;
             case ALTER_RULE_CHANGE:
                 LOG(F("****** CHANGED BYTE at "));
-                LOGLN(r.position);
+                LOG(r.position);
+                LOG(F(" "));
+                LOGLN(r.value);
+
                 (*serial_write)(r.value);
                 handled = 1;
                 break;
@@ -132,6 +146,7 @@ void tweak_write(int ch)
             }
             break;
         }
+        r.isHandled = true;
     }
     if (!handled)
     {
@@ -172,6 +187,8 @@ void update_packet(XModemPacketStatus status)
         LOG(F("ValidDuplicate"));
         break;
     case XMODEM_PACKET_ACTION::ReceiverACK:
+        send_index = 0;
+        currentPacketNumber = status.packetNumber + 1;
         LOG(F("ReceiverACK"));
         break;
     case XMODEM_PACKET_ACTION::ReceiverNAK:
@@ -205,7 +222,6 @@ public:
     static void MasterAction(alter_rule *alter_rules)
     {
         Xmodem xmodem(serial_read, tweak_write);
-        send_index = 0;
 
         LOGLN(F("Sending..."));
         fillBuffer(buffer, BUFFER_SIZE);
@@ -264,6 +280,7 @@ void testMissingDataByte(bool isMaster)
     LOGLN(F("--------------------------------"));
 
     resetAlterRules();
+    alter_rules[0].packetNumber = 4;
     alter_rules[0].action = ALTER_RULE_DELETE;
     alter_rules[0].position = 17;
 
@@ -285,6 +302,7 @@ void testExtraDataByte(bool isMaster)
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_INSERT;
+    alter_rules[0].packetNumber = 5;
     alter_rules[0].position = 17;
     alter_rules[0].value = 0xFF;
 
@@ -306,8 +324,106 @@ void testChangedByteInPayload(bool isMaster)
 
     resetAlterRules();
     alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].packetNumber = 1;
     alter_rules[0].position = 17;
     alter_rules[0].value = 0xFF;
+
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
+}
+
+void testCorruptPacketNumber(bool isMaster)
+{
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-    testCorruptPacketNumber   -"));
+    LOGLN(F("--------------------------------"));
+
+    resetAlterRules();
+
+    alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].packetNumber = 16;
+    alter_rules[0].position = 1;
+    alter_rules[0].value = 0xA0;
+
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
+}
+
+void testCorruptPacketNumberCheck(bool isMaster)
+{
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("- testCorruptPacketNumberCheck  -"));
+    LOGLN(F("--------------------------------"));
+
+    resetAlterRules();
+
+    alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].packetNumber = 15;
+    alter_rules[0].position = 2;
+    alter_rules[0].value = 0xA0;
+
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
+}
+
+void testPacketSequenceError(bool isMaster)
+{
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-   testPacketSequenceError    -"));
+    LOGLN(F("--------------------------------"));
+
+    resetAlterRules();
+
+    alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].packetNumber = 16;
+    alter_rules[0].position = 1;
+    alter_rules[0].value = 0xA0;
+
+    alter_rules[1].action = ALTER_RULE_CHANGE;
+    alter_rules[1].packetNumber = 16;
+    alter_rules[1].position = 2;
+    alter_rules[1].value = ~(0xA0);
+
+    if (isMaster)
+    {
+        XM_ShouldSucceed::MasterAction(alter_rules);
+    }
+    else
+    {
+        XM_ShouldSucceed::SlaveAction();
+    }
+}
+
+void testCorreptSohError(bool isMaster)
+{
+    LOGLN(F("--------------------------------"));
+    LOGLN(F("-     testCorreptSohError      -"));
+    LOGLN(F("--------------------------------"));
+
+    resetAlterRules();
+
+    alter_rules[0].action = ALTER_RULE_CHANGE;
+    alter_rules[0].packetNumber = 16;
+    alter_rules[0].position = 0;
+    alter_rules[0].value = 0xA0;
 
     if (isMaster)
     {
@@ -322,7 +438,6 @@ void testChangedByteInPayload(bool isMaster)
 void testAll(bool isMaster)
 {
     isPassing = true;
-
     if (isPassing)
         testNoGlitches(isMaster);
 
@@ -334,6 +449,18 @@ void testAll(bool isMaster)
 
     if (isPassing)
         testChangedByteInPayload(isMaster);
+
+    if (isPassing)
+        testCorruptPacketNumber(isMaster);
+
+    if (isPassing)
+        testCorruptPacketNumberCheck(isMaster);
+
+    if (isPassing)
+        testPacketSequenceError(isMaster);
+
+    if (isPassing)
+        testCorreptSohError(isMaster);
 
     if (isPassing)
     {
