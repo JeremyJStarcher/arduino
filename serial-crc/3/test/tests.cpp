@@ -1,27 +1,21 @@
 #include <stdio.h>
 #include <string.h>
-#include <array>
-#include <iostream>
-
-#include <termios.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/ioctl.h>
-using namespace std;
-
 #include "tests.h"
 
-long long timeInMilliseconds(void);
 void serial_write(int ch);
 int serial_read(long ms);
-extern FILE *logFile;
-extern int comportFD;
+
+#ifdef ARDUINO_AVR_MEGA2560
+#else
+#include <iostream>
+using namespace std;
 
 #define F(x) (x)
 #define LOG(x) cout << (x)
 #define LOGLN(x) \
     cout << (x); \
     cout << "\n"
+#endif
 
 #include "../xmodem.h"
 
@@ -104,8 +98,6 @@ void fillBuffer(unsigned char *buffer, size_t s)
 int send_index;
 void tweak_write(int ch)
 {
-    fprintf(logFile, "send_index = %d\n", send_index);
-
     char handled = 0;
 
     for (int i = 0; i < ALTER_RULE_MAX; i++)
@@ -148,7 +140,7 @@ void tweak_write(int ch)
 
 void update_packet(XModemPacketStatus status)
 {
-    LOG((int) status.packetNumber);
+    LOG((int)status.packetNumber);
     LOG(F("\t"));
 
     switch (status.action)
