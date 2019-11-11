@@ -117,5 +117,4 @@ int serial_read(long int ms)
 void serial_write(int ch)
 {
   Serial1.write(ch);
-  //delay(5);
 }
