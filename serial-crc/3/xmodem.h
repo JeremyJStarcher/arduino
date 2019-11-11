@@ -207,15 +207,16 @@ void Xmodem::accumulateCrc(unsigned char ch)
 #if XMODEM_CRC_SLOW
 void Xmodem::accumulateCrc(unsigned char ch)
 {
-	this->packetCrc ^= ch << 8;
+	unsigned short crc = this->packetCrc;
+	crc ^= ch << 8;
 	for (char i = 0; i < 8; ++i)
 	{
-		if (this->packetCrc & 0x8000)
-			this->packetCrc = (this->packetCrc << 1) ^ 0x1021;
+		if (crc & 0x8000)
+			crc = (crc << 1) ^ 0x1021;
 		else
-			this->packetCrc = this->packetCrc << 1;
+			crc = crc << 1;
 	}
-
+	this->packetCrc = crc;
 	this->packetChecksome += ch;
 }
 #endif
