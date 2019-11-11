@@ -4,7 +4,7 @@
 #define INIT_SOH 0xA0
 #define INIT_ACK 0xFE
 
-const int SERIAL_BAUD = 9600; //  9600;
+const int SERIAL_BAUD = 115200; //  9600;
 const int USB_BAUD = 9600;
 
 bool isBoardMaster = false;
