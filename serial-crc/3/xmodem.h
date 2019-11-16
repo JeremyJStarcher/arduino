@@ -41,6 +41,25 @@
 #include <string.h>
 using namespace std;
 
+#define XMODEM_SOH 0x01
+#define XMODEM_STX 0x02
+#define XMODEM_EOT 0x04
+#define XMODEM_ACK 0x06
+#define XMODEM_NAK 0x15
+#define XMODEM_CAN 0x18
+#define XMODEM_CTRLZ 0x1A
+
+/* The XMODEM_INIT_STATE is only sent with the very first packet
+   and is used to decide if the transfer is in CRC or checksome
+   mode.  Once that has been established, there is no need to send
+   it again. */
+enum class XMODEM_INIT_STATE : unsigned char
+{
+	ATTEMPTED_CRC = 'C',
+	ATTEMPT_CHECKSOME = XMODEM_NAK,
+	RESOLVED = 0,
+};
+
 enum class XMODEM_PACKET_ACTION : signed char
 {
 	Receiving = 1,
@@ -106,14 +125,6 @@ private:
 #define XMODEM_CRC_SLOW 1
 #endif
 #endif
-
-#define XMODEM_SOH 0x01
-#define XMODEM_STX 0x02
-#define XMODEM_EOT 0x04
-#define XMODEM_ACK 0x06
-#define XMODEM_NAK 0x15
-#define XMODEM_CAN 0x18
-#define XMODEM_CTRLZ 0x1A
 
 #define DELAY_1000 (1000)
 #define DELAY_LONG (1000 * 10)
@@ -245,7 +256,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	void (*update_packet)(XModemPacketStatus status))
 {
 	int buffer_size;
-	unsigned char trychar = 'C';
+	XMODEM_INIT_STATE initState = XMODEM_INIT_STATE::ATTEMPTED_CRC;
 	int i, c;
 	int retry, retrans = MAXRETRANS;
 	this->packetCrc = 0;
@@ -259,9 +270,9 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		for (retry = 0; retry < 16; ++retry)
 		{
-			if (trychar)
+			if (initState != XMODEM_INIT_STATE::RESOLVED)
 			{
-				(*serial_write)(trychar);
+				(*serial_write)((int)initState);
 			}
 
 			if ((c = serial_read(DELAY_2000)) >= 0)
@@ -292,9 +303,10 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				}
 			}
 		}
-		if (trychar == 'C')
+
+		if (initState == XMODEM_INIT_STATE::ATTEMPTED_CRC)
 		{
-			trychar = XMODEM_NAK;
+			initState = XMODEM_INIT_STATE::ATTEMPT_CHECKSOME;
 			continue;
 		}
 
@@ -310,12 +322,11 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		this->packetAction = XMODEM_PACKET_ACTION::Receiving;
 		this->updateStatus(this->packetAction, update_packet);
 
-		if (trychar == 'C')
+		if (initState == XMODEM_INIT_STATE::ATTEMPTED_CRC)
 		{
 			this->useCrc = true;
 		}
-
-		trychar = 0;
+		initState = XMODEM_INIT_STATE::RESOLVED;
 
 		this->packetChecksome = 0;
 		this->packetCrc = 0;
