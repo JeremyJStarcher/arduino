@@ -137,6 +137,9 @@ void putCharInEEPROM(xmodem_t offset, xmodem_t i, unsigned char ch)
 
 void update_packet(XModemPacketStatus status)
 {
+  /* In the character by character mode, these values are only
+   *  used to update the UI, if applicable.
+   */
   switch (status.action)
   {
     case XMODEM_PACKET_ACTION::Receiving:
