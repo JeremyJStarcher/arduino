@@ -4,7 +4,11 @@
 #define INIT_SOH 0xA0
 #define INIT_ACK 0xFE
 
-const int SERIAL_BAUD = 115200; //  9600;
+extern void serial_write(int ch);
+extern int serial_read(long int ms);
+
+
+const int SERIAL_BAUD = 9600; // 19200; //  9600;
 const int USB_BAUD = 9600;
 
 bool isBoardMaster = false;
@@ -53,41 +57,15 @@ void blinkSuccess()
   }
 }
 
-extern int _inbyte(unsigned short timeout); // msec timeout
-extern void _outbyte(int c);
-
-signed int _inbyte(int timeout)
-{
-  long now = millis();
-  signed int c;
-
-  while ((c = Serial1.read()) == -1)
-  {
-    if (millis() > now + timeout)
-    {
-      break;
-    }
-  }
-
-  // Serial.print("<");Serial.print(c);Serial.println(">");
-  return c;
-}
-
-void _outbyte(int b)
-{
-  // Serial.print("[");Serial.print(b);Serial.println("]");
-  Serial1.write(b);
-}
-
 void initSerialInner(HardwareSerial remote, int snd, int rcv)
 {
   if (snd)
   {
     unsigned int c;
 
-    while ((c = _inbyte(READ_TIMEOUT)) != INIT_ACK)
+    while ((c = serial_read(READ_TIMEOUT)) != INIT_ACK)
     {
-      _outbyte(INIT_SOH);
+      serial_write(INIT_SOH);
     }
   }
 
@@ -95,24 +73,24 @@ void initSerialInner(HardwareSerial remote, int snd, int rcv)
   {
     signed int c;
 
-    while ((c = _inbyte(READ_TIMEOUT)) != INIT_SOH)
+    while ((c = serial_read(READ_TIMEOUT)) != INIT_SOH)
     {
       delay(100);
     }
-    _outbyte(INIT_ACK);
+    serial_write(INIT_ACK);
   }
 
   Serial.print("Flushing serial port...");
   // Make sure the other side sends everything.
   for (int i = 0; i < 10; i++) {
     delay(100);
-    while (_inbyte(READ_TIMEOUT) != -1)
+    while (serial_read(READ_TIMEOUT) != -1)
     {
       // Do onthing.
     }
   }
   
-  Serial.println(_inbyte(READ_TIMEOUT));
+  Serial.println(serial_read(READ_TIMEOUT));
 }
 
 void initSerial(HardwareSerial remote)

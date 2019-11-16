@@ -1,5 +1,5 @@
 #include "util.h"
-//#define XMODEM_CRC_FAST 1
+// #define XMODEM_CRC_FAST 1
 #define XMODEM_CRC_SLOW 1
 #include "xmodem.h"
 
@@ -79,8 +79,11 @@ void setup()
   Serial.print("Total time: ");
   Serial.print(dur);
   Serial.print("ms ");
-  Serial.print(dur / 1000 / 60);
-  Serial.println(" mins");
+
+  Serial.print((dur / 1000) / 60);
+  Serial.print(" mins ");
+  Serial.print((dur / 1000) % 60);
+  Serial.println(" secs");
 
   if (isPassing)
   {
