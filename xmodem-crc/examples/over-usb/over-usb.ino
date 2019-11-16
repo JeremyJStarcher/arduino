@@ -6,9 +6,6 @@ void setup()
   Serial.begin(9600);
   Serial.println(F("\n\n\nUSB Connection established"));
 
-  // Serial3.begin(9600);
-  // Serial3.println(F("\n\n\nUSB Connection established"));
-
   showHelp();
 }
 
@@ -54,7 +51,7 @@ void loop()
   }
 }
 
-int serial_read(long int ms)
+int Serial_read(long int ms)
 {
 
   const long long t = millis() + ms;
@@ -74,7 +71,7 @@ int serial_read(long int ms)
   }
 }
 
-void serial_write(int ch)
+void Serial_write(int ch)
 {
   Serial.write(ch);
 }
@@ -116,7 +113,6 @@ unsigned long eeprom_crc(void) {
   return crc;
 }
 
-
 int getCharFromEEPROM(xmodem_t offset, xmodem_t i)
 {
   xmodem_t pos = offset + i;
@@ -135,80 +131,62 @@ void putCharInEEPROM(xmodem_t offset, xmodem_t i, unsigned char ch)
   xmodem_t pos = offset + i;
   if (pos < EEPROM.length())
   {
-    Serial3.print(pos, HEX);
-    Serial3.print(" ");
-    Serial3.print(ch, HEX);
-    Serial3.println("");
-    
     EEPROM.update(pos, ch);
   }
 }
-
-
 
 void update_packet(XModemPacketStatus status)
 {
   switch (status.action)
   {
     case XMODEM_PACKET_ACTION::Receiving:
-      // Serial3.println("XMODEM_PACKET_ACTION::Receiving");
       break;
     case XMODEM_PACKET_ACTION::Timeout:
-      // Serial3.println(" XMODEM_PACKET_ACTION::Timeout:");
       break;
     case XMODEM_PACKET_ACTION::PacketNumberCorrupt:
-      // Serial3.println(" XMODEM_PACKET_ACTION::PacketNumberCorrupt:");
       break;
     case XMODEM_PACKET_ACTION::PacketNumberOutOfSequence:
-      // Serial3.println("XMODEM_PACKET_ACTION::PacketNumberOutOfSequence:");
       break;
     case XMODEM_PACKET_ACTION::CrcMismatch:
-      // Serial3.println("XMODEM_PACKET_ACTION::CrcMismatch:");
       break;
     case XMODEM_PACKET_ACTION::ChecksomeMismatch:
-      // Serial3.println("XMODEM_PACKET_ACTION::ChecksomeMismatch:");
       break;
     case XMODEM_PACKET_ACTION::Accepted:
-      // Serial3.println("XMODEM_PACKET_ACTION::Accepted:");
       break;
     case XMODEM_PACKET_ACTION::ValidDuplicate:
-      // Serial3.println("XMODEM_PACKET_ACTION::ValidDuplicate:");
       break;
     case XMODEM_PACKET_ACTION::ReceiverACK:
-      // Serial3.println("XMODEM_PACKET_ACTION::ReceiverACK:");
       break;
     case XMODEM_PACKET_ACTION::ReceiverNAK:
-      // Serial3.println("XMODEM_PACKET_ACTION::ReceiverNAK:");
       break;
     case XMODEM_PACKET_ACTION::ReceiverGarbage:
-      // Serial3.println("XMODEM_PACKET_ACTION::ReceiverGarbage:");
       break;
     case XMODEM_PACKET_ACTION::Sync:
-      // Serial3.println("XMODEM_PACKET_ACTION::Sync:");
       break;
     case XMODEM_PACKET_ACTION::SyncError:
-      // Serial3.println("XMODEM_PACKET_ACTION::SyncError:");
       break;
     case XMODEM_PACKET_ACTION::Transmitting:
-      // Serial3.println("XMODEM_PACKET_ACTION::Transmitting:");
       break;
     case XMODEM_PACKET_ACTION::WaitingForReceiver:
-      // Serial3.println("XMODEM_PACKET_ACTION::WaitingForReceiver:");
       break;
     default:
-      // Serial3.println("default");
       break;
   }
 }
 
 void upload(void) {
-  Xmodem xmodem(serial_read, serial_write);
+  Serial.println("Starting Upload");
+  Serial.println("If you are uploading a replacement EEPROM file,");
+  Serial.println("there may be a lot of errors and retries.  Updating EEPROM");
+  Serial.println("values takes a /long/ time.");
+
+  Xmodem xmodem(Serial_read, Serial_write);
   int k = (int) xmodem.receiveCharacterMode(putCharInEEPROM, update_packet);
 }
 
 void download(void) {
   Serial.println("Starting download.....");
-  Xmodem xmodem(serial_read, serial_write);
+  Xmodem xmodem(Serial_read, Serial_write);
   int k = (int) xmodem.transmitCharacterMode(getCharFromEEPROM, update_packet);
   Serial.print("download complete. status ");
   Serial.println(k);
