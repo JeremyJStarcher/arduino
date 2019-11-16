@@ -48,6 +48,9 @@ void setup()
   if (isBoardMaster)
   {
     Serial.println(F("Master board.  In control."));
+    Serial.println(F("Giving slave time to be programmed"));
+    delay(10 * 1000);
+
     Serial.println(F("Resetting slave"));
     pinMode(slaveResetPin, OUTPUT);
     digitalWrite(slaveResetPin, LOW);
