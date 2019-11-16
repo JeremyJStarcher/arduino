@@ -7,8 +7,7 @@
 extern void serial_write(int ch);
 extern int serial_read(long int ms);
 
-
-const int SERIAL_BAUD = 9600; // 19200; //  9600;
+const int SERIAL_BAUD = 28800;
 const int USB_BAUD = 9600;
 
 bool isBoardMaster = false;
