@@ -1,4 +1,7 @@
 #include <HardwareSerial.h>
+
+#include <stdbool.h>
+
 #define READ_TIMEOUT 1000
 
 #define INIT_SOH 0xA0
@@ -56,7 +59,7 @@ void blinkSuccess()
   }
 }
 
-void initSerialInner(HardwareSerial remote, int snd, int rcv)
+void initSerialInner(HardwareSerial remote, bool snd, bool rcv)
 {
   if (snd)
   {
@@ -110,10 +113,10 @@ void initSerial(HardwareSerial remote)
 
   if (isBoardMaster)
   {
-    initSerialInner(remote, 1, 0);
+    initSerialInner(remote, true, false);
   }
   else
   {
-    initSerialInner(remote, 0, 1);
+    initSerialInner(remote, false, true);
   }
 }
