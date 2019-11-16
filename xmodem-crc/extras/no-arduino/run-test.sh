@@ -7,7 +7,7 @@ rm slave.txt
  SLAVE_DEVICE="\"/dev/ttyUSB1\""
 MASTER_DEVICE="\"/dev/ttyUSB0\""
 
-DEFINES="-DBAUD=B${BAUD} -DSLAVE_DEVICE=${SLAVE_DEVICE} -DMASTER_DEVICE=${MASTER_DEVICE}"
+DEFINES="-DBAUD=B${BAUD} -DSLAVE_DEVICE=${SLAVE_DEVICE} -DMASTER_DEVICE=${MASTER_DEVICE} -DNO_ARDUINO"
 GCC_ARGS="-g3 -Wall -I ../../src"
 FILES="runner.cpp ../../src/xmodem.cpp ../../examples/mega-to-mega-test/tests.cpp"
 
