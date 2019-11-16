@@ -47,7 +47,7 @@ class XModemPacketStatus
 {
 public:
 	XMODEM_PACKET_ACTION action;
-	unsigned char packetNumber;
+	unsigned int packetNumber;
 };
 
 enum class XMODEM_TRANSFER_STATUS : signed char
@@ -73,6 +73,10 @@ public:
 	void accumulateCrc(unsigned char ch);
 
 private:
+	// the full packet number. Does not wrap around if packet# is > 255. Starts at 0
+	unsigned int fullPacketNumber;
+
+	// Starts at 1. Wraps around.
 	unsigned char packetno;
 	XMODEM_PACKET_ACTION packetAction;
 	void updateStatus(XMODEM_PACKET_ACTION action, void (*update_packet)(XModemPacketStatus status));

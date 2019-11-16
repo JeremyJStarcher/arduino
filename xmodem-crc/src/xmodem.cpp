@@ -115,7 +115,7 @@ void Xmodem::accumulateCrc(unsigned char ch)
 void Xmodem::updateStatus(XMODEM_PACKET_ACTION action, void (*update_packet)(XModemPacketStatus status))
 {
 	XModemPacketStatus status = XModemPacketStatus();
-	status.packetNumber = this->packetno;
+	status.packetNumber = this->fullPacketNumber;
 	status.action = action;
 	(*update_packet)(status);
 }
@@ -137,11 +137,13 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 {
 	int buffer_size;
 	XMODEM_INIT_STATE initState = XMODEM_INIT_STATE::ATTEMPTED_CRC;
+
 	int i, c;
 	int retry, retrans = MAXRETRANS;
 	this->packetCrc = 0;
 	this->packetOffset = 0;
-	this->packetno = 0;
+	this->packetno = 1;
+	this->fullPacketNumber = 0;
 
 	for (;;)
 	{
@@ -304,7 +306,8 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			this->packetAction = XMODEM_PACKET_ACTION::Accepted;
 			this->updateStatus(this->packetAction, update_packet);
 			this->packetOffset += buffer_size;
-			++packetno;
+			++this->packetno;
+			++this->fullPacketNumber;
 			retrans = MAXRETRANS + 1;
 		}
 		else
@@ -353,7 +356,8 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 	int retry;
 	bool is_eof = false;
 	this->packetOffset = 0;
-	this->packetno = 0;
+	this->packetno = 1;
+	this->fullPacketNumber = 0;
 
 	for (;;)
 	{
@@ -450,7 +454,8 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 						case XMODEM_ACK:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverACK;
 							this->updateStatus(this->packetAction, update_packet);
-							++packetno;
+							++this->packetno;
+							++this->fullPacketNumber;
 							this->packetOffset += buffer_size;
 							goto start_trans;
 						case XMODEM_CAN:
@@ -500,4 +505,3 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 		}
 	}
 }
-
