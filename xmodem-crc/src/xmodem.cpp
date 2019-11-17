@@ -14,12 +14,12 @@
 #define MAXRETRANS 25
 
 unsigned char *xmodemBuffer;
-size_t xmodemBuffer_size;
+size_t xmodemBufferSize;
 
 int getCharFromFullBuffer(xmodem_t offset, xmodem_t i)
 {
 	xmodem_t pos = offset + i;
-	if (pos < xmodemBuffer_size)
+	if (pos < xmodemBufferSize)
 	{
 		return xmodemBuffer[pos];
 	}
@@ -32,7 +32,7 @@ int getCharFromFullBuffer(xmodem_t offset, xmodem_t i)
 void putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 {
 	xmodem_t pos = offset + i;
-	if (pos < xmodemBuffer_size)
+	if (pos < xmodemBufferSize)
 	{
 		xmodemBuffer[pos] = ch;
 	}
@@ -166,28 +166,28 @@ void Xmodem::accumulateCrc(unsigned char ch)
 }
 #endif
 
-void Xmodem::updateStatus(XMODEM_PACKET_ACTION action, void (*update_packet)(XModemPacketStatus status))
+void Xmodem::updateStatus(XMODEM_PACKET_ACTION action, void (*broadcastPacketChange)(XModemPacketStatus status))
 {
 	XModemPacketStatus status = XModemPacketStatus();
 	status.packetNumber = this->fullPacketNumber;
 	status.action = action;
-	(*update_packet)(status);
+	(*broadcastPacketChange)(status);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::receiveFullBuffer(
 	unsigned char *dest,
 	xmodem_t dest_size,
-	void (*update_packet)(XModemPacketStatus status))
+	void (*broadcastPacketChange)(XModemPacketStatus status))
 {
 	xmodemBuffer = dest;
-	xmodemBuffer_size = dest_size;
+	xmodemBufferSize = dest_size;
 
-	return receiveCharacterMode(putCharInFullBuffer, update_packet);
+	return receiveCharacterMode(putCharInFullBuffer, broadcastPacketChange);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
-	void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch),
-	void (*update_packet)(XModemPacketStatus status))
+	void (*storeCharacter)(xmodem_t offset, xmodem_t i, unsigned char ch),
+	void (*broadcastPacketChange)(XModemPacketStatus status))
 {
 	int buffer_size;
 	XMODEM_INIT_STATE initState = XMODEM_INIT_STATE::ATTEMPTED_CRC;
@@ -202,7 +202,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 	for (;;)
 	{
 		this->packetAction = XMODEM_PACKET_ACTION::Sync;
-		this->updateStatus(this->packetAction, update_packet);
+		this->updateStatus(this->packetAction, broadcastPacketChange);
 
 		for (retry = 0; retry < 16; ++retry)
 		{
@@ -217,9 +217,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				{
 				case XMODEM_SOH:
 					buffer_size = 128;
-					goto start_recv;
-				case XMODEM_STX:
-					buffer_size = 1024;
 					goto start_recv;
 				case XMODEM_EOT:
 					flushinput();
@@ -251,12 +248,12 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		this->putChar(XMODEM_CAN);
 		this->putChar(XMODEM_CAN);
 		this->packetAction = XMODEM_PACKET_ACTION::SyncError;
-		this->updateStatus(this->packetAction, update_packet);
+		this->updateStatus(this->packetAction, broadcastPacketChange);
 		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
 
 	start_recv:
 		this->packetAction = XMODEM_PACKET_ACTION::Receiving;
-		this->updateStatus(this->packetAction, update_packet);
+		this->updateStatus(this->packetAction, broadcastPacketChange);
 
 		if (initState == XMODEM_INIT_STATE::ATTEMPTED_CRC)
 		{
@@ -296,7 +293,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 				goto reject;
 			}
 			this->accumulateCrc(c);
-			(*put_char)(this->packetOffset, i, c);
+			(*storeCharacter)(this->packetOffset, i, c);
 		}
 
 		if (this->useCrc)
@@ -358,7 +355,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		if (incomingPacketNumber == packetno)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Accepted;
-			this->updateStatus(this->packetAction, update_packet);
+			this->updateStatus(this->packetAction, broadcastPacketChange);
 			this->packetOffset += buffer_size;
 			++this->packetno;
 			++this->fullPacketNumber;
@@ -370,7 +367,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			// and sent an ACK, but the ACK got mangled on the way back to the
 			// sender, who sends the packet again.
 			this->packetAction = XMODEM_PACKET_ACTION::ValidDuplicate;
-			this->updateStatus(this->packetAction, update_packet);
+			this->updateStatus(this->packetAction, broadcastPacketChange);
 		}
 
 		if (--retrans <= 0)
@@ -386,7 +383,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		continue;
 
 	reject:
-		this->updateStatus(this->packetAction, update_packet);
+		this->updateStatus(this->packetAction, broadcastPacketChange);
 		flushinput();
 		this->putChar(XMODEM_NAK);
 	}
@@ -394,16 +391,16 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(
 	unsigned char *src, xmodem_t source_size,
-	void (*update_packet)(XModemPacketStatus status))
+	void (*broadcastPacketChange)(XModemPacketStatus status))
 {
-	xmodemBuffer_size = source_size;
+	xmodemBufferSize = source_size;
 	xmodemBuffer = src;
-	return this->transmitCharacterMode(getCharFromFullBuffer, update_packet);
+	return this->transmitCharacterMode(getCharFromFullBuffer, broadcastPacketChange);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
-	int (*get_char)(xmodem_t offset, xmodem_t i),
-	void (*update_packet)(XModemPacketStatus status))
+	int (*retrieveCharacter)(xmodem_t offset, xmodem_t i),
+	void (*broadcastPacketChange)(XModemPacketStatus status))
 {
 	int buffer_size;
 	int i, c;
@@ -418,12 +415,12 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 		for (retry = 0; retry < 16; ++retry)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
-			this->updateStatus(this->packetAction, update_packet);
+			this->updateStatus(this->packetAction, broadcastPacketChange);
 
 			if ((c = this->getChar(DELAY_1500)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				this->updateStatus(this->packetAction, update_packet);
+				this->updateStatus(this->packetAction, broadcastPacketChange);
 			}
 			else
 			{
@@ -459,7 +456,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 		{
 		start_trans:
 			this->packetAction = XMODEM_PACKET_ACTION::Sync;
-			this->updateStatus(this->packetAction, update_packet);
+			this->updateStatus(this->packetAction, broadcastPacketChange);
 
 			buffer_size = 128;
 
@@ -468,7 +465,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 				for (retry = 0; retry < MAXRETRANS; ++retry)
 				{
 					this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
-					this->updateStatus(this->packetAction, update_packet);
+					this->updateStatus(this->packetAction, broadcastPacketChange);
 
 					this->putChar(XMODEM_SOH);
 					this->putChar(packetno);
@@ -479,7 +476,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 					for (i = 0; i < buffer_size; ++i)
 					{
-						int khar = (*get_char)(this->packetOffset, i);
+						int khar = (*retrieveCharacter)(this->packetOffset, i);
 						if (khar == -1)
 						{
 							is_eof = true;
@@ -507,7 +504,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 						{
 						case XMODEM_ACK:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverACK;
-							this->updateStatus(this->packetAction, update_packet);
+							this->updateStatus(this->packetAction, broadcastPacketChange);
 							++this->packetno;
 							++this->fullPacketNumber;
 							this->packetOffset += buffer_size;
@@ -522,18 +519,18 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 							break;
 						case XMODEM_NAK:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverNAK;
-							this->updateStatus(this->packetAction, update_packet);
+							this->updateStatus(this->packetAction, broadcastPacketChange);
 							break;
 						default:
 							this->packetAction = XMODEM_PACKET_ACTION::ReceiverGarbage;
-							this->updateStatus(this->packetAction, update_packet);
+							this->updateStatus(this->packetAction, broadcastPacketChange);
 							break;
 						}
 					}
 					else
 					{
 						this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-						this->updateStatus(this->packetAction, update_packet);
+						this->updateStatus(this->packetAction, broadcastPacketChange);
 					}
 				}
 

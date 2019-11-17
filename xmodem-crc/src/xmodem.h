@@ -73,10 +73,10 @@ public:
 #ifndef NO_ARDUINO
 	Xmodem(Stream *S);
 #endif
-	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t dest_size, void (*update_packet)(XModemPacketStatus status));
-	XMODEM_TRANSFER_STATUS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch), void (*update_packet)(XModemPacketStatus status));
-	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srch, void (*update_packet)(XModemPacketStatus status));
-	XMODEM_TRANSFER_STATUS transmitCharacterMode(int (*get_char)(xmodem_t offset, xmodem_t i), void (*update_packet)(XModemPacketStatus status));
+	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t dest_size, void (*broadcastPacketChange)(XModemPacketStatus status));
+	XMODEM_TRANSFER_STATUS receiveCharacterMode(void (*storeCharacter)(xmodem_t offset, xmodem_t i, unsigned char ch), void (*updatePacketData)(XModemPacketStatus status));
+	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srch, void (*updatePacketData)(XModemPacketStatus status));
+	XMODEM_TRANSFER_STATUS transmitCharacterMode(int (*retrieveCharacter)(xmodem_t offset, xmodem_t i), void (*updatePacketData)(XModemPacketStatus status));
 
 	void accumulateCrc(unsigned char ch);
 
@@ -87,7 +87,7 @@ private:
 	// Starts at 1. Wraps around.
 	unsigned char packetno;
 	XMODEM_PACKET_ACTION packetAction;
-	void updateStatus(XMODEM_PACKET_ACTION action, void (*update_packet)(XModemPacketStatus status));
+	void updateStatus(XMODEM_PACKET_ACTION action, void (*updatePacketData)(XModemPacketStatus status));
 	xmodem_t packetOffset;
 	unsigned short packetCrc;
 	unsigned char packetChecksome;
