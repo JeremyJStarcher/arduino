@@ -51,38 +51,13 @@ void loop()
   }
 }
 
-int Serial_read(long int ms)
-{
-
-  const long long t = millis() + ms;
-  int ch;
-  while (1)
-  {
-    ch = Serial.read();
-    if (ch >= 0)
-    {
-      return ch;
-    }
-
-    if (millis() > t)
-    {
-      return -1;
-    }
-  }
-}
-
-void Serial_write(int ch)
-{
-  Serial.write(ch);
-}
 
 void showHelp() {
-  Serial.println(F("\n\n? - **NOT STREAMED** Help"));
+  Serial.println(F("\n\n? - STREAMED DEMO Help"));
   Serial.println(F("F - Fill EEPROM with random data"));
   Serial.println(F("C - Show EEPROM CRC"));
   Serial.println(F("D - Download (xmodem)"));
   Serial.println(F("U - Upload (xmodem)"));
-
 }
 
 void fillEEPROM() {
@@ -183,13 +158,13 @@ void upload(void) {
   Serial.println("there may be a lot of errors and retries.  Updating EEPROM");
   Serial.println("values takes a /long/ time.");
 
-  Xmodem xmodem(Serial_read, Serial_write);
+  Xmodem xmodem(&Serial);
   int k = (int) xmodem.receiveCharacterMode(putCharInEEPROM, update_packet);
 }
 
 void download(void) {
   Serial.println("Starting download.....");
-  Xmodem xmodem(Serial_read, Serial_write);
+  Xmodem xmodem(&Serial);
   int k = (int) xmodem.transmitCharacterMode(getCharFromEEPROM, update_packet);
   Serial.print("download complete. status ");
   Serial.println(k);

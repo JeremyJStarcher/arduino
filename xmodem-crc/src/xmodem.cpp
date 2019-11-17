@@ -38,18 +38,72 @@ void putCharInFullBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 	}
 }
 
-static void flushinput(int (*serial_read)(long int ms))
-{
-	while (serial_read(DELAY_1500) >= 0)
-		; // idle
-}
-
 Xmodem::Xmodem(
 	int (*_serial_read)(long int ms),
 	void (*_serial_write)(int ch))
 {
 	this->serial_read = _serial_read;
 	this->serial_write = _serial_write;
+#ifndef NO_ARDUINO
+	this->hasStreamObject = false;
+#endif
+}
+
+#ifndef NO_ARDUINO
+Xmodem::Xmodem(Stream *S)
+{
+	this->stream = S;
+	this->hasStreamObject = true;
+}
+#endif
+
+void Xmodem::putChar(int ch)
+{
+#ifndef NO_ARDUINO
+	if (!this->hasStreamObject)
+	{
+		this->serial_write(ch);
+		return;
+	}
+
+	this->stream->write(ch);
+#else
+	this->serial_write(ch);
+#endif
+}
+
+int Xmodem::getChar(long int ms)
+{
+#ifndef NO_ARDUINO
+	if (!this->hasStreamObject)
+	{
+		return this->serial_read(ms);
+	}
+
+	const long long t = millis() + ms;
+	int ch;
+	while (1)
+	{
+		ch = this->stream->read();
+		if (ch >= 0)
+		{
+			return ch;
+		}
+
+		if (millis() > t)
+		{
+			return -1;
+		}
+	}
+#else
+	return this->serial_read(ms);
+#endif
+}
+
+void Xmodem::flushinput()
+{
+	while (this->getChar(DELAY_1500) >= 0)
+		; // idle
 }
 
 #if XMODEM_CRC_FAST
@@ -154,10 +208,10 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		{
 			if (initState != XMODEM_INIT_STATE::RESOLVED)
 			{
-				(*serial_write)((int)initState);
+				this->putChar((int)initState);
 			}
 
-			if ((c = serial_read(DELAY_2000)) >= 0)
+			if ((c = this->getChar(DELAY_2000)) >= 0)
 			{
 				switch (c)
 				{
@@ -168,19 +222,19 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 					buffer_size = 1024;
 					goto start_recv;
 				case XMODEM_EOT:
-					flushinput(serial_read);
-					(*serial_write)(XMODEM_ACK);
+					flushinput();
+					this->putChar(XMODEM_ACK);
 					return XMODEM_TRANSFER_STATUS::SUCCESS;
 				case XMODEM_CAN:
-					if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
+					if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
 					{
-						flushinput(serial_read);
-						(*serial_write)(XMODEM_ACK);
+						flushinput();
+						this->putChar(XMODEM_ACK);
 						return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 					}
 					break;
 				default:
-					flushinput(serial_read);
+					flushinput();
 					break;
 				}
 			}
@@ -192,10 +246,10 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			continue;
 		}
 
-		flushinput(serial_read);
-		(*serial_write)(XMODEM_CAN);
-		(*serial_write)(XMODEM_CAN);
-		(*serial_write)(XMODEM_CAN);
+		flushinput();
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
 		this->packetAction = XMODEM_PACKET_ACTION::SyncError;
 		this->updateStatus(this->packetAction, update_packet);
 		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
@@ -220,14 +274,14 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		unsigned char incomingChecksome;
 
-		incomingPacketNumber = serial_read(DELAY_1000);
+		incomingPacketNumber = this->getChar(DELAY_1000);
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
 			goto reject;
 		}
 
-		incomingPacketNumber2 = serial_read(DELAY_1000);
+		incomingPacketNumber2 = this->getChar(DELAY_1000);
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
@@ -236,7 +290,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		for (i = 0; i < buffer_size; ++i)
 		{
-			if ((c = serial_read(DELAY_1000)) < 0)
+			if ((c = this->getChar(DELAY_1000)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
 				goto reject;
@@ -247,14 +301,14 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		if (this->useCrc)
 		{
-			incomingCrcHigh = serial_read(DELAY_1000);
+			incomingCrcHigh = this->getChar(DELAY_1000);
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
 				goto reject;
 			}
 
-			incomingCrcLow = serial_read(DELAY_1000);
+			incomingCrcLow = this->getChar(DELAY_1000);
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
@@ -263,7 +317,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		}
 		else
 		{
-			incomingChecksome = serial_read(DELAY_1000);
+			incomingChecksome = this->getChar(DELAY_1000);
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
@@ -321,20 +375,20 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 
 		if (--retrans <= 0)
 		{
-			flushinput(serial_read);
-			(*serial_write)(XMODEM_CAN);
-			(*serial_write)(XMODEM_CAN);
-			(*serial_write)(XMODEM_CAN);
+			flushinput();
+			this->putChar(XMODEM_CAN);
+			this->putChar(XMODEM_CAN);
+			this->putChar(XMODEM_CAN);
 			return XMODEM_TRANSFER_STATUS::TOO_MANY_RETRIES;
 		}
 
-		(*serial_write)(XMODEM_ACK);
+		this->putChar(XMODEM_ACK);
 		continue;
 
 	reject:
 		this->updateStatus(this->packetAction, update_packet);
-		flushinput(serial_read);
-		(*serial_write)(XMODEM_NAK);
+		flushinput();
+		this->putChar(XMODEM_NAK);
 	}
 }
 
@@ -366,7 +420,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
 			this->updateStatus(this->packetAction, update_packet);
 
-			if ((c = serial_read(DELAY_1500)) < 0)
+			if ((c = this->getChar(DELAY_1500)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
 				this->updateStatus(this->packetAction, update_packet);
@@ -382,10 +436,10 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 					this->useCrc = false;
 					goto start_trans;
 				case XMODEM_CAN:
-					if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
+					if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
 					{
-						(*serial_write)(XMODEM_ACK);
-						flushinput(serial_read);
+						this->putChar(XMODEM_ACK);
+						flushinput();
 						return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 					}
 					break;
@@ -395,10 +449,10 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			}
 		}
 
-		(*serial_write)(XMODEM_CAN);
-		(*serial_write)(XMODEM_CAN);
-		(*serial_write)(XMODEM_CAN);
-		flushinput(serial_read);
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
+		flushinput();
 		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
 
 		for (;;)
@@ -416,9 +470,9 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 					this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
 					this->updateStatus(this->packetAction, update_packet);
 
-					(*serial_write)(XMODEM_SOH);
-					(*serial_write)(packetno);
-					(*serial_write)((unsigned char)(~packetno));
+					this->putChar(XMODEM_SOH);
+					this->putChar(packetno);
+					this->putChar((unsigned char)(~packetno));
 
 					this->packetChecksome = 0;
 					this->packetCrc = 0;
@@ -433,21 +487,21 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 						unsigned char ch = (khar == -1) ? (XMODEM_CTRLZ) : (unsigned char)khar;
 
-						(*serial_write)(ch);
+						this->putChar(ch);
 						this->accumulateCrc(ch);
 					}
 
 					if (this->useCrc)
 					{
-						(*serial_write)((this->packetCrc & 0xFF00) >> 8);
-						(*serial_write)(this->packetCrc & 0xFF);
+						this->putChar((this->packetCrc & 0xFF00) >> 8);
+						this->putChar(this->packetCrc & 0xFF);
 					}
 					else
 					{
-						(*serial_write)(this->packetChecksome);
+						this->putChar(this->packetChecksome);
 					}
 
-					if ((c = serial_read(DELAY_LONG)) >= 0)
+					if ((c = this->getChar(DELAY_LONG)) >= 0)
 					{
 						switch (c)
 						{
@@ -459,10 +513,10 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 							this->packetOffset += buffer_size;
 							goto start_trans;
 						case XMODEM_CAN:
-							if ((c = serial_read(DELAY_1000)) == XMODEM_CAN)
+							if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
 							{
-								(*serial_write)(XMODEM_ACK);
-								flushinput(serial_read);
+								this->putChar(XMODEM_ACK);
+								flushinput();
 								return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
 							}
 							break;
@@ -483,23 +537,23 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 					}
 				}
 
-				(*serial_write)(XMODEM_CAN);
-				(*serial_write)(XMODEM_CAN);
-				(*serial_write)(XMODEM_CAN);
-				flushinput(serial_read);
+				this->putChar(XMODEM_CAN);
+				this->putChar(XMODEM_CAN);
+				this->putChar(XMODEM_CAN);
+				flushinput();
 				return XMODEM_TRANSFER_STATUS::TRANSMIT_ERROR;
 			}
 			else
 			{
 				for (retry = 0; retry < 10; ++retry)
 				{
-					(*serial_write)(XMODEM_EOT);
-					if ((c = serial_read(DELAY_2000)) == XMODEM_ACK)
+					this->putChar(XMODEM_EOT);
+					if ((c = this->getChar(DELAY_2000)) == XMODEM_ACK)
 					{
 						break;
 					}
 				}
-				flushinput(serial_read);
+				flushinput();
 				return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
 			}
 		}

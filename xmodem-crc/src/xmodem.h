@@ -1,5 +1,10 @@
 #ifndef SERIAL_CRC_H
 #define SERIAL_CRC_H
+
+#ifndef NO_ARDUINO
+#include <Arduino.h>
+#endif
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -65,6 +70,9 @@ class Xmodem
 {
 public:
 	Xmodem(int (*serial_read)(long int ms), void (*serial_write)(int ch));
+#ifndef NO_ARDUINO
+	Xmodem(Stream *S);
+#endif
 	XMODEM_TRANSFER_STATUS receiveFullBuffer(unsigned char *dest, xmodem_t dest_size, void (*update_packet)(XModemPacketStatus status));
 	XMODEM_TRANSFER_STATUS receiveCharacterMode(void (*put_char)(xmodem_t offset, xmodem_t i, unsigned char ch), void (*update_packet)(XModemPacketStatus status));
 	XMODEM_TRANSFER_STATUS transmitFullBuffer(unsigned char *src, xmodem_t srch, void (*update_packet)(XModemPacketStatus status));
@@ -84,7 +92,16 @@ private:
 	unsigned short packetCrc;
 	unsigned char packetChecksome;
 	bool useCrc = false;
+#ifndef NO_ARDUINO
+	Stream *stream;
+	bool hasStreamObject;
+#endif
+	int streamRead(long int ms);
+	void streamWrite(int ch);
 	void (*serial_write)(int ch);
 	int (*serial_read)(long int ms);
+	void flushinput();
+	void putChar(int ch);
+	int getChar(long int ms);
 };
 #endif
