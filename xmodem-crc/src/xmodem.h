@@ -10,13 +10,6 @@
 #include <string.h>
 using namespace std;
 
-#define XMODEM_SOH 0x01
-#define XMODEM_STX 0x02
-#define XMODEM_EOT 0x04
-#define XMODEM_ACK 0x06
-#define XMODEM_NAK 0x15
-#define XMODEM_CAN 0x18
-#define XMODEM_CTRLZ 0x1A
 
 /* The XMODEM_INIT_STATE is only sent with the very first packet
    and is used to decide if the transfer is in CRC or checksome
@@ -25,7 +18,7 @@ using namespace std;
 enum class XMODEM_INIT_STATE : unsigned char
 {
 	ATTEMPTED_CRC = 'C',
-	ATTEMPT_CHECKSOME = XMODEM_NAK,
+	ATTEMPT_CHECKSOME = 0x15,
 	RESOLVED = 0,
 };
 

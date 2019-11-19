@@ -6,12 +6,20 @@
 #endif
 #endif
 
-#define DELAY_1000 (1000)
-#define DELAY_LONG (1000 * 10)
-#define DELAY_1500 (1500)
-#define DELAY_2000 (2000)
+const int DELAY_1000 = (1000);
+const int DELAY_LONG = (1000 * 10);
+const int DELAY_1500 = (1500);
+const int DELAY_2000 = (2000);
 
-#define MAXRETRANS 25
+const unsigned char XMODEM_SOH = 0x01;
+const unsigned char XMODEM_STX = 0x02;
+const unsigned char XMODEM_EOT = 0x04;
+const unsigned char XMODEM_ACK = 0x06;
+const unsigned char XMODEM_NAK = 0x15;
+const unsigned char XMODEM_CAN = 0x18;
+const unsigned char XMODEM_CTRLZ = 0x1A;
+
+const char MAXRETRANS = 25;
 
 unsigned char *xmodemBuffer;
 size_t xmodemBufferSize;
@@ -261,9 +269,6 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		}
 		initState = XMODEM_INIT_STATE::RESOLVED;
 
-		this->packetChecksome = 0;
-		this->packetCrc = 0;
-
 		unsigned char incomingPacketNumber;
 		unsigned char incomingPacketNumber2;
 		unsigned char incomingCrcHigh;
@@ -285,6 +290,8 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			goto reject;
 		}
 
+		this->packetChecksome = 0;
+		this->packetCrc = 0;
 		for (i = 0; i < buffer_size; ++i)
 		{
 			if ((c = this->getChar(DELAY_1000)) < 0)

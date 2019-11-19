@@ -51,7 +51,6 @@ void loop()
   }
 }
 
-
 void showHelp() {
   Serial.println(F("\n\n? - STREAMED DEMO Help"));
   Serial.println(F("F - Fill EEPROM with random data"));
