@@ -30,11 +30,10 @@ using namespace std;
 #define LOGLN(x) Serial.println(x)
 #endif
 
-
-#define BUFFER_SIZE 5048
+const int BUFFER_SIZE = 5048;
 static unsigned char buffer[BUFFER_SIZE];
 
-struct alter_rule
+struct alterRule
 {
   unsigned char packetNumber;
   int position;
@@ -43,13 +42,13 @@ struct alter_rule
   bool isHandled;
 };
 
-#define ALTER_RULE_MAX 5
-#define ALTER_RULE_NONE 0
-#define ALTER_RULE_INSERT 1
-#define ALTER_RULE_DELETE 2
-#define ALTER_RULE_CHANGE 3
+const char ALTER_RULE_MAX = 5;
+const char ALTER_RULE_NONE = 0;
+const char ALTER_RULE_INSERT = 1;
+const char ALTER_RULE_DELETE = 2;
+const char ALTER_RULE_CHANGE = 3;
 
-alter_rule alter_rules[ALTER_RULE_MAX];
+alterRule alterRules[ALTER_RULE_MAX];
 
 bool isPassing;
 
@@ -57,11 +56,11 @@ void resetAlterRules()
 {
   for (int i = 0; i < ALTER_RULE_MAX; i++)
   {
-    alter_rules[i].action = ALTER_RULE_NONE;
-    alter_rules[i].packetNumber = -1;
-    alter_rules[i].position = -1;
-    alter_rules[i].value = -1;
-    alter_rules[i].isHandled = false;
+    alterRules[i].action = ALTER_RULE_NONE;
+    alterRules[i].packetNumber = -1;
+    alterRules[i].position = -1;
+    alterRules[i].value = -1;
+    alterRules[i].isHandled = false;
   }
 }
 
@@ -69,7 +68,6 @@ unsigned char getBufferByte(size_t idx)
 {
   static unsigned char txt[] = "The quick brown fox";
   return txt[idx % sizeof(txt)];
-  // return idx & 0xFF;
 }
 
 bool compareBuffer(unsigned char *buffer, size_t s)
@@ -120,7 +118,7 @@ void tweak_write(int ch)
 
   for (int i = 0; i < ALTER_RULE_MAX; i++)
   {
-    alter_rule r = alter_rules[i];
+    alterRule r = alterRules[i];
 
     if (
       (r.position == send_index) &&
@@ -228,7 +226,7 @@ void update_packet(XModemPacketStatus status)
 class XM_ShouldSucceed : public XMTestBase
 {
   public:
-    static void MasterAction(alter_rule *alter_rules)
+    static void MasterAction(alterRule *alterRules)
     {
       Xmodem xmodem(serial_read, tweak_write);
 
@@ -274,7 +272,7 @@ void testNoGlitches(bool isMaster)
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -289,13 +287,13 @@ void testMissingDataByte(bool isMaster)
   LOGLN(F("--------------------------------"));
 
   resetAlterRules();
-  alter_rules[0].packetNumber = 4;
-  alter_rules[0].action = ALTER_RULE_DELETE;
-  alter_rules[0].position = 17;
+  alterRules[0].packetNumber = 4;
+  alterRules[0].action = ALTER_RULE_DELETE;
+  alterRules[0].position = 17;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -310,14 +308,14 @@ void testExtraDataByte(bool isMaster)
   LOGLN(F("--------------------------------"));
 
   resetAlterRules();
-  alter_rules[0].action = ALTER_RULE_INSERT;
-  alter_rules[0].packetNumber = 5;
-  alter_rules[0].position = 17;
-  alter_rules[0].value = 0xFF;
+  alterRules[0].action = ALTER_RULE_INSERT;
+  alterRules[0].packetNumber = 5;
+  alterRules[0].position = 17;
+  alterRules[0].value = 0xFF;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -332,14 +330,14 @@ void testChangedByteInPayload(bool isMaster)
   LOGLN(F("--------------------------------"));
 
   resetAlterRules();
-  alter_rules[0].action = ALTER_RULE_CHANGE;
-  alter_rules[0].packetNumber = 1;
-  alter_rules[0].position = 17;
-  alter_rules[0].value = 0xFF;
+  alterRules[0].action = ALTER_RULE_CHANGE;
+  alterRules[0].packetNumber = 1;
+  alterRules[0].position = 17;
+  alterRules[0].value = 0xFF;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -355,14 +353,14 @@ void testCorruptPacketNumber(bool isMaster)
 
   resetAlterRules();
 
-  alter_rules[0].action = ALTER_RULE_CHANGE;
-  alter_rules[0].packetNumber = 16;
-  alter_rules[0].position = 1;
-  alter_rules[0].value = 0xA0;
+  alterRules[0].action = ALTER_RULE_CHANGE;
+  alterRules[0].packetNumber = 16;
+  alterRules[0].position = 1;
+  alterRules[0].value = 0xA0;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -378,14 +376,14 @@ void testCorruptPacketNumberCheck(bool isMaster)
 
   resetAlterRules();
 
-  alter_rules[0].action = ALTER_RULE_CHANGE;
-  alter_rules[0].packetNumber = 15;
-  alter_rules[0].position = 2;
-  alter_rules[0].value = 0xA0;
+  alterRules[0].action = ALTER_RULE_CHANGE;
+  alterRules[0].packetNumber = 15;
+  alterRules[0].position = 2;
+  alterRules[0].value = 0xA0;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -401,19 +399,19 @@ void testPacketSequenceError(bool isMaster)
 
   resetAlterRules();
 
-  alter_rules[0].action = ALTER_RULE_CHANGE;
-  alter_rules[0].packetNumber = 16;
-  alter_rules[0].position = 1;
-  alter_rules[0].value = 0xA0;
+  alterRules[0].action = ALTER_RULE_CHANGE;
+  alterRules[0].packetNumber = 16;
+  alterRules[0].position = 1;
+  alterRules[0].value = 0xA0;
 
-  alter_rules[1].action = ALTER_RULE_CHANGE;
-  alter_rules[1].packetNumber = 16;
-  alter_rules[1].position = 2;
-  alter_rules[1].value = ~(0xA0);
+  alterRules[1].action = ALTER_RULE_CHANGE;
+  alterRules[1].packetNumber = 16;
+  alterRules[1].position = 2;
+  alterRules[1].value = ~(0xA0);
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
@@ -429,14 +427,14 @@ void testCorreptSohError(bool isMaster)
 
   resetAlterRules();
 
-  alter_rules[0].action = ALTER_RULE_CHANGE;
-  alter_rules[0].packetNumber = 16;
-  alter_rules[0].position = 0;
-  alter_rules[0].value = 0xA0;
+  alterRules[0].action = ALTER_RULE_CHANGE;
+  alterRules[0].packetNumber = 16;
+  alterRules[0].position = 0;
+  alterRules[0].value = 0xA0;
 
   if (isMaster)
   {
-    XM_ShouldSucceed::MasterAction(alter_rules);
+    XM_ShouldSucceed::MasterAction(alterRules);
   }
   else
   {
