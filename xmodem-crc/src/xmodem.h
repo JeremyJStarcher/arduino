@@ -80,7 +80,7 @@ private:
 	// Starts at 1. Wraps around.
 	unsigned char packetno;
 	XMODEM_PACKET_ACTION packetAction;
-	void updateStatus(XMODEM_PACKET_ACTION action, void (*updatePacketData)(XModemPacketStatus status));
+	void updateStatus(void (*updatePacketData)(XModemPacketStatus status));
 	xmodem_t packetOffset;
 	unsigned short packetCrc;
 	unsigned char packetChecksome;
