@@ -281,14 +281,16 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-			goto reject;
+			this->rejectReceive(broadcastPacketChange);
+			continue;
 		}
 
 		incomingPacketNumber2 = this->getChar(DELAY_1000);
 		if (c == -1)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-			goto reject;
+			this->rejectReceive(broadcastPacketChange);
+			continue;
 		}
 
 		this->packetChecksome = 0;
@@ -298,7 +300,8 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if ((c = this->getChar(DELAY_1000)) < 0)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 			this->accumulateCrc(c);
 			(*storeCharacter)(this->packetOffset, i, c);
@@ -310,14 +313,16 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 
 			incomingCrcLow = this->getChar(DELAY_1000);
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 		}
 		else
@@ -326,20 +331,23 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (c == -1)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 		}
 
 		if (incomingPacketNumber != (unsigned char)(~incomingPacketNumber2))
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::PacketNumberCorrupt;
-			goto reject;
+			this->rejectReceive(broadcastPacketChange);
+			continue;
 		}
 
 		if (!(incomingPacketNumber == packetno || incomingPacketNumber == (unsigned char)packetno - 1))
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::PacketNumberOutOfSequence;
-			goto reject;
+			this->rejectReceive(broadcastPacketChange);
+			continue;
 		}
 
 		if (this->useCrc)
@@ -348,7 +356,8 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (crc != this->packetCrc)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::CrcMismatch;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 		}
 		else
@@ -356,7 +365,8 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 			if (incomingChecksome != this->packetChecksome)
 			{
 				this->packetAction = XMODEM_PACKET_ACTION::ChecksomeMismatch;
-				goto reject;
+				this->rejectReceive(broadcastPacketChange);
+				continue;
 			}
 		}
 
@@ -388,13 +398,15 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		}
 
 		this->putChar(XMODEM_ACK);
-		continue;
-
-	reject:
-		this->updateStatus(broadcastPacketChange);
-		flushinput();
-		this->putChar(XMODEM_NAK);
 	}
+}
+
+void Xmodem::rejectReceive(
+	void (*broadcastPacketChange)(XModemPacketStatus status))
+{
+	this->updateStatus(broadcastPacketChange);
+	flushinput();
+	this->putChar(XMODEM_NAK);
 }
 
 XMODEM_TRANSFER_STATUS Xmodem::transmitFullBuffer(
@@ -454,11 +466,14 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			}
 		}
 
-		this->putChar(XMODEM_CAN);
-		this->putChar(XMODEM_CAN);
-		this->putChar(XMODEM_CAN);
-		flushinput();
-		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
+		if (retry == START_TRANSFER_RETRIES)
+		{
+			this->putChar(XMODEM_CAN);
+			this->putChar(XMODEM_CAN);
+			this->putChar(XMODEM_CAN);
+			flushinput();
+			return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
+		}
 
 		for (;;)
 		{

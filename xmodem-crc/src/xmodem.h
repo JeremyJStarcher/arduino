@@ -81,6 +81,8 @@ private:
 	unsigned char packetno;
 	XMODEM_PACKET_ACTION packetAction;
 	void updateStatus(void (*updatePacketData)(XModemPacketStatus status));
+	void  rejectReceive(void (*broadcastPacketChange)(XModemPacketStatus status));
+
 	xmodem_t packetOffset;
 	unsigned short packetCrc;
 	unsigned char packetChecksome;
