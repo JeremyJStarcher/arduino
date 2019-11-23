@@ -20,6 +20,7 @@ const unsigned char XMODEM_CAN = 0x18;
 const unsigned char XMODEM_CTRLZ = 0x1A;
 
 const char MAXRETRANS = 25;
+const char START_TRANSFER_RETRIES = 16;
 
 unsigned char *xmodemBuffer;
 size_t xmodemBufferSize;
@@ -212,7 +213,7 @@ XMODEM_TRANSFER_STATUS Xmodem::receiveCharacterMode(
 		this->packetAction = XMODEM_PACKET_ACTION::Sync;
 		this->updateStatus(broadcastPacketChange);
 
-		for (retry = 0; retry < 16; ++retry)
+		for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
 		{
 			if (initState != XMODEM_INIT_STATE::RESOLVED)
 			{
@@ -419,7 +420,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 
 	for (;;)
 	{
-		for (retry = 0; retry < 16; ++retry)
+		for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
 		{
 			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
 			this->updateStatus(broadcastPacketChange);
@@ -549,7 +550,7 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 			}
 			else
 			{
-				for (retry = 0; retry < 10; ++retry)
+				for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
 				{
 					this->putChar(XMODEM_EOT);
 					if ((c = this->getChar(DELAY_2000)) == XMODEM_ACK)
@@ -558,7 +559,8 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 					}
 				}
 				flushinput();
-				return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
+				return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS
+										 : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
 			}
 		}
 	}
