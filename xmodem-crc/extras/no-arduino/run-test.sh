@@ -5,7 +5,7 @@ rm master.txt
 rm slave.txt
 
  SLAVE_DEVICE="\"/dev/ttyUSB1\""
-MASTER_DEVICE="\"/dev/ttyUSB0\""
+MASTER_DEVICE="\"/dev/ttyUSB2\""
 
 DEFINES="-DBAUD=B${BAUD} -DSLAVE_DEVICE=${SLAVE_DEVICE} -DMASTER_DEVICE=${MASTER_DEVICE} -DNO_ARDUINO"
 GCC_ARGS="-g3 -Wall -I ../../src"
