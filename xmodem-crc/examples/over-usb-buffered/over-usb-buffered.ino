@@ -150,8 +150,25 @@ void putCharInBuffer(xmodem_t offset, xmodem_t i, unsigned char ch)
 
 void update_packet(XModemPacketStatus status)
 {
-  /* In the character by character mode, these values are only
-      used to update the UI, if applicable.
+  /* In the buffer mode, we have to respond when a packet is sent
+     or received correctly.
+  */
+  switch (status.action)
+  {
+    case XMODEM_PACKET_ACTION::Accepted:
+      saveBuffer();
+      break;
+    case XMODEM_PACKET_ACTION::ReceiverACK:
+      // The other end accepted the packet.
+      loadBuffer();
+      break;
+    default:
+      break;
+  }
+
+
+  /*
+     These values can be used to update the UI
   */
   switch (status.action)
   {
@@ -168,13 +185,10 @@ void update_packet(XModemPacketStatus status)
     case XMODEM_PACKET_ACTION::ChecksomeMismatch:
       break;
     case XMODEM_PACKET_ACTION::Accepted:
-      saveBuffer();
       break;
     case XMODEM_PACKET_ACTION::ValidDuplicate:
       break;
     case XMODEM_PACKET_ACTION::ReceiverACK:
-      // The other end accepted the packet.
-      loadBuffer();
       break;
     case XMODEM_PACKET_ACTION::ReceiverNAK:
       break;
@@ -235,15 +249,5 @@ void saveBuffer() {
       EEPROM.update(pos, buffer[i]);
     }
   }
-  debug_blink();
   transmitIndex += BUFFER_SIZE;
-}
-
-void debug_blink() {
-  for (int i = 0; i < 20; i++) {
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(250);                        // wait for a second
-    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-    delay(250);                        // wait for a second
-  }
 }
