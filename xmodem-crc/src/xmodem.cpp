@@ -430,153 +430,157 @@ XMODEM_TRANSFER_STATUS Xmodem::transmitCharacterMode(
 	this->packetno = 1;
 	this->fullPacketNumber = 0;
 
-	for (;;)
+	for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
 	{
-		for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
-		{
-			this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
-			this->updateStatus(broadcastPacketChange);
+		this->packetAction = XMODEM_PACKET_ACTION::WaitingForReceiver;
+		this->updateStatus(broadcastPacketChange);
+		c = this->getChar(DELAY_1500);
 
-			if ((c = this->getChar(DELAY_1500)) < 0)
-			{
-				this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-				this->updateStatus(broadcastPacketChange);
-			}
-			else
-			{
-				switch (c)
-				{
-				case 'C':
-					this->useCrc = true;
-					goto start_trans;
-				case XMODEM_NAK:
-					this->useCrc = false;
-					goto start_trans;
-				case XMODEM_CAN:
-					if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
-					{
-						this->putChar(XMODEM_ACK);
-						flushinput();
-						return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
-					}
-					break;
-				default:
-					break;
-				}
-			}
+		if (c < 0)
+		{
+			this->packetAction = XMODEM_PACKET_ACTION::Timeout;
+			this->updateStatus(broadcastPacketChange);
 		}
 
-		if (retry == START_TRANSFER_RETRIES)
+		if (c == 'C')
 		{
+			this->useCrc = true;
+			break;
+		}
+
+		if (c == XMODEM_NAK)
+		{
+			this->useCrc = false;
+			break;
+		}
+
+		if (c == XMODEM_CAN)
+		{
+			if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
+			{
+				this->putChar(XMODEM_ACK);
+				flushinput();
+				return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
+			}
+			continue;
+		}
+	}
+
+	if (retry == START_TRANSFER_RETRIES)
+	{
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
+		this->putChar(XMODEM_CAN);
+		flushinput();
+		return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
+	}
+
+	for (;;)
+	{
+		this->packetAction = XMODEM_PACKET_ACTION::Sync;
+		this->updateStatus(broadcastPacketChange);
+
+		buffer_size = 128;
+
+		if (!is_eof)
+		{
+			for (retry = 0; retry < MAXRETRANS; ++retry)
+			{
+				this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
+				this->updateStatus(broadcastPacketChange);
+
+				this->putChar(XMODEM_SOH);
+				this->putChar(packetno);
+				this->putChar((unsigned char)(~packetno));
+
+				this->packetChecksome = 0;
+				this->packetCrc = 0;
+
+				for (i = 0; i < buffer_size; ++i)
+				{
+					int khar = (*retrieveCharacter)(this->packetOffset, i);
+					if (khar == -1)
+					{
+						is_eof = true;
+					}
+
+					unsigned char ch = (khar == -1) ? (XMODEM_CTRLZ) : (unsigned char)khar;
+
+					this->putChar(ch);
+					this->accumulateCrc(ch);
+				}
+
+				if (this->useCrc)
+				{
+					this->putChar((this->packetCrc & 0xFF00) >> 8);
+					this->putChar(this->packetCrc & 0xFF);
+				}
+				else
+				{
+					this->putChar(this->packetChecksome);
+				}
+
+				if ((c = this->getChar(DELAY_LONG)) >= 0)
+				{
+					switch (c)
+					{
+					case XMODEM_ACK:
+						this->packetAction = XMODEM_PACKET_ACTION::ReceiverACK;
+						this->updateStatus(broadcastPacketChange);
+						++this->packetno;
+						++this->fullPacketNumber;
+						this->packetOffset += buffer_size;
+						break;
+
+					case XMODEM_CAN:
+						if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
+						{
+							this->putChar(XMODEM_ACK);
+							flushinput();
+							return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
+						}
+						break;
+					case XMODEM_NAK:
+						this->packetAction = XMODEM_PACKET_ACTION::ReceiverNAK;
+						this->updateStatus(broadcastPacketChange);
+						break;
+					default:
+						this->packetAction = XMODEM_PACKET_ACTION::ReceiverGarbage;
+						this->updateStatus(broadcastPacketChange);
+						break;
+					}
+				}
+				else
+				{
+					this->packetAction = XMODEM_PACKET_ACTION::Timeout;
+					this->updateStatus(broadcastPacketChange);
+				}
+			}
+
+			if (this->packetAction == XMODEM_PACKET_ACTION::ReceiverACK)
+			{
+				continue;
+			}
+
 			this->putChar(XMODEM_CAN);
 			this->putChar(XMODEM_CAN);
 			this->putChar(XMODEM_CAN);
 			flushinput();
-			return XMODEM_TRANSFER_STATUS::SYNC_ERROR;
+			return XMODEM_TRANSFER_STATUS::TRANSMIT_ERROR;
 		}
-
-		for (;;)
+		else
 		{
-		start_trans:
-			this->packetAction = XMODEM_PACKET_ACTION::Sync;
-			this->updateStatus(broadcastPacketChange);
-
-			buffer_size = 128;
-
-			if (!is_eof)
+			for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
 			{
-				for (retry = 0; retry < MAXRETRANS; ++retry)
+				this->putChar(XMODEM_EOT);
+				if ((c = this->getChar(DELAY_2000)) == XMODEM_ACK)
 				{
-					this->packetAction = XMODEM_PACKET_ACTION::Transmitting;
-					this->updateStatus(broadcastPacketChange);
-
-					this->putChar(XMODEM_SOH);
-					this->putChar(packetno);
-					this->putChar((unsigned char)(~packetno));
-
-					this->packetChecksome = 0;
-					this->packetCrc = 0;
-
-					for (i = 0; i < buffer_size; ++i)
-					{
-						int khar = (*retrieveCharacter)(this->packetOffset, i);
-						if (khar == -1)
-						{
-							is_eof = true;
-						}
-
-						unsigned char ch = (khar == -1) ? (XMODEM_CTRLZ) : (unsigned char)khar;
-
-						this->putChar(ch);
-						this->accumulateCrc(ch);
-					}
-
-					if (this->useCrc)
-					{
-						this->putChar((this->packetCrc & 0xFF00) >> 8);
-						this->putChar(this->packetCrc & 0xFF);
-					}
-					else
-					{
-						this->putChar(this->packetChecksome);
-					}
-
-					if ((c = this->getChar(DELAY_LONG)) >= 0)
-					{
-						switch (c)
-						{
-						case XMODEM_ACK:
-							this->packetAction = XMODEM_PACKET_ACTION::ReceiverACK;
-							this->updateStatus(broadcastPacketChange);
-							++this->packetno;
-							++this->fullPacketNumber;
-							this->packetOffset += buffer_size;
-							goto start_trans;
-						case XMODEM_CAN:
-							if ((c = this->getChar(DELAY_1000)) == XMODEM_CAN)
-							{
-								this->putChar(XMODEM_ACK);
-								flushinput();
-								return XMODEM_TRANSFER_STATUS::CANCELED_BY_REMOTE;
-							}
-							break;
-						case XMODEM_NAK:
-							this->packetAction = XMODEM_PACKET_ACTION::ReceiverNAK;
-							this->updateStatus(broadcastPacketChange);
-							break;
-						default:
-							this->packetAction = XMODEM_PACKET_ACTION::ReceiverGarbage;
-							this->updateStatus(broadcastPacketChange);
-							break;
-						}
-					}
-					else
-					{
-						this->packetAction = XMODEM_PACKET_ACTION::Timeout;
-						this->updateStatus(broadcastPacketChange);
-					}
+					break;
 				}
-
-				this->putChar(XMODEM_CAN);
-				this->putChar(XMODEM_CAN);
-				this->putChar(XMODEM_CAN);
-				flushinput();
-				return XMODEM_TRANSFER_STATUS::TRANSMIT_ERROR;
 			}
-			else
-			{
-				for (retry = 0; retry < START_TRANSFER_RETRIES; ++retry)
-				{
-					this->putChar(XMODEM_EOT);
-					if ((c = this->getChar(DELAY_2000)) == XMODEM_ACK)
-					{
-						break;
-					}
-				}
-				flushinput();
-				return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS
-										 : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
-			}
+			flushinput();
+			return (c == XMODEM_ACK) ? XMODEM_TRANSFER_STATUS::SUCCESS
+									 : XMODEM_TRANSFER_STATUS::NO_EOT_REPLY;
 		}
 	}
 }
