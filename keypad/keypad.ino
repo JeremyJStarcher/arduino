@@ -36,6 +36,8 @@
 // CTX    GND
 // GND    GND
 
+#define TTF_POWERPIN1 2
+#define TTF_POWERPIN2 3
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -70,11 +72,12 @@ const int slot_size = EEPROM.length() / EEPROM_SLOTS;
 const int display_name_length = 10;
 const int secret_length = slot_size - display_name_length;
 
+const long SCREEN_TIMEOUT_MS = 5000;
+
 Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 
-float p = 3.1415926;
-
 bool isLocked = true;
+bool isScreenOff = true;
 
 void draw_screen(void) {
   if (isLocked) {
@@ -135,35 +138,33 @@ void ttf_names(void) {
   }
 }
 
-void setup(void) {
-  Serial.begin(9600);
+void screenOff() {
+  digitalWrite(TTF_POWERPIN1, LOW);
+  digitalWrite(TTF_POWERPIN2, LOW);
 
-  Serial1.begin(9600);
+  pinMode(TTF_POWERPIN1, OUTPUT);
+  pinMode(TTF_POWERPIN2, OUTPUT);
+  isScreenOff = true;
+}
 
-  Serial1.println(F("SYSTEM LOADED"));
-
-  Keyboard.begin();
-
-  // Serial.print(F("Hello! ST77xx TFT Test"));
+void screenOn() {
+  screenOff();
+  digitalWrite(TTF_POWERPIN1, HIGH);
+  digitalWrite(TTF_POWERPIN2, HIGH);
 
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
-
+  isScreenOff = false;
   draw_screen();
-
-  // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
-  // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
-  // may end up with a black screen some times, or all the time.
-  //tft.setSPISpeed(40000000);
-
-  return;
 }
 
-void loop2() {
-  tft.invertDisplay(true);
-  delay(500);
-  tft.invertDisplay(false);
-  delay(500);
+void setup(void) {
+  screenOn();
+
+  Serial.begin(9600);
+  Serial1.begin(9600);
+  Serial1.println(F("SYSTEM LOADED"));
+  Keyboard.begin();
 }
 
 int get_name_offset(int slot) {
@@ -371,8 +372,21 @@ void handle_serial() {
 }
 
 int read_keypad() {
+  unsigned long currentMillis = millis();
+  static unsigned long targetMillis = currentMillis + SCREEN_TIMEOUT_MS;
+
+  if (currentMillis > targetMillis) {
+    screenOff();
+  }
+
   char key = kpd.getKey();
   if (key) {
+    targetMillis = currentMillis + SCREEN_TIMEOUT_MS;
+    if (isScreenOff) {
+      screenOn();
+      return 0;
+    }
+
     tft.invertDisplay(true);
     delay(100);
     tft.invertDisplay(false);
