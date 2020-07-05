@@ -1,88 +1,42 @@
 /**************************************************************************
   This is a library for several Adafruit displays based on ST77* drivers.
 
-  Works with the Adafruit 1.8" TFT Breakout w/SD card
-    ----> http://www.adafruit.com/products/358
-  The 1.8" TFT shield
-    ----> https://www.adafruit.com/product/802
-  The 1.44" TFT breakout
-    ----> https://www.adafruit.com/product/2088
-  The 1.14" TFT breakout
-  ----> https://www.adafruit.com/product/4383
-  The 1.3" TFT breakout
-  ----> https://www.adafruit.com/product/4313
-  The 1.54" TFT breakout
-    ----> https://www.adafruit.com/product/3787
-  The 2.0" TFT breakout
-    ----> https://www.adafruit.com/product/4311
-  as well as Adafruit raw 1.8" TFT display
-    ----> http://www.adafruit.com/products/618
-
-  Check out the links above for our tutorials and wiring diagrams.
-  These displays use SPI to communicate, 4 or 5 pins are required to
-  interface (RST is optional).
-
-  Adafruit invests time and resources providing this open source code,
-  please support Adafruit and open-source hardware by purchasing
-  products from Adafruit!
-
   Written by Limor Fried/Ladyada for Adafruit Industries.
   MIT license, all text above must be included in any redistribution
  **************************************************************************/
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
-#include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
+#include <EEPROM.h>
 
 #include <Keypad.h>
 #include <Keyboard.h>
 
-#include <SoftwareSerial.h>
-
-SoftwareSerial mySerial(3, 2); // RX, TX
-
-#if defined(ARDUINO_FEATHER_ESP32) // Feather Huzzah32
-#define TFT_CS         14
-#define TFT_RST        15
-#define TFT_DC         32
-
-#elif defined(ESP8266)
-#define TFT_CS         4
-#define TFT_RST        16
-#define TFT_DC         5
-
-#else
 // For the breakout board, you can use any 2 or 3 pins.
 // These pins will also work for the 1.8" TFT shield.
 #define TFT_CS        10
 #define TFT_RST        9 // Or set to -1 and connect to Arduino RESET pin
 #define TFT_DC         8
-#endif
+#define TFT_SDA       16 // **HARDWARE PIN MOSI
+#define TFT_SDL       15 // **HARDWARE PIN SCK
+// VCC
+// GND
 
-// OPTION 1 (recommended) is to use the HARDWARE SPI pins, which are unique
-// to each board and not reassignable. For Arduino Uno: MOSI = pin 11 and
-// SCLK = pin 13. This is the fastest mode of operation and is required if
-// using the breakout board's microSD card.
+// RESET BUTTON
+// RST
+// GND
 
-// For 1.44" and 1.8" TFT with ST7735 use:
+// FTDI
+// DTR    N/C
+// RX     TX1
+// TX     RX1
+// VCC    VCC
+// CTX    GND
+// GND    GND
+
+
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
-
-// For 1.14", 1.3", 1.54", and 2.0" TFT with ST7789:
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
-
-
-// OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
-// tradeoff being that performance is not as fast as hardware SPI above.
-//#define TFT_MOSI 11  // Data out
-//#define TFT_SCLK 13  // Clock out
-
-// For ST7735-based displays, we will use this call
-//Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
-
-// OR for the ST7789-based displays, we will use this call
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
-
 
 const byte KEY_ROWS = 4;
 const byte KEY_COLS = 3;
@@ -94,8 +48,7 @@ char keys[KEY_ROWS][KEY_COLS] = {
 };
 
 /*
-
-   Starting at #
+   Starting at # character and working the way down
    A3
    A2
    A1
@@ -103,118 +56,74 @@ char keys[KEY_ROWS][KEY_COLS] = {
    6
    5
    4
-
-   DISPLAY
-   SLC - 15
-   SDA - 16
-
 */
 
 byte rowPins[KEY_ROWS] = {4, 5, 6, 7};
 byte colPins[KEY_COLS] = { A1, A2, A3 };
 
+// How many total memory chucks to device the EEPROM into
+const byte EEPROM_SLOTS = 16;
+
+const int slot_size = EEPROM.length() / EEPROM_SLOTS;
+const int label_length = 10;
+const int type_length = slot_size - label_length;
+
 Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 
 float p = 3.1415926;
 
+void ttf_names(void) {
+  tft.fillScreen(ST77XX_YELLOW);
+  tft.setCursor(0, 0);
+  tft.setTextWrap(false);
+  byte fontSize = 2;
+  tft.setTextSize(fontSize);
+
+  for (int i = 0; i < 10; i++) {
+    int text_color = i % 2 == 0 ? ST77XX_WHITE : ST77XX_WHITE;
+    int bg_color = i % 2 == 0 ? ST77XX_BLUE : ST77XX_BLACK;
+
+    tft.fillRect(0, i * 8 * fontSize , tft.width(), (8 * fontSize) - 1, bg_color);
+
+    tft.setTextColor(text_color);
+    tft.print("#");
+    tft.print(i);
+    tft.print(" ");
+
+    int offset = get_name_offset(i);
+
+    char c;
+    while ((c = EEPROM.read(offset )) != 0) {
+      tft.print(c);
+      offset += 1;
+    }
+
+    tft.println("");
+  }
+}
+
 void setup(void) {
-  char key;
   Serial.begin(9600);
 
-  while (!Serial) {
-    ; // spin wheels
-  }
+  Serial1.begin(9600);
 
-  mySerial.begin(4800);
+  Serial1.println(F("SYSTEM LOADED"));
 
   Keyboard.begin();
 
-  while (key = kpd.getKey()) {
-    // Eat anything left on the keypad.
-  }
-
-  Serial.print(F("Hello! ST77xx TFT Test"));
+  // Serial.print(F("Hello! ST77xx TFT Test"));
 
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
 
-  // OR use this initializer if using a 1.8" TFT screen with offset such as WaveShare:
-  // tft.initR(INITR_GREENTAB);      // Init ST7735S chip, green tab
-
-  // OR use this initializer (uncomment) if using a 1.44" TFT:
-  //tft.initR(INITR_144GREENTAB); // Init ST7735R chip, green tab
-
-  // OR use this initializer (uncomment) if using a 0.96" 160x80 TFT:
-  //tft.initR(INITR_MINI160x80);  // Init ST7735S mini display
-
-  // OR use this initializer (uncomment) if using a 1.3" or 1.54" 240x240 TFT:
-  //tft.init(240, 240);           // Init ST7789 240x240
-
-  // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
-  //tft.init(240, 320);           // Init ST7789 320x240
-
-  // OR use this initializer (uncomment) if using a 1.14" 240x135 TFT:
-  //tft.init(135, 240);           // Init ST7789 240x135
+  ttf_names();
 
   // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
   // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
   // may end up with a black screen some times, or all the time.
   //tft.setSPISpeed(40000000);
 
-  Serial.println(F("Initialized"));
-
-  uint16_t time = millis();
-  tft.fillScreen(ST77XX_BLACK);
-  time = millis() - time;
-
   return;
-
-  Serial.println(time, DEC);
-  delay(500);
-
-  // large block of
-  tft.fillScreen(ST77XX_BLACK);
-  testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST77XX_WHITE);
-  delay(1000);
-
-  // tft print function!
-  tftPrintTest();
-  delay(4000);
-
-  // a single pixel
-  tft.drawPixel(tft.width() / 2, tft.height() / 2, ST77XX_GREEN);
-  delay(500);
-
-  // line draw test
-  testlines(ST77XX_YELLOW);
-  delay(500);
-
-  // optimized lines
-  testfastlines(ST77XX_RED, ST77XX_BLUE);
-  delay(500);
-
-  testdrawrects(ST77XX_GREEN);
-  delay(500);
-
-  testfillrects(ST77XX_YELLOW, ST77XX_MAGENTA);
-  delay(500);
-
-  tft.fillScreen(ST77XX_BLACK);
-  testfillcircles(10, ST77XX_BLUE);
-  testdrawcircles(10, ST77XX_WHITE);
-  delay(500);
-
-  testroundrects();
-  delay(500);
-
-  testtriangles();
-  delay(500);
-
-  mediabuttons();
-  delay(500);
-
-  Serial.println("done");
-  delay(1000);
 }
 
 void loop2() {
@@ -224,225 +133,229 @@ void loop2() {
   delay(500);
 }
 
+int get_name_offset(int slot) {
+  return slot_size * slot;
+}
 
-void loop() {
+int get_value_offset(int slot) {
+  return get_name_offset(slot) + label_length;
+}
 
+void save_name(int slot, char *str) {
+  const int offset = get_name_offset(slot);
+  for (int i = 0; i < strlen(str); i++) {
+    EEPROM.update(offset + i, str[i]);
+  }
+}
+
+void save_value(int slot, char *str) {
+  const int offset = get_value_offset(slot);
+  for (int i = 0; i < strlen(str); i++) {
+    EEPROM.update(offset + i, str[i]);
+  }
+}
+
+
+void handle_command(char *cmd_str) {
+  const byte MAX_TOKENS = 10;
+
+  char *strings[MAX_TOKENS];
+  char *ptr = NULL;
+  int index = 0;
+
+  ptr = strtok(cmd_str, " ");
+  while (ptr != NULL && index < MAX_TOKENS) {
+    strings[index] = ptr;
+    index += 1;
+    ptr = strtok(NULL, " ");
+  }
+
+  char *cmd = strings[0];
+
+  if (0) {
+    for (int i = 0; i < index; i++) {
+      Serial1.print(F("Token #"));
+      Serial1.print(i);
+      Serial1.print(F(" "));
+      Serial1.println(strings[i]);
+    }
+  }
+
+  if (strcmp("help", cmd) == 0) {
+    Serial1.println(F("Valid commands: "));
+    Serial1.println(F("  info                  -- system information."));
+    Serial1.println(F("  init                  -- clears the entire system."));
+    Serial1.println(F("  setname <#> <value>   -- Set display name"));
+    Serial1.println(F("  setvalue <#> <value>  -- Set value to type"));
+    Serial1.println(F("  list                  -- List information"));
+
+    return;
+  }
+
+  if (strcmp("list", cmd) == 0) {
+    for (int i = 0; i < 10; i++) {
+      Serial1.print("#");
+      Serial1.print(i);
+      Serial1.print(" ");
+
+      int offset = get_name_offset(i);
+      int idx = 0;
+      char c;
+      while ((c = EEPROM.read(offset + idx)) != 0) {
+        Serial1.print(c);
+        idx += 1;
+      }
+      while (idx < label_length) {
+        Serial1.print(" ");
+        idx += 1;
+      }
+
+      Serial1.print(": ");
+
+      offset = get_value_offset(i);
+      idx = 0;
+      while ((c = EEPROM.read(offset + idx)) != 0) {
+        Serial1.print(c);
+        idx += 1;
+      }
+
+      Serial1.println("");
+    }
+  }
+
+  if (strcmp("setname", cmd) == 0) {
+    int slot = strings[1][0] - '0';
+    if (slot > 9 or slot < 0) {
+      Serial1.println(F("Invalid slot number."));
+      return;
+    }
+    char *value = strings[2];
+    if (strlen(value) > label_length) {
+      Serial1.println(F("The label is too long."));
+      return;
+    }
+
+    save_name(slot, value);
+    return;
+  }
+
+  if (strcmp("setvalue", cmd) == 0) {
+    int slot = strings[1][0] - '0';
+    if (slot > 9 or slot < 0) {
+      Serial1.println(F("Invalid slot number."));
+      return;
+    }
+    char *value = strings[2];
+    if (strlen(value) > type_length) {
+      Serial1.println(F("The string to type is too long."));
+      return;
+    }
+
+    save_value(slot, value);
+    return;
+  }
+
+  if (strcmp("info", cmd) == 0) {
+    Serial1.print(F("EEPROM size: "));
+    Serial1.println(EEPROM.length());
+
+    Serial1.print(F("Slots      : "));
+    Serial1.println(EEPROM_SLOTS);
+
+    Serial1.print(F("Slot size  : "));
+    Serial1.println(slot_size);
+
+    Serial1.print(F("Label Len  : "));
+    Serial1.println(label_length);
+
+    Serial1.print(F("Type Len   : "));
+    Serial1.println(type_length );
+    Serial1.println("");
+    return;
+  }
+
+  if (strcmp("init", cmd) == 0) {
+    Serial1.println(F("Clearing system:"));
+    for (int i = 0 ; i < EEPROM.length() ; i++) {
+      EEPROM.update(i, 0);
+    }
+    Serial1.println(F("EEPROM CLEARED"));
+    return;
+  }
+}
+
+void handle_serial() {
+  static const byte CMD_LEN = 100;
+  static char serial_cmd[CMD_LEN + 1];
+
+  static byte cmd_index = 0;
+  char in_char;
+
+  while (Serial1.available() > 0) {
+    in_char = Serial1.read();
+
+    if (1) {
+      if (in_char == 8 && cmd_index > 0) {
+        Serial1.print(in_char);
+        Serial1.print(F(" "));
+        Serial1.print(in_char);
+        cmd_index -= 1;
+        serial_cmd[cmd_index] = 0;
+      } else if (in_char == 13) {
+        Serial1.println(F(""));
+        Serial1.print(F("Your command: '"));
+        Serial1.print(serial_cmd);
+        Serial1.println(F("'"));
+        Serial1.println(F(""));
+
+        handle_command(serial_cmd);
+
+        cmd_index = 0;
+        serial_cmd[cmd_index] = 0;
+      } else if (in_char == 10) {
+        // Ignore line feeds
+      } else if (cmd_index < CMD_LEN) {
+        serial_cmd[cmd_index] = in_char;
+        cmd_index += 1;
+        serial_cmd[cmd_index] = 0;
+        Serial1.print(in_char);
+      }
+    }
+  }
+}
+
+int read_keypad() {
   char key = kpd.getKey();
   if (key) {
-    tft.fillScreen(ST77XX_BLACK);
-    tft.setCursor(0, 0);
-    tft.setTextColor(ST77XX_WHITE);
-    tft.setTextWrap(true);
-    tft.setTextSize(3);
-    tft.print(key);
-    mySerial.println(key);
+    tft.invertDisplay(true);
+    delay(100);
+    tft.invertDisplay(false);
+  }
+  return key;
+}
 
+void handle_keypad() {
+  char key = read_keypad();
+  if (key) {
+    int slot = key - '0';
+    if (slot >= 0 && slot <= 9) {
+      int offset = get_value_offset(slot);
+
+      char c;
+      while ((c = EEPROM.read(offset )) != 0) {
+        Keyboard.print(c);
+        offset += 1;
+      }
+    }
     switch (key) {
-      case '1':
-        Keyboard.print("PASSWORD");
-        break;
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
       case '*':
-      case '0':
       case '#':
         break;
     }
   }
 }
 
-
-void testlines(uint16_t color) {
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = 0; x < tft.width(); x += 6) {
-    tft.drawLine(0, 0, x, tft.height() - 1, color);
-    delay(0);
-  }
-  for (int16_t y = 0; y < tft.height(); y += 6) {
-    tft.drawLine(0, 0, tft.width() - 1, y, color);
-    delay(0);
-  }
-
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = 0; x < tft.width(); x += 6) {
-    tft.drawLine(tft.width() - 1, 0, x, tft.height() - 1, color);
-    delay(0);
-  }
-  for (int16_t y = 0; y < tft.height(); y += 6) {
-    tft.drawLine(tft.width() - 1, 0, 0, y, color);
-    delay(0);
-  }
-
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = 0; x < tft.width(); x += 6) {
-    tft.drawLine(0, tft.height() - 1, x, 0, color);
-    delay(0);
-  }
-  for (int16_t y = 0; y < tft.height(); y += 6) {
-    tft.drawLine(0, tft.height() - 1, tft.width() - 1, y, color);
-    delay(0);
-  }
-
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = 0; x < tft.width(); x += 6) {
-    tft.drawLine(tft.width() - 1, tft.height() - 1, x, 0, color);
-    delay(0);
-  }
-  for (int16_t y = 0; y < tft.height(); y += 6) {
-    tft.drawLine(tft.width() - 1, tft.height() - 1, 0, y, color);
-    delay(0);
-  }
-}
-
-void testdrawtext(char *text, uint16_t color) {
-  tft.setCursor(0, 0);
-  tft.setTextColor(color);
-  tft.setTextWrap(true);
-  tft.print(text);
-}
-
-void testfastlines(uint16_t color1, uint16_t color2) {
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t y = 0; y < tft.height(); y += 5) {
-    tft.drawFastHLine(0, y, tft.width(), color1);
-  }
-  for (int16_t x = 0; x < tft.width(); x += 5) {
-    tft.drawFastVLine(x, 0, tft.height(), color2);
-  }
-}
-
-void testdrawrects(uint16_t color) {
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = 0; x < tft.width(); x += 6) {
-    tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color);
-  }
-}
-
-void testfillrects(uint16_t color1, uint16_t color2) {
-  tft.fillScreen(ST77XX_BLACK);
-  for (int16_t x = tft.width() - 1; x > 6; x -= 6) {
-    tft.fillRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color1);
-    tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2 , x, x, color2);
-  }
-}
-
-void testfillcircles(uint8_t radius, uint16_t color) {
-  for (int16_t x = radius; x < tft.width(); x += radius * 2) {
-    for (int16_t y = radius; y < tft.height(); y += radius * 2) {
-      tft.fillCircle(x, y, radius, color);
-    }
-  }
-}
-
-void testdrawcircles(uint8_t radius, uint16_t color) {
-  for (int16_t x = 0; x < tft.width() + radius; x += radius * 2) {
-    for (int16_t y = 0; y < tft.height() + radius; y += radius * 2) {
-      tft.drawCircle(x, y, radius, color);
-    }
-  }
-}
-
-void testtriangles() {
-  tft.fillScreen(ST77XX_BLACK);
-  uint16_t color = 0xF800;
-  int t;
-  int w = tft.width() / 2;
-  int x = tft.height() - 1;
-  int y = 0;
-  int z = tft.width();
-  for (t = 0 ; t <= 15; t++) {
-    tft.drawTriangle(w, y, y, x, z, x, color);
-    x -= 4;
-    y += 4;
-    z -= 4;
-    color += 100;
-  }
-}
-
-void testroundrects() {
-  tft.fillScreen(ST77XX_BLACK);
-  uint16_t color = 100;
-  int i;
-  int t;
-  for (t = 0 ; t <= 4; t += 1) {
-    int x = 0;
-    int y = 0;
-    int w = tft.width() - 2;
-    int h = tft.height() - 2;
-    for (i = 0 ; i <= 16; i += 1) {
-      tft.drawRoundRect(x, y, w, h, 5, color);
-      x += 2;
-      y += 3;
-      w -= 4;
-      h -= 6;
-      color += 1100;
-    }
-    color += 100;
-  }
-}
-
-void tftPrintTest() {
-  tft.setTextWrap(false);
-  tft.fillScreen(ST77XX_BLACK);
-  tft.setCursor(0, 30);
-  tft.setTextColor(ST77XX_RED);
-  tft.setTextSize(1);
-  tft.println("Hello World!");
-  tft.setTextColor(ST77XX_YELLOW);
-  tft.setTextSize(2);
-  tft.println("Hello World!");
-  tft.setTextColor(ST77XX_GREEN);
-  tft.setTextSize(3);
-  tft.println("Hello World!");
-  tft.setTextColor(ST77XX_BLUE);
-  tft.setTextSize(4);
-  tft.print(1234.567);
-  delay(1500);
-  tft.setCursor(0, 0);
-  tft.fillScreen(ST77XX_BLACK);
-  tft.setTextColor(ST77XX_WHITE);
-  tft.setTextSize(0);
-  tft.println("Hello World!");
-  tft.setTextSize(1);
-  tft.setTextColor(ST77XX_GREEN);
-  tft.print(p, 6);
-  tft.println(" Want pi?");
-  tft.println(" ");
-  tft.print(8675309, HEX); // print 8,675,309 out in HEX!
-  tft.println(" Print HEX!");
-  tft.println(" ");
-  tft.setTextColor(ST77XX_WHITE);
-  tft.println("Sketch has been");
-  tft.println("running for: ");
-  tft.setTextColor(ST77XX_MAGENTA);
-  tft.print(millis() / 1000);
-  tft.setTextColor(ST77XX_WHITE);
-  tft.print(" seconds.");
-}
-
-void mediabuttons() {
-  // play
-  tft.fillScreen(ST77XX_BLACK);
-  tft.fillRoundRect(25, 10, 78, 60, 8, ST77XX_WHITE);
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_RED);
-  delay(500);
-  // pause
-  tft.fillRoundRect(25, 90, 78, 60, 8, ST77XX_WHITE);
-  tft.fillRoundRect(39, 98, 20, 45, 5, ST77XX_GREEN);
-  tft.fillRoundRect(69, 98, 20, 45, 5, ST77XX_GREEN);
-  delay(500);
-  // play color
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_BLUE);
-  delay(50);
-  // pause color
-  tft.fillRoundRect(39, 98, 20, 45, 5, ST77XX_RED);
-  tft.fillRoundRect(69, 98, 20, 45, 5, ST77XX_RED);
-  // play color
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_GREEN);
+void loop() {
+  handle_serial();
+  handle_keypad();
 }
