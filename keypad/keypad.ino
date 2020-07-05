@@ -7,6 +7,7 @@
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
+
 #include <SPI.h>
 #include <EEPROM.h>
 
@@ -115,7 +116,7 @@ void ttf_names(void) {
     int text_color = i % 2 == 0 ? ST77XX_WHITE : ST77XX_WHITE;
     int bg_color = i % 2 == 0 ? ST77XX_BLUE : ST77XX_BLACK;
 
-    tft.fillRect(0, i * 8 * fontSize , tft.width(), (8 * fontSize) - 1, bg_color);
+    tft.fillRect(0, i * 8 * fontSize , tft.width(), (8 * fontSize) - 0, bg_color);
 
     tft.setTextColor(text_color);
     tft.print("#");
@@ -205,15 +206,6 @@ void handle_command(char *cmd_str) {
 
   char *cmd = strings[0];
 
-  if (0) {
-    for (int i = 0; i < index; i++) {
-      Serial1.print(F("Token #"));
-      Serial1.print(i);
-      Serial1.print(F(" "));
-      Serial1.println(strings[i]);
-    }
-  }
-
   if (strcmp("help", cmd) == 0) {
     Serial1.println(F("Valid commands: "));
     Serial1.println(F("  info                  -- system information."));
@@ -223,6 +215,24 @@ void handle_command(char *cmd_str) {
     Serial1.println(F("  setpassword <value>   -- Set password"));
     Serial1.println(F("  list                  -- List information"));
 
+    if (isLocked) {
+      Serial1.println(F("The system is in locked mode.  The only command available"));
+      Serial1.println(F("is 'init'.  Unlock using the keypad or run 'init.'"));
+      Serial1.println(F(""));
+      Serial1.println(F("After init, the password will be empty."));
+    }
+  }
+
+  if (strcmp("init", cmd) == 0) {
+    Serial1.println(F("Clearing system:"));
+    for (int i = 0 ; i < EEPROM.length() ; i++) {
+      EEPROM.update(i, 0);
+    }
+    Serial1.println(F("EEPROM CLEARED"));
+  }
+
+
+  if (isLocked) {
     return;
   }
 
@@ -267,7 +277,6 @@ void handle_command(char *cmd_str) {
     }
 
     save_name(slot, value);
-    return;
   }
 
   if (strcmp("setname", cmd) == 0) {
@@ -283,7 +292,6 @@ void handle_command(char *cmd_str) {
     }
 
     save_name(slot, value);
-    return;
   }
 
   if (strcmp("setsecret", cmd) == 0) {
@@ -299,7 +307,6 @@ void handle_command(char *cmd_str) {
     }
 
     save_secret(slot, value);
-    return;
   }
 
   if (strcmp("info", cmd) == 0) {
@@ -318,17 +325,9 @@ void handle_command(char *cmd_str) {
     Serial1.print(F("Secret Len : "));
     Serial1.println(secret_length);
     Serial1.println("");
-    return;
   }
 
-  if (strcmp("init", cmd) == 0) {
-    Serial1.println(F("Clearing system:"));
-    for (int i = 0 ; i < EEPROM.length() ; i++) {
-      EEPROM.update(i, 0);
-    }
-    Serial1.println(F("EEPROM CLEARED"));
-    return;
-  }
+  draw_screen();
 }
 
 void handle_serial() {
@@ -421,7 +420,6 @@ void handle_locked_keypad() {
     default:
       if (EEPROM.read(offset + idx) != key) {
         isValid = false;
-        flicker_screen();
       }
       idx += 1;
       break;
