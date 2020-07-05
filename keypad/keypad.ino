@@ -63,14 +63,46 @@ byte colPins[KEY_COLS] = { A1, A2, A3 };
 
 // How many total memory chucks to device the EEPROM into
 const byte EEPROM_SLOTS = 16;
+const byte PASSWORD_SLOT = 10;
 
 const int slot_size = EEPROM.length() / EEPROM_SLOTS;
-const int label_length = 10;
-const int type_length = slot_size - label_length;
+const int display_name_length = 10;
+const int secret_length = slot_size - display_name_length;
 
 Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 
 float p = 3.1415926;
+
+bool isLocked = true;
+
+void draw_screen(void) {
+  if (isLocked) {
+    ttf_locked_screen();
+  } else {
+    ttf_names();
+  }
+}
+
+
+void ttf_locked_screen(void) {
+  tft.fillScreen(ST77XX_BLACK);
+  tft.setCursor(0, 0);
+  tft.setTextWrap(false);
+  byte fontSize = 2;
+  tft.setTextSize(fontSize);
+
+  tft.setTextColor(ST77XX_BLACK, ST77XX_YELLOW);
+  tft.println("  SCREEN  ");
+  tft.println("  LOCKED  ");
+  tft.println("");
+
+  tft.setTextColor(ST77XX_RED);
+  tft.print("  *");
+  tft.setTextColor(ST77XX_GREEN);
+  tft.print("<PIN>");
+  tft.setTextColor(ST77XX_RED);
+  tft.println("# ");
+}
 
 void ttf_names(void) {
   tft.fillScreen(ST77XX_YELLOW);
@@ -116,7 +148,7 @@ void setup(void) {
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
 
-  ttf_names();
+  draw_screen();
 
   // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
   // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
@@ -137,22 +169,23 @@ int get_name_offset(int slot) {
   return slot_size * slot;
 }
 
-int get_value_offset(int slot) {
-  return get_name_offset(slot) + label_length;
+int get_secret_offset(int slot) {
+  return get_name_offset(slot) + display_name_length;
+}
+
+void update_eprom(int offset, char *str) {
+  for (int i = 0; i < strlen(str); i++) {
+    EEPROM.update(offset + i, str[i]);
+    EEPROM.update(offset + i + 1, 0);
+  }
 }
 
 void save_name(int slot, char *str) {
-  const int offset = get_name_offset(slot);
-  for (int i = 0; i < strlen(str); i++) {
-    EEPROM.update(offset + i, str[i]);
-  }
+  update_eprom(get_name_offset(slot), str);
 }
 
-void save_value(int slot, char *str) {
-  const int offset = get_value_offset(slot);
-  for (int i = 0; i < strlen(str); i++) {
-    EEPROM.update(offset + i, str[i]);
-  }
+void save_secret(int slot, char *str) {
+  update_eprom(get_secret_offset(slot), str);
 }
 
 
@@ -186,7 +219,8 @@ void handle_command(char *cmd_str) {
     Serial1.println(F("  info                  -- system information."));
     Serial1.println(F("  init                  -- clears the entire system."));
     Serial1.println(F("  setname <#> <value>   -- Set display name"));
-    Serial1.println(F("  setvalue <#> <value>  -- Set value to type"));
+    Serial1.println(F("  setsecret <#> <value> -- Set value to type"));
+    Serial1.println(F("  setpassword <value>   -- Set password"));
     Serial1.println(F("  list                  -- List information"));
 
     return;
@@ -205,14 +239,14 @@ void handle_command(char *cmd_str) {
         Serial1.print(c);
         idx += 1;
       }
-      while (idx < label_length) {
+      while (idx < display_name_length) {
         Serial1.print(" ");
         idx += 1;
       }
 
       Serial1.print(": ");
 
-      offset = get_value_offset(i);
+      offset = get_secret_offset(i);
       idx = 0;
       while ((c = EEPROM.read(offset + idx)) != 0) {
         Serial1.print(c);
@@ -223,6 +257,19 @@ void handle_command(char *cmd_str) {
     }
   }
 
+  if (strcmp("setpassword", cmd) == 0) {
+    int slot = PASSWORD_SLOT;
+
+    char *value = strings[1];
+    if (strlen(value) > display_name_length + display_name_length) {
+      Serial1.println(F("The password is too long"));
+      return;
+    }
+
+    save_name(slot, value);
+    return;
+  }
+
   if (strcmp("setname", cmd) == 0) {
     int slot = strings[1][0] - '0';
     if (slot > 9 or slot < 0) {
@@ -230,7 +277,7 @@ void handle_command(char *cmd_str) {
       return;
     }
     char *value = strings[2];
-    if (strlen(value) > label_length) {
+    if (strlen(value) > display_name_length) {
       Serial1.println(F("The label is too long."));
       return;
     }
@@ -239,19 +286,19 @@ void handle_command(char *cmd_str) {
     return;
   }
 
-  if (strcmp("setvalue", cmd) == 0) {
+  if (strcmp("setsecret", cmd) == 0) {
     int slot = strings[1][0] - '0';
     if (slot > 9 or slot < 0) {
       Serial1.println(F("Invalid slot number."));
       return;
     }
     char *value = strings[2];
-    if (strlen(value) > type_length) {
-      Serial1.println(F("The string to type is too long."));
+    if (strlen(value) > secret_length) {
+      Serial1.println(F("The secret is too long."));
       return;
     }
 
-    save_value(slot, value);
+    save_secret(slot, value);
     return;
   }
 
@@ -265,11 +312,11 @@ void handle_command(char *cmd_str) {
     Serial1.print(F("Slot size  : "));
     Serial1.println(slot_size);
 
-    Serial1.print(F("Label Len  : "));
-    Serial1.println(label_length);
+    Serial1.print(F("Name Len   : "));
+    Serial1.println(display_name_length);
 
-    Serial1.print(F("Type Len   : "));
-    Serial1.println(type_length );
+    Serial1.print(F("Secret Len : "));
+    Serial1.println(secret_length);
     Serial1.println("");
     return;
   }
@@ -334,12 +381,59 @@ int read_keypad() {
   return key;
 }
 
-void handle_keypad() {
+void flicker_screen() {
+  for (int i = 0; i < 100; i++) {
+    tft.invertDisplay(true);
+    delay(10);
+    tft.invertDisplay(false);
+    delay(10);
+  }
+}
+
+void handle_locked_keypad() {
+  static byte idx = 0;
+  static bool isValid = false;
+
+  int offset = get_name_offset(PASSWORD_SLOT);
+
+  char key = read_keypad();
+  if (!key) {
+    return;
+  }
+  switch (key) {
+    case '*':
+      idx = 0;
+      isValid = true;
+      break;
+    case '#':
+      // '#' needs to match to a zero to show the end the string
+      if (EEPROM.read(offset + idx) != 0) {
+        isValid = false;
+      }
+
+      if (isValid) {
+        isLocked = false;
+        draw_screen();
+      } else {
+        flicker_screen();
+      }
+      break;
+    default:
+      if (EEPROM.read(offset + idx) != key) {
+        isValid = false;
+        flicker_screen();
+      }
+      idx += 1;
+      break;
+  }
+}
+
+void handle_unlocked_keypad() {
   char key = read_keypad();
   if (key) {
     int slot = key - '0';
     if (slot >= 0 && slot <= 9) {
-      int offset = get_value_offset(slot);
+      int offset = get_secret_offset(slot);
 
       char c;
       while ((c = EEPROM.read(offset )) != 0) {
@@ -347,6 +441,7 @@ void handle_keypad() {
         offset += 1;
       }
     }
+
     switch (key) {
       case '*':
       case '#':
@@ -357,5 +452,10 @@ void handle_keypad() {
 
 void loop() {
   handle_serial();
-  handle_keypad();
+
+  if (isLocked) {
+    handle_locked_keypad();
+  } else {
+    handle_unlocked_keypad();
+  }
 }
