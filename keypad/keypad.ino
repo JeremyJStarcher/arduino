@@ -36,8 +36,10 @@
 // CTX    GND
 // GND    GND
 
+// Because these two pins are carrying power, they were chosen to pull
+// from two different ports.
 #define TTF_POWERPIN1 2
-#define TTF_POWERPIN2 3
+#define TTF_POWERPIN2 A0
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -72,7 +74,7 @@ const int slot_size = EEPROM.length() / EEPROM_SLOTS;
 const int display_name_length = 10;
 const int secret_length = slot_size - display_name_length;
 
-const long SCREEN_TIMEOUT_MS = 5000;
+#define SCREEN_TIMEOUT_MS ((unsigned long) 1 * 60 * 1000)
 
 Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 
@@ -154,6 +156,7 @@ void screenOn() {
 
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
+
   isScreenOff = false;
   draw_screen();
 }
@@ -373,7 +376,11 @@ void handle_serial() {
 
 int read_keypad() {
   unsigned long currentMillis = millis();
-  static unsigned long targetMillis = currentMillis + SCREEN_TIMEOUT_MS;
+  static unsigned long targetMillis = 0;
+
+  if (targetMillis == 0) {
+    targetMillis = currentMillis + SCREEN_TIMEOUT_MS;
+  }
 
   if (currentMillis > targetMillis) {
     screenOff();
