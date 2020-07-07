@@ -1,10 +1,3 @@
-/**************************************************************************
-  This is a library for several Adafruit displays based on ST77* drivers.
-
-  Written by Limor Fried/Ladyada for Adafruit Industries.
-  MIT license, all text above must be included in any redistribution
- **************************************************************************/
-
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 
@@ -17,10 +10,10 @@
 // For the breakout board, you can use any 2 or 3 pins.
 // These pins will also work for the 1.8" TFT shield.
 #define TFT_CS        10
-#define TFT_RST        9 // Or set to -1 and connect to Arduino RESET pin
-#define TFT_DC         8
+#define TFT_RST        8 // Or set to -1 and connect to Arduino RESET pin
+#define TFT_DC         9
 #define TFT_SDA       16 // **HARDWARE PIN MOSI
-#define TFT_SDL       15 // **HARDWARE PIN SCK
+#define TFT_SCL       15 // **HARDWARE PIN SCK
 // VCC
 // GND
 
@@ -63,8 +56,13 @@ char keys[KEY_ROWS][KEY_COLS] = {
    4
 */
 
+#if  0
 byte rowPins[KEY_ROWS] = {4, 5, 6, 7};
 byte colPins[KEY_COLS] = { A1, A2, A3 };
+#else
+byte rowPins[KEY_ROWS] = {A3, A2, A1, 7};
+byte colPins[KEY_COLS] = { 6, 5, 4 };
+#endif
 
 // How many total memory chucks to device the EEPROM into
 const byte EEPROM_SLOTS = 16;
@@ -195,6 +193,10 @@ void save_secret(int slot, char *str) {
 
 
 void handle_command(char *cmd_str) {
+  if (strlen(cmd_str) == 0) {
+    return;
+  }
+
   const byte MAX_TOKENS = 10;
 
   char *strings[MAX_TOKENS];
@@ -212,23 +214,26 @@ void handle_command(char *cmd_str) {
 
   if (strcmp("help", cmd) == 0) {
     Serial1.println(F("Valid commands: "));
-    Serial1.println(F("  info                  -- system information."));
     Serial1.println(F("  init                  -- clears the entire system."));
-    Serial1.println(F("  setname <#> <value>   -- Set display name"));
-    Serial1.println(F("  setsecret <#> <value> -- Set value to type"));
-    Serial1.println(F("  setpassword <value>   -- Set password"));
-    Serial1.println(F("  list                  -- List information"));
 
     if (isLocked) {
+      Serial1.println("");
       Serial1.println(F("The system is in locked mode.  The only command available"));
       Serial1.println(F("is 'init'.  Unlock using the keypad or run 'init.'"));
       Serial1.println(F(""));
       Serial1.println(F("After init, the password will be empty."));
+    } else {
+      Serial1.println(F("  info                  -- system information."));
+      Serial1.println(F("  setname <#> <value>   -- Set display name"));
+      Serial1.println(F("  setsecret <#> <value> -- Set value to type"));
+      Serial1.println(F("  setunlockpin <value>  -- Set PIN"));
+      Serial1.println(F("  list                  -- List information"));
     }
   }
 
+
   if (strcmp("init", cmd) == 0) {
-    Serial1.println(F("Clearing system:"));
+    Serial1.println(F("Running INIT: Clearing system:"));
     for (int i = 0 ; i < EEPROM.length() ; i++) {
       EEPROM.update(i, 0);
     }
@@ -271,7 +276,7 @@ void handle_command(char *cmd_str) {
     }
   }
 
-  if (strcmp("setpassword", cmd) == 0) {
+  if (strcmp("setunlockpin", cmd) == 0) {
     int slot = PASSWORD_SLOT;
 
     char *value = strings[1];
@@ -310,6 +315,10 @@ void handle_command(char *cmd_str) {
       return;
     }
 
+    Serial1.print("Setting slot ");
+    Serial1.print(slot);
+    Serial1.print(" to ");
+    Serial1.println(value);
     save_secret(slot, value);
   }
 
@@ -344,32 +353,30 @@ void handle_serial() {
   while (Serial1.available() > 0) {
     in_char = Serial1.read();
 
-    if (1) {
-      if (in_char == 8 && cmd_index > 0) {
-        Serial1.print(in_char);
-        Serial1.print(F(" "));
-        Serial1.print(in_char);
-        cmd_index -= 1;
-        serial_cmd[cmd_index] = 0;
-      } else if (in_char == 13) {
-        Serial1.println(F(""));
-        Serial1.print(F("Your command: '"));
-        Serial1.print(serial_cmd);
-        Serial1.println(F("'"));
-        Serial1.println(F(""));
+    if (in_char == 8 && cmd_index > 0) {
+      Serial1.print(in_char);
+      Serial1.print(F(" "));
+      Serial1.print(in_char);
+      cmd_index -= 1;
+      serial_cmd[cmd_index] = 0;
+    } else if (in_char == 13) {
+      Serial1.println(F(""));
+      Serial1.print(F("Your command: '"));
+      Serial1.print(serial_cmd);
+      Serial1.println(F("'"));
+      Serial1.println(F(""));
 
-        handle_command(serial_cmd);
+      handle_command(serial_cmd);
 
-        cmd_index = 0;
-        serial_cmd[cmd_index] = 0;
-      } else if (in_char == 10) {
-        // Ignore line feeds
-      } else if (cmd_index < CMD_LEN) {
-        serial_cmd[cmd_index] = in_char;
-        cmd_index += 1;
-        serial_cmd[cmd_index] = 0;
-        Serial1.print(in_char);
-      }
+      cmd_index = 0;
+      serial_cmd[cmd_index] = 0;
+    } else if (in_char == 10) {
+      // Ignore line feeds
+    } else if (cmd_index < CMD_LEN) {
+      serial_cmd[cmd_index] = in_char;
+      cmd_index += 1;
+      serial_cmd[cmd_index] = 0;
+      Serial1.print(in_char);
     }
   }
 }
@@ -393,6 +400,10 @@ int read_keypad() {
       screenOn();
       return 0;
     }
+
+    tft.setCursor(0, 0);
+    tft.fillScreen(ST77XX_BLACK);
+    tft.print(key);
 
     tft.invertDisplay(true);
     delay(100);
