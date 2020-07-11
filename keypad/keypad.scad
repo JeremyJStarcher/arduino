@@ -1,14 +1,14 @@
 KBD_WIDTH = 69;
-KBD_HEIGHT = 77;
+KBD_HEIGHT = 79;
 KBD_THICK = 3;
 
 SCR_WIDTH = 35;
-SCR_HEIGHT = 42;
+SCR_HEIGHT = 42+6+5+10;
 SCR_THICK = 8;
 
-B_THICKNESS = 7;
-B_WIDTH = 50;
-B_HEIGHT = 69;
+B_THICKNESS = 20;
+B_WIDTH = 53;
+B_HEIGHT = 72;
 
 BORDER = 4;
 SEP = 2;
@@ -17,9 +17,10 @@ BOX_WIDTH = KBD_WIDTH + SCR_WIDTH + (BORDER*2) + SEP;
 BOX_HEIGHT = KBD_HEIGHT + (BORDER*2);
 BOX_THICKNESS = B_THICKNESS + SCR_THICK + 3;
 
-
 BOARD_X= ((KBD_WIDTH - B_WIDTH) /2) +BORDER;
 BOARD_Y= ((KBD_HEIGHT - B_HEIGHT) /2) +BORDER;
+
+CABLE_WIDTH = 21;
 
 module boardVoid() {
     translate([
@@ -61,18 +62,74 @@ module boardPegs() {
 
 
 
-difference() {
-    union() {
-        roundedcube([BOX_WIDTH, BOX_HEIGHT, BOX_THICKNESS], radius=BORDER);
-    }
-    union() {
-        boardVoid();
-        kbdVoid();
-        scrVoid();
+module mainBody() {
+    difference() {
+        union() {
+            roundedcube([BOX_WIDTH, BOX_HEIGHT, BOX_THICKNESS], radius=BORDER);
+        }
+        union() {
+            boardVoid();
+            kbdVoid();
+            scrVoid();
+        }
     }
 }
 
-boardPegs();
+module bodyVoid() {
+    color("red")
+    translate([
+        BORDER+(KBD_WIDTH/2)-(CABLE_WIDTH/2),
+        BORDER*3,
+        BOX_THICKNESS - KBD_THICK]) {
+            cube([CABLE_WIDTH, KBD_HEIGHT, 5+2]);
+            translate([0, 0, -BOX_THICKNESS+2])
+            cube([CABLE_WIDTH, KBD_HEIGHT, 5+2]);
+        }
+        
+x = BORDER + KBD_WIDTH + SEP;
+y = +((KBD_HEIGHT + SCR_HEIGHT) /2) +BORDER;
+z =    -BOX_THICKNESS/2 - SCR_THICK;
+  
+    color("cyan")
+    translate([x, -15 +y, -z])
+    rotate([-45, 0, 0])
+    cube([SCR_WIDTH, SCR_HEIGHT/4, SCR_THICK+2]);    
+    color("green")
+    translate([x-15,  +y-65, +23 +z])
+    cube([SCR_WIDTH+15, SCR_HEIGHT, SCR_THICK+10]);
+   
+
+   bb = BORDER*4;
+        translate([-1, bb, 0])
+  cube([CABLE_WIDTH, BOX_HEIGHT -bb*2, 20]);     
+}
+
+if (0)
+difference() {
+    union() {
+        mainBody();
+        //boardPegs();
+    }
+    union() {
+        bodyVoid();
+    }
+}
+
+difference() {
+    roundedcube([BOX_WIDTH, BOX_HEIGHT, 3], radius=1);
+    union() {
+        translate([53, 17, 0])
+        cylinder(r=4, h = 10);
+        
+        
+        translate([20, BOX_HEIGHT-17, 0])
+        cylinder(r=4, h = 10);
+ 
+        translate([BOX_WIDTH-20, BOX_HEIGHT-17, 0])
+        cylinder(r=4, h = 10);
+        
+        }
+}
 
 // Higher definition curves
 $fs = 0.01;

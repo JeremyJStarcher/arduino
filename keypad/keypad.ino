@@ -79,21 +79,28 @@ Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 bool isLocked = true;
 bool isScreenOff = true;
 
+const byte SCREEN_NAMES = 0;
+const byte SCREEN_CMD = 1;
+byte screen = SCREEN_NAMES;
+
 void draw_screen(void) {
   if (isLocked) {
     ttf_locked_screen();
   } else {
-    ttf_names();
+    switch (screen) {
+      case SCREEN_NAMES:
+        ttf_names();
+        break;
+      case SCREEN_CMD:
+        show_cmd();
+        break;
+    }
   }
 }
 
 
 void ttf_locked_screen(void) {
-  tft.fillScreen(ST77XX_BLACK);
-  tft.setCursor(0, 0);
-  tft.setTextWrap(false);
-  byte fontSize = 2;
-  tft.setTextSize(fontSize);
+  cls();
 
   tft.setTextColor(ST77XX_BLACK, ST77XX_YELLOW);
   tft.println("  SCREEN  ");
@@ -108,10 +115,32 @@ void ttf_locked_screen(void) {
   tft.println("# ");
 }
 
-void ttf_names(void) {
-  tft.fillScreen(ST77XX_YELLOW);
+void cls() {
+  tft.fillScreen(ST77XX_BLACK);
   tft.setCursor(0, 0);
   tft.setTextWrap(false);
+  byte fontSize = 2;
+  tft.setTextSize(fontSize);
+  tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+}
+
+void show_cmd(void) {
+  cls();
+  tft.setTextColor(ST77XX_YELLOW, ST77XX_BLUE);
+  tft.println(F("0           "));
+  tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+  tft.println(F("1 JIG ON    "));
+  tft.setTextColor(ST77XX_YELLOW, ST77XX_BLUE);
+  tft.println(F("2 JIG OFF   "));
+
+  tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+  tft.println(F("* RETURN    "));
+  tft.setTextColor(ST77XX_YELLOW, ST77XX_BLUE);
+  tft.println(F("# LOCK      "));
+}
+
+void ttf_names(void) {
+  cls();
   byte fontSize = 2;
   tft.setTextSize(fontSize);
 
@@ -119,20 +148,24 @@ void ttf_names(void) {
     int text_color = i % 2 == 0 ? ST77XX_WHITE : ST77XX_WHITE;
     int bg_color = i % 2 == 0 ? ST77XX_BLUE : ST77XX_BLACK;
 
-    tft.fillRect(0, i * 8 * fontSize , tft.width(), (8 * fontSize) - 0, bg_color);
-
-    tft.setTextColor(text_color);
-    tft.print("#");
+    tft.setTextColor(text_color, bg_color);
     tft.print(i);
     tft.print(" ");
 
     int offset = get_name_offset(i);
 
     char c;
+    byte len = 0;
     while ((c = EEPROM.read(offset )) != 0) {
       tft.print(c);
       offset += 1;
+      len += 1;
     }
+    while (len < 9) {
+      tft.print(' ');
+      len += 1;
+    }
+
 
     tft.println("");
   }
@@ -151,6 +184,7 @@ void screenOn() {
   screenOff();
   digitalWrite(TTF_POWERPIN1, HIGH);
   digitalWrite(TTF_POWERPIN2, HIGH);
+
 
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
@@ -401,9 +435,11 @@ int read_keypad() {
       return 0;
     }
 
+#if 0
     tft.setCursor(0, 0);
     tft.fillScreen(ST77XX_BLACK);
     tft.print(key);
+#endif
 
     tft.invertDisplay(true);
     delay(100);
@@ -444,10 +480,15 @@ void handle_locked_keypad() {
 
       if (isValid) {
         isLocked = false;
+        screen = SCREEN_NAMES;
         draw_screen();
       } else {
         flicker_screen();
       }
+
+      // Reset the value
+      idx = 0;
+      isValid = false;
       break;
     default:
       if (EEPROM.read(offset + idx) != key) {
@@ -458,7 +499,23 @@ void handle_locked_keypad() {
   }
 }
 
-void handle_unlocked_keypad() {
+void handle_screen1_keypad() {
+  char key = read_keypad();
+  if (key) {
+    switch (key) {
+      case '*':
+        screen = 0;
+        draw_screen();
+        break;
+      case '#':
+        isLocked = true;
+        draw_screen();
+        break;
+    }
+  }
+}
+
+void handle_screen0_keypad() {
   char key = read_keypad();
   if (key) {
     int slot = key - '0';
@@ -474,7 +531,12 @@ void handle_unlocked_keypad() {
 
     switch (key) {
       case '*':
+        screen = 1;
+        draw_screen();
+        break;
       case '#':
+        isLocked = true;
+        draw_screen();
         break;
     }
   }
@@ -486,6 +548,13 @@ void loop() {
   if (isLocked) {
     handle_locked_keypad();
   } else {
-    handle_unlocked_keypad();
+    switch (screen) {
+      case SCREEN_NAMES:
+        handle_screen0_keypad();
+        break;
+      case SCREEN_CMD:
+        handle_screen1_keypad();
+        break;
+    }
   }
 }
