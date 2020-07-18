@@ -1,3 +1,5 @@
+// Upload this sketch as a Leonardo!!!
+
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 
@@ -6,6 +8,7 @@
 
 #include <Keypad.h>
 #include <Keyboard.h>
+#include <Mouse.h>
 
 // For the breakout board, you can use any 2 or 3 pins.
 // These pins will also work for the 1.8" TFT shield.
@@ -78,6 +81,7 @@ Keypad kpd = Keypad(makeKeymap(keys), rowPins, colPins, KEY_ROWS, KEY_COLS);
 
 bool isLocked = true;
 bool isScreenOff = true;
+bool isMouseOn = false;
 
 const byte SCREEN_NAMES = 0;
 const byte SCREEN_CMD = 1;
@@ -137,6 +141,15 @@ void show_cmd(void) {
   tft.println(F("* RETURN    "));
   tft.setTextColor(ST77XX_YELLOW, ST77XX_BLUE);
   tft.println(F("# LOCK      "));
+
+  tft.println(F(""));
+  if (isMouseOn) {
+    tft.setTextColor(ST77XX_YELLOW, ST77XX_RED);
+    tft.println(F("**JIG ON**  "));
+  } else {
+    tft.setTextColor(ST77XX_YELLOW, ST77XX_BLACK);
+    tft.println(F("**JIG OFF**  "));
+  }
 }
 
 void ttf_names(void) {
@@ -195,11 +208,24 @@ void screenOn() {
 
 void setup(void) {
   screenOn();
+  cls();
 
-  Serial.begin(9600);
+  tft.print("Serial");
+  // Serial.begin(9600);
   Serial1.begin(9600);
   Serial1.println(F("SYSTEM LOADED"));
+  tft.println(" OK");
+
+  tft.print("Keyboard");
+  delay(5000);
   Keyboard.begin();
+  tft.println(" OK");
+
+  tft.print("Mouse");
+  delay(5000);
+  Mouse.begin();
+  tft.println(" OK");
+  draw_screen();
 }
 
 int get_name_offset(int slot) {
@@ -503,6 +529,14 @@ void handle_screen1_keypad() {
   char key = read_keypad();
   if (key) {
     switch (key) {
+      case '1':
+        isMouseOn = true;
+        draw_screen();
+        break;
+      case '2':
+        isMouseOn = false;
+        draw_screen();
+        break;
       case '*':
         screen = 0;
         draw_screen();
@@ -542,8 +576,25 @@ void handle_screen0_keypad() {
   }
 }
 
+void moveMouse() {
+  static signed int x = 20;
+  static signed char dir = 1;
+
+  if (!isMouseOn) {
+    return;
+  }
+
+  x += dir;
+  if ((x > 1000) || (x <= 1)) {
+    dir = -dir;
+  }
+
+  Mouse.move(dir, dir, 0);
+}
+
 void loop() {
   handle_serial();
+  moveMouse();
 
   if (isLocked) {
     handle_locked_keypad();
