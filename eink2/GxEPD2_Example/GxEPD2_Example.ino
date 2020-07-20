@@ -1,3 +1,13 @@
+
+// RED    3.3V
+// BLACK   GND
+// BLUE     23
+// YELLOW   18
+// ORANGE    5
+// GREEN    14
+// WHITE    13
+// PURPLE   27
+
 // Display Library example for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
 // Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
 //
