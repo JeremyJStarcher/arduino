@@ -4,6 +4,20 @@
 #include <WiFiAP.h>
 #include <EEPROM.h>
 
+
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+
 #define SSID_MAX_LEN 100
 #define PW_MAX_LEN 100
 
@@ -12,16 +26,12 @@
 #define EEPROM_PW_OFFSET (SSID_MAX_LEN + 1)
 
 const int LED_PIN = 2;
+const int PROGRAM_SWITCH_PIN = 16;
 
 #define IRC_SERVER   "eu.undernet.org"
 #define IRC_PORT     6667
 #define IRC_NICKNAME "jilly_t2"
 #define IRC_USER     "jilly_t2"
-
-
-// Set these to your desired credentials.
-const char *priv_ssid = "ESP32_TOY";
-const char *priv_password = "";
 
 WiFiServer server(80);
 
@@ -34,7 +44,7 @@ IRCClient client(IRC_SERVER, IRC_PORT, wiFiClient);
 const byte MODE_AP = 1;
 const byte MODE_CLIENT = 2;
 
-byte currMode = MODE_CLIENT;
+byte currMode = MODE_AP;
 
 #define EEPROM_SIZE 512
 
@@ -42,14 +52,31 @@ void setupAP() {
   Serial.println();
   Serial.println("Configuring access point...");
 
+  uint64_t chipid = ESP.getEfuseMac(); //The chip ID is essentially its MAC address(length: 6 bytes).
+  uint16_t chip = (uint16_t)(chipid >> 32);
+  static char ssid[23];
+
+  snprintf(ssid, 23, "ESP-TOY-%04X%08X", chip, (uint32_t)chipid);
+
   // You can remove the password parameter if you want the AP to be open.
-  WiFi.softAP(priv_ssid /*, password */);
+  WiFi.softAP(ssid /*, password */);
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
   server.begin();
 
   Serial.println("Server started");
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("ACCESS POINT NAME"));
+  display.println(ssid);
+  display.println(F("URL"));
+  display.print(F("http://"));
+  display.println(myIP);
+  display.display();
 }
 
 void setupClient() {
@@ -57,7 +84,7 @@ void setupClient() {
   getSSID(ssid_buf, sizeof ssid_buf);
   char pw_buf[PW_MAX_LEN];
   getPW(pw_buf, sizeof pw_buf);
-  
+
   Serial.println("");
   Serial.print("Connecting to ");
   Serial.println(ssid_buf);
@@ -78,26 +105,72 @@ void setupClient() {
   client.setSentCallback(debugSentCallback);
 }
 
+void showBoot() {
+  display.display();
+  delay(2000); // Pause for 2 seconds
+
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("PRESS PRG BUTTON TO SET AP"));
+  display.display();
+  delay(2000);
+}
+
 void setup() {
-  Serial.begin(115200);
-  delay(100);
-
-  EEPROM.begin(EEPROM_SIZE);
-
   char ssid_buf[SSID_MAX_LEN];
-  getSSID(ssid_buf, sizeof ssid_buf);
   char pw_buf[PW_MAX_LEN];
-  getPW(pw_buf, sizeof pw_buf);
-
-  Serial.print("This was configured for ");
-  Serial.print(ssid_buf);
-  Serial.print(" => ");
-  Serial.println(pw_buf);
 
   pinMode(LED_PIN, OUTPUT);
+  pinMode(PROGRAM_SWITCH_PIN, INPUT_PULLUP);
+
+  Serial.begin(4800);
+  delay(100);
+
+  Serial.println("IN SETUP CP1");
+  EEPROM.begin(EEPROM_SIZE);
+
+  // Start I2C Communication SDA = 5 and SCL = 4 on Wemos Lolin32 ESP32 with built-in SSD1306 OLED
+  Serial.println("IN SETUP CP2");
+  Wire.begin(5, 4);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;);
+  }
+
+  showBoot();
+
+  int mode = digitalRead(PROGRAM_SWITCH_PIN);
+  if (mode == 0) {
+    currMode = MODE_AP;
+  } else {
+    currMode = MODE_CLIENT;
+  }
+
+  // Clear the buffer
+  display.clearDisplay();
+
+  // Clear the buffer
+  display.clearDisplay();
+
+  // Draw a single pixel in white
+  display.drawPixel(10, 10, SSD1306_WHITE);
+
+  // Show the display buffer on the screen. You MUST call display() after
+  // drawing commands to make them visible on screen!
+  display.display();
 
   switch (currMode) {
     case MODE_CLIENT:
+      getSSID(ssid_buf, sizeof ssid_buf);
+      getPW(pw_buf, sizeof pw_buf);
+
+      Serial.print("This was configured for ");
+      Serial.print(ssid_buf);
+      Serial.print(" => ");
+      Serial.println(pw_buf);
       setupClient();
       break;
     case MODE_AP:
@@ -257,6 +330,15 @@ void loopAP() {
               Serial.println("******");
             }
 
+
+            char ssid_buf[SSID_MAX_LEN];
+            getSSID(ssid_buf, sizeof ssid_buf);
+            char pw_buf[PW_MAX_LEN];
+            getPW(pw_buf, sizeof pw_buf);
+
+            Serial.println(ssid_buf);
+            Serial.println(pw_buf);
+
             ///Current line: GET /save/113,113,113,0,122,122,122,0 HTTP/1.1
 
 
@@ -296,6 +378,7 @@ void loop() {
 
 
 void callback(IRCMessage ircMessage) {
+  bool cmd_good = false;
   // PRIVMSG ignoring CTCP messages
   if (ircMessage.command == "PRIVMSG" && ircMessage.text[0] != '\001') {
     String message("<" + ircMessage.nick + "> " + ircMessage.text);
@@ -304,15 +387,21 @@ void callback(IRCMessage ircMessage) {
     if (message.indexOf("LEDON") >= 0) {
       digitalWrite(LED_PIN, HIGH);
       client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! LED ON");
+      cmd_good = true;
     }
 
     if (message.indexOf("LEDOFF") >= 0) {
       digitalWrite(LED_PIN, LOW);
       client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! LED OFF");
+      cmd_good = true;
     }
-    //    if (ircMessage.nick == REPLY_TO) {
-    client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! I'm your IRC bot.");
-    //    }
+
+    if (!cmd_good) {
+      //    if (ircMessage.nick == REPLY_TO) {
+      client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! I'm your IRC bot.");
+      client.sendMessage(ircMessage.nick, "Commands I know: LEDON and LEDOFF");
+      //    }
+    }
 
     return;
   }
