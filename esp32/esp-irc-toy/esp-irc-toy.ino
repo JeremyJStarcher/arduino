@@ -244,8 +244,6 @@ void processSetCommand(IRCMessage ircMessage) {
   intensity = strtok(NULL, " ");
   duration = strtok(NULL, " ");
 
-  unsigned short dur = atoi(duration);
-  unsigned short in = atoi(intensity);
 
   //  client.sendMessage(ircMessage.nick, setKeyword);
   //  client.sendMessage(ircMessage.nick, code);
@@ -256,6 +254,9 @@ void processSetCommand(IRCMessage ircMessage) {
     client.sendMessage(ircMessage.nick, F("Missing parameters"));
     return;
   }
+
+  unsigned short dur = atoi(duration);
+  unsigned short in = atoi(intensity);
 
   if (dur > 60 || dur < 0) {
     client.sendMessage(ircMessage.nick, F("Duraction must be between 0 and 60"));
