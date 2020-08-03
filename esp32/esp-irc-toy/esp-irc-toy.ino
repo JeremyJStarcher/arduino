@@ -219,10 +219,6 @@ void loopClient() {
     Toy toy = toys[i];
     long timeLeft = (toy.expires - millis()) / 1000;
     if (timeLeft < 0) {
-      toy.isOn = false;
-    }
-
-    if (!toy.isOn) {
       digitalWrite(toy.digitalPin, LOW);
       ledcWrite(i, 0);
     } else {
@@ -460,7 +456,6 @@ void processSetCommand(IRCMessage ircMessage) {
 
   toys[toyIndex].expires = millis() + (atoi(duration) * 1000);
   toys[toyIndex].intensity = atoi(intensity);
-  toys[toyIndex].isOn = true;
   client.sendMessage(ircMessage.nick, "Command set.");
 
 #if 0
@@ -478,7 +473,7 @@ void callback(IRCMessage ircMessage) {
     String message("<" + ircMessage.nick + "> " + ircMessage.text);
     Serial.println(message);
 
-    if (message.indexOf("help") >= 0) {
+    if (ircMessage.text.indexOf("help") == 0) {
       client.sendMessage(ircMessage.nick, "set (code) (intensity) (duration)");
       client.sendMessage(ircMessage.nick, "(code) is a code as given in the 'list' command.");
       client.sendMessage(ircMessage.nick, "(intensity) power rating between 1 and 100");
@@ -491,7 +486,7 @@ void callback(IRCMessage ircMessage) {
       cmd_good = true;
     }
 
-    if (message.indexOf("list") >= 0) {
+    if (ircMessage.text.indexOf("list") == 0) {
       client.sendMessage(ircMessage.nick, "(code) (name) (time) (intensity)");
       for (int i = 0; i < TOY_COUNT; i++) {
         Toy toy = toys[i];
@@ -499,25 +494,13 @@ void callback(IRCMessage ircMessage) {
 
         client.sendMessage(
           ircMessage.nick,
-          String((toy.isOn ? "on" : "off")) + " " +
+          String((timeLeft > 0 ? "on" : "off")) + " " +
           toy.id + " " +
           toy.name + " " +
-          String((long) timeLeft) + " " +
+          String(timeLeft > 0 ? (long) timeLeft : 0) + " " +
           toy.intensity
         );
       }
-      cmd_good = true;
-    }
-
-    if (message.indexOf("LEDON") >= 0) {
-      digitalWrite(LED_PIN, HIGH);
-      client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! LED ON");
-      cmd_good = true;
-    }
-
-    if (message.indexOf("LEDOFF") >= 0) {
-      digitalWrite(LED_PIN, LOW);
-      client.sendMessage(ircMessage.nick, "Hi " + ircMessage.nick + "! LED OFF");
       cmd_good = true;
     }
 

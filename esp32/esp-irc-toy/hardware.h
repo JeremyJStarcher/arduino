@@ -6,7 +6,6 @@
 struct mytoy {
   String id;
   String name;
-  bool isOn;
   long long expires;
   byte intensity;
   byte digitalPin;
