@@ -282,7 +282,7 @@ void setup()
   espDelay(5000);
 
 
-  showDatum();
+  //showDatum();
 
   tft.setRotation(0);
   tft.fillScreen(TFT_RED);
