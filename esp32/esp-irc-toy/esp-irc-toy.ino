@@ -275,8 +275,9 @@ void processSetCommand(IRCMessage ircMessage) {
   }
 
   if (toyIndex == TOY_COUNT) {
-    client.sendMessage(ircMessage.nick, F("The following code is not known.  See the 'list' command"));
-    client.sendMessage(ircMessage.nick, code);
+    char buf[100];
+    snprintf(buf, 99, "The following code is not known: '%s'.  See the 'list' command.", code);
+    client.sendMessage(ircMessage.nick, buf);
     return;
   }
 
