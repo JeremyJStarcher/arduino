@@ -284,13 +284,6 @@ void processSetCommand(IRCMessage ircMessage) {
   toys[toyIndex].expires = millis() + (atoi(duration) * 1000);
   toys[toyIndex].intensity = atoi(intensity);
   client.sendMessage(ircMessage.nick, "Command set.");
-
-#if 0
-  client.sendMessage(ircMessage.nick, F("Duration"));
-  client.sendMessage(ircMessage.nick, String(atoi(duration)));
-  client.sendMessage(ircMessage.nick, String((long) toys[toyIndex].expires));
-  client.sendMessage(ircMessage.nick, toys[toyIndex].name);
-#endif
 }
 
 void callback(IRCMessage ircMessage) {
