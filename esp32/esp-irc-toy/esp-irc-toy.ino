@@ -211,6 +211,27 @@ void loop() {
 }
 
 
+void processListCommand(IRCMessage ircMessage) {
+  char buf[100];
+  snprintf(buf, 99, "%4s %-10s %-20s %11s %6s", "---", "(code)", "(name)", "(intensity)", "(time)");
+  client.sendMessage(ircMessage.nick, buf);
+
+  for (int i = 0; i < TOY_COUNT; i++) {
+    Toy toy = toys[i];
+    long timeLeft = (toy.expires - millis()) / 1000;
+
+    snprintf(buf, 99, "%4s %-10s %-20s %11ld %6d",
+             timeLeft > 0 ? "on" : "off",
+             toy.id,
+             &toy.name[0],
+             toy.intensity,
+             timeLeft > 0 ? (long) timeLeft : 0
+            );
+
+    client.sendMessage(ircMessage.nick, buf);
+  }
+}
+
 void processSetCommand(IRCMessage ircMessage) {
   char *setKeyword = NULL;
   char *code = NULL;
@@ -291,20 +312,7 @@ void callback(IRCMessage ircMessage) {
     }
 
     if (ircMessage.text.indexOf("list") == 0) {
-      client.sendMessage(ircMessage.nick, "(code) (name) (time) (intensity)");
-      for (int i = 0; i < TOY_COUNT; i++) {
-        Toy toy = toys[i];
-        long timeLeft = (toy.expires - millis()) / 1000;
-
-        client.sendMessage(
-          ircMessage.nick,
-          String((timeLeft > 0 ? "on" : "off")) + " " +
-          toy.id + " " +
-          toy.name + " " +
-          String(timeLeft > 0 ? (long) timeLeft : 0) + " " +
-          toy.intensity
-        );
-      }
+      processListCommand(ircMessage);
       cmd_good = true;
     }
 
