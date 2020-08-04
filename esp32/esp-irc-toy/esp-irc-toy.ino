@@ -47,6 +47,7 @@ const byte MODE_AP = 1;
 const byte MODE_CLIENT = 2;
 
 byte currMode = MODE_AP;
+volatile bool ircRegistered = false;
 
 #define EEPROM_SIZE 512
 
@@ -68,15 +69,14 @@ void setupClient() {
   Serial.println(ssid_buf);
   WiFi.begin(ssid_buf, pw_buf);
 
-  byte c = false;
+  bool c = false;
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    display.fillRect(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8, 8, 8, SSD1306_BLACK);
+    display.fillRect(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8, 8, 8,
+                     c ? SSD1306_BLACK : SSD1306_WHITE);
 
-    display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
-    display.setCursor(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8);
-    display.print(c == false ? F(".") : F( "o"));
     c = !c;
     display.display();
   }
@@ -170,19 +170,73 @@ void setup() {
   }
 }
 
+void tryIRCConnect() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("Connecting to IRC"));
+  display.println(IRC_SERVER);
+  display.println(IRC_NICKNAME);
+
+  display.display();
+
+  ircRegistered = false;
+  Serial.println("Attempting IRC connection...");
+  // Attempt to connect
+  if (client.connect(IRC_NICKNAME, IRC_USER, IRC_FULLNAME)) {
+    Serial.println("connected");
+  } else {
+    Serial.println("failed... try again in 5 seconds");
+    // Wait 5 seconds before retrying
+    delay(5000);
+  }
+}
+
+void showStatus() {
+  char buf[100];
+  for (int i = 0; i < TOY_COUNT; i++) {
+    Toy toy = toys[i];
+    long timeLeft = (toy.expires - millis()) / 1000;
+
+    snprintf(buf, 99, "%1s %-10s %3ld %2d",
+             timeLeft > 0 ? "+" : " ",
+             toy.id,
+             toy.intensity,
+             timeLeft > 0 ? (long) timeLeft : 0
+            );
+
+    display.println(buf);
+  }
+}
+
 void loopClient() {
+  static bool c = false;
+
+
   if (!client.connected()) {
-    Serial.println("Attempting IRC connection...");
-    // Attempt to connect
-    if (client.connect(IRC_NICKNAME, IRC_USER, IRC_FULLNAME)) {
-      Serial.println("connected");
-    } else {
-      Serial.println("failed... try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
+    tryIRCConnect();
     return;
   }
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+
+  if (ircRegistered) {
+    showStatus();
+  } else {
+    display.println(F("Connected to IRC"));
+    display.println(F("Attempting to log in."));
+    display.println(F("This may wait until the nickname has timed out."));
+    display.println(F("(Hope nobody else grabbed it)"));
+    display.fillRect(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8, 8, 8,
+                     c ? SSD1306_BLACK : SSD1306_WHITE);
+  }
+
+  display.display();
+  c = !c;
 
   for (int i = 0; i < TOY_COUNT; i++) {
     Toy toy = toys[i];
@@ -288,6 +342,14 @@ void processSetCommand(IRCMessage ircMessage) {
 
 void callback(IRCMessage ircMessage) {
   bool cmd_good = false;
+
+  if (ircMessage.command == "001") {
+    ircRegistered = true;
+  }
+
+  Serial.println(ircMessage.command);
+  Serial.println(ircMessage.text);
+
   // PRIVMSG ignoring CTCP messages
   if (ircMessage.command == "PRIVMSG" && ircMessage.text[0] != '\001') {
     String message("<" + ircMessage.nick + "> " + ircMessage.text);
