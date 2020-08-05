@@ -57,28 +57,48 @@ void setupClient() {
   char pw_buf[PW_MAX_LEN];
   getPW(pw_buf, sizeof pw_buf);
 
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.println(F("Connecting to"));
-  display.println(ssid_buf);
+  /* Sometimes the wifi gets locked confused and won't connect
+      Rebooting the device works -- hopefully re-attempting the
+      connect works as well.
+  */
+  int attempts = 0;
+  while (true) {
+    attempts += 1;
 
-  Serial.println("");
-  Serial.print("Connecting to ");
-  Serial.println(ssid_buf);
-  WiFi.begin(ssid_buf, pw_buf);
-
-  bool c = false;
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    display.fillRect(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8, 8, 8,
-                     c ? SSD1306_BLACK : SSD1306_WHITE);
-
-    c = !c;
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0, 0);
+    display.println(F("Connecting to"));
+    display.println(ssid_buf);
+    display.setTextSize(2);
+    display.print(F("Attempt # "));
+    display.println(attempts);
+    display.setTextSize(1);
     display.display();
+
+    Serial.println("");
+    Serial.print(F("Connecting to "));
+    Serial.println(ssid_buf);
+    WiFi.begin(ssid_buf, pw_buf);
+
+    bool c = false;
+    byte waitfor = 20;
+
+    while (WiFi.status() != WL_CONNECTED && waitfor > 0) {
+      delay(500);
+      Serial.print(".");
+      display.fillRect(SCREEN_WIDTH - 8, SCREEN_HEIGHT - 8, 8, 8,
+                       c ? SSD1306_BLACK : SSD1306_WHITE);
+
+      waitfor -= 1;
+      c = !c;
+      display.display();
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      break;
+    }
   }
 
   display.println("");
