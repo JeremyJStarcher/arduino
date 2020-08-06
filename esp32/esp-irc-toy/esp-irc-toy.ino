@@ -226,7 +226,11 @@ void showStatus() {
              timeLeft > 0 ? (long) timeLeft : 0
             );
 
+    if (timeLeft > 0) {
+      display.setTextColor(SSD1306_BLACK, SSD1306_WHITE);
+    }
     display.println(buf);
+    display.setTextColor(SSD1306_WHITE);
   }
 }
 
