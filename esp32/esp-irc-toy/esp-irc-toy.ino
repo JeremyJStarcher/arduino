@@ -376,21 +376,22 @@ void processSetCommand(IRCMessage ircMessage) {
 
   toys[toyIndex].expires = millis() + (atoi(duration) * 1000);
 
-  if (strcmp(intensity, "high") == 0) {
+  if (intensity[0] == 'h') {
     toys[toyIndex].intensity = intensity_high;
     toys[toyIndex].pwm = toys[toyIndex].high * MAX_PWM;
-  } else if (strcmp(intensity, "medium") == 0) {
+  } else if (intensity[0] == 'm') {
     toys[toyIndex].intensity = intensity_medium;
     toys[toyIndex].pwm = toys[toyIndex].medium * MAX_PWM;
-  } else if (strcmp(intensity, "low") == 0) {
+  } else if (intensity[0] == 'l') {
     toys[toyIndex].intensity = intensity_low;
     toys[toyIndex].pwm = toys[toyIndex].low * MAX_PWM;
-  } else if (strcmp(intensity, "none") == 0) {
+  } else if (intensity[0] == 'n') {
     toys[toyIndex].intensity = intensity_none;
     toys[toyIndex].pwm = 0;
   } else {
     toys[toyIndex].pwm = 0;
     client.sendMessage(ircMessage.nick, "Unknown intensity. Must be 'high', 'medium' or 'low'.");
+    client.sendMessage(ircMessage.nick, "May also say 'h' 'm' or 'l'");
   }
 
   client.sendMessage(ircMessage.nick, "Command set.");
@@ -416,7 +417,7 @@ void callback(IRCMessage ircMessage) {
     if (ircMessage.text.indexOf("help") == 0) {
       client.sendMessage(ircMessage.nick, "set (code) (intensity) (duration)");
       client.sendMessage(ircMessage.nick, "(code) is a code as given in the 'list' command.");
-      client.sendMessage(ircMessage.nick, "(intensity) is 'high', 'medium' or 'low'");
+      client.sendMessage(ircMessage.nick, "(intensity) is 'high', 'medium' or 'low'.  May also use 'h' 'm' 'l'");
       client.sendMessage(ircMessage.nick, "(duration) is time, given in seconds.");
       cmd_good = true;
     }
