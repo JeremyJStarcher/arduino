@@ -265,8 +265,8 @@ void loopClient() {
   for (int i = 0; i < TOY_COUNT; i++) {
     Toy toy = toys[i];
     long timeLeft = (toy.expires - millis()) / 1000;
-    if (timeLeft < 0) {
-      digitalWrite(toy.digitalPin, LOW);
+    if (timeLeft <= 0) {
+      // digitalWrite(toy.digitalPin, LOW);
       ledcWrite(i, 0);
     } else {
       int pwm = map(toy.intensity, 0, 100, 0, 1023);
