@@ -20,7 +20,6 @@ void loopAP(void);
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-
 #define SSID_MAX_LEN 100
 #define PW_MAX_LEN 100
 
@@ -50,6 +49,7 @@ byte currMode = MODE_AP;
 volatile bool ircRegistered = false;
 
 #define EEPROM_SIZE 512
+#define MAX_PWM 1023
 
 void setupClient() {
   char ssid_buf[SSID_MAX_LEN];
@@ -213,16 +213,38 @@ void tryIRCConnect() {
   }
 }
 
+char *intensity_to_string(Intensity intensity, char* buf) {
+  switch (intensity) {
+    case intensity_none:
+      strcpy(buf, "---");
+      return buf;
+    case intensity_high:
+      strcpy(buf, "HI");
+      return buf;
+    case intensity_medium:
+      strcpy(buf, "MED");
+      return buf;
+    case intensity_low:
+      strcpy(buf, "LOW");
+      return buf;
+    default:
+      strcpy(buf, "???");
+      return buf;
+  }
+}
+
 void showStatus() {
   char buf[100];
   for (int i = 0; i < TOY_COUNT; i++) {
     Toy toy = toys[i];
     long timeLeft = (toy.expires - millis()) / 1000;
+    char buf2[100];
+    intensity_to_string(toy.intensity, buf2);
 
-    snprintf(buf, 99, "%1s %-10s %3ld %2d",
+    snprintf(buf, 99, "%1s %-10s %4s %2d",
              timeLeft > 0 ? "+" : " ",
              toy.id,
-             toy.intensity,
+             buf2,
              timeLeft > 0 ? (long) timeLeft : 0
             );
 
@@ -236,7 +258,6 @@ void showStatus() {
 
 void loopClient() {
   static bool c = false;
-
 
   if (!client.connected()) {
     tryIRCConnect();
@@ -266,11 +287,9 @@ void loopClient() {
     Toy toy = toys[i];
     long timeLeft = (toy.expires - millis()) / 1000;
     if (timeLeft <= 0) {
-      // digitalWrite(toy.digitalPin, LOW);
       ledcWrite(i, 0);
     } else {
-      int pwm = map(toy.intensity, 0, 100, 0, 1023);
-      ledcWrite(i, pwm);
+      ledcWrite(i, toy.pwm);
     }
   }
 
@@ -288,7 +307,6 @@ void loop() {
   }
 }
 
-
 void processListCommand(IRCMessage ircMessage) {
   char buf[100];
   snprintf(buf, 99, "%4s %-10s %-20s %11s %6s", "---", "(code)", "(name)", "(intensity)", "(time)");
@@ -297,12 +315,14 @@ void processListCommand(IRCMessage ircMessage) {
   for (int i = 0; i < TOY_COUNT; i++) {
     Toy toy = toys[i];
     long timeLeft = (toy.expires - millis()) / 1000;
+    char buf2[100];
+    intensity_to_string(toy.intensity, buf2);
 
-    snprintf(buf, 99, "%4s %-10s %-20s %11ld %6d",
+    snprintf(buf, 99, "%4s %-10s %-20s %11s %6d",
              timeLeft > 0 ? "on" : "off",
              toy.id,
              &toy.name[0],
-             toy.intensity,
+             buf2,
              timeLeft > 0 ? (long) timeLeft : 0
             );
 
@@ -337,12 +357,7 @@ void processSetCommand(IRCMessage ircMessage) {
   unsigned short in = atoi(intensity);
 
   if (dur > 60 || dur < 0) {
-    client.sendMessage(ircMessage.nick, F("Duraction must be between 0 and 60"));
-    return;
-  }
-
-  if (in > 100 || in < 0) {
-    client.sendMessage(ircMessage.nick, F("Intensity must be between 0 and 100"));
+    client.sendMessage(ircMessage.nick, F("Duration must be between 0 and 60"));
     return;
   }
 
@@ -360,8 +375,27 @@ void processSetCommand(IRCMessage ircMessage) {
   }
 
   toys[toyIndex].expires = millis() + (atoi(duration) * 1000);
-  toys[toyIndex].intensity = atoi(intensity);
+
+  if (strcmp(intensity, "high") == 0) {
+    toys[toyIndex].intensity = intensity_high;
+    toys[toyIndex].pwm = toys[toyIndex].high * MAX_PWM;
+  } else if (strcmp(intensity, "medium") == 0) {
+    toys[toyIndex].intensity = intensity_medium;
+    toys[toyIndex].pwm = toys[toyIndex].medium * MAX_PWM;
+  } else if (strcmp(intensity, "low") == 0) {
+    toys[toyIndex].intensity = intensity_low;
+    toys[toyIndex].pwm = toys[toyIndex].low * MAX_PWM;
+  } else if (strcmp(intensity, "none") == 0) {
+    toys[toyIndex].intensity = intensity_none;
+    toys[toyIndex].pwm = 0;
+  } else {
+    toys[toyIndex].pwm = 0;
+    client.sendMessage(ircMessage.nick, "Unknown intensity. Must be 'high', 'medium' or 'low'.");
+  }
+
   client.sendMessage(ircMessage.nick, "Command set.");
+
+  processListCommand(ircMessage);
 }
 
 void callback(IRCMessage ircMessage) {
@@ -382,7 +416,7 @@ void callback(IRCMessage ircMessage) {
     if (ircMessage.text.indexOf("help") == 0) {
       client.sendMessage(ircMessage.nick, "set (code) (intensity) (duration)");
       client.sendMessage(ircMessage.nick, "(code) is a code as given in the 'list' command.");
-      client.sendMessage(ircMessage.nick, "(intensity) power rating between 1 and 100");
+      client.sendMessage(ircMessage.nick, "(intensity) is 'high', 'medium' or 'low'");
       client.sendMessage(ircMessage.nick, "(duration) is time, given in seconds.");
       cmd_good = true;
     }
