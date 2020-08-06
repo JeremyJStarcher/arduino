@@ -356,8 +356,8 @@ void processSetCommand(IRCMessage ircMessage) {
   unsigned short dur = atoi(duration);
   unsigned short in = atoi(intensity);
 
-  if (dur > 60 || dur < 0) {
-    client.sendMessage(ircMessage.nick, F("Duration must be between 0 and 60"));
+  if (dur > 60 || dur < 2) {
+    client.sendMessage(ircMessage.nick, F("Duration must be between 2 and 60"));
     return;
   }
 
