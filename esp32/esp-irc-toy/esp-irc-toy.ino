@@ -28,7 +28,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define EEPROM_PW_OFFSET (SSID_MAX_LEN + 1)
 
 const int LED_PIN = 2;
-const int PROGRAM_SWITCH_PIN = 16;
+const int PROGRAM_SWITCH_PIN = 13; // FROM SCHEMATIC
 
 #define IRC_SERVER   "eu.undernet.org"
 #define IRC_PORT     6667
@@ -140,9 +140,14 @@ void setup() {
     pinMode(toys[i].digitalPin, OUTPUT);
     ledcSetup(i, 5000, 10);
     ledcAttachPin(toys[i].digitalPin, i);
+    //digitalWrite(toys[i].digitalPin, LOW);
+
     Serial.print("Building ");
-    Serial.println(toys[i].id);
+    Serial.print(toys[i].id);
+    Serial.print(" on pin #");
+    Serial.println(toys[i].digitalPin);
   }
+
   pinMode(PROGRAM_SWITCH_PIN, INPUT_PULLUP);
 
   delay(1000);
@@ -160,6 +165,9 @@ void setup() {
   showBoot();
 
   int mode = digitalRead(PROGRAM_SWITCH_PIN);
+  Serial.print("mode = ");
+  Serial.println(mode);
+
   if (mode == 0) {
     currMode = MODE_AP;
   } else {
@@ -283,13 +291,19 @@ void loopClient() {
   display.display();
   c = !c;
 
-  for (int i = 0; i < TOY_COUNT; i++) {
-    Toy toy = toys[i];
-    long timeLeft = (toy.expires - millis()) / 1000;
-    if (timeLeft <= 0) {
-      ledcWrite(i, 0);
-    } else {
-      ledcWrite(i, toy.pwm);
+  if (true) {
+    for (int i = 0; i < TOY_COUNT; i++) {
+      Toy toy = toys[i];
+      byte digitalPin = toys[i].digitalPin;
+
+      long timeLeft = (toy.expires - millis()) / 1000;
+      if (timeLeft <= 0) {
+        ledcWrite(i, 0);
+        //digitalWrite(digitalPin, LOW);
+      } else {
+        //digitalWrite(digitalPin, HIGH);
+        ledcWrite(i, toy.pwm);
+      }
     }
   }
 
@@ -308,7 +322,7 @@ void loop() {
 }
 
 void processListCommand(IRCMessage ircMessage) {
-  char buf[100];
+  static char buf[100];
   snprintf(buf, 99, "%4s %-10s %-20s %11s %6s", "---", "(code)", "(name)", "(intensity)", "(time)");
   client.sendMessage(ircMessage.nick, buf);
 
@@ -468,6 +482,7 @@ void callback(IRCMessage ircMessage) {
 }
 
 void debugSentCallback(String data) {
+  return;
   Serial.println(data);
 }
 

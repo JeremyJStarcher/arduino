@@ -19,7 +19,7 @@ struct mytoy {
 
 typedef mytoy Toy;
 
-  extern Toy toys[];
-#define TOY_COUNT 3
+extern Toy toys[];
+#define TOY_COUNT 4
 
 #endif
