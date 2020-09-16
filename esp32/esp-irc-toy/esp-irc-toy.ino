@@ -10,6 +10,8 @@
 #include "IRCClient.h"
 #include "hardware.h"
 
+char * getEpromServer();
+int getEpromPort();
 char * getEpromString(int phrase, char *buffer, size_t len);
 void setupAP(void);
 void loopAP(void);
@@ -40,8 +42,8 @@ const int LED_PIN = 2;
 
 const int PROGRAM_SWITCH_PIN = 13; // FROM SCHEMATIC
 
-#define IRC_SERVER   "us.undernet.org"
-#define IRC_PORT     6667
+//#define IRC_SERVER   "us.undernet.org"
+//#define IRC_PORT     6667
 //#define IRC_NICKNAME "jilly_t2"
 //#define IRC_USER     "jilly_t2"
 //#define IRC_FULLNAME  "Jill's RC Gizmo"
@@ -50,8 +52,8 @@ const int PROGRAM_SWITCH_PIN = 13; // FROM SCHEMATIC
 #define REPLY_TO     "NICK" // Reply only to this nick
 
 WiFiClient wiFiClient;
-IRCClient client(IRC_SERVER /*getEpromString(EEPROM_IRC_SERVER) */,
-                 IRC_PORT /*atoi(getEpromString(EEPROM_IRC_PORT)) */,
+IRCClient client(getEpromServer(),
+                 getEpromPort(),
                  wiFiClient
                 );
 
@@ -148,13 +150,20 @@ void setup() {
   char ssid_buf[SSID_MAX_LEN];
   char pw_buf[PW_MAX_LEN];
 
+  // Start I2C Communication SDA = 5 and SCL = 4 on Wemos Lolin32 ESP32 with built-in SSD1306 OLED
+  Wire.begin(5, 4);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;);
+  }
+
   Serial.begin(115200);
 
   for (int i = 0; i < TOY_COUNT; i++) {
     pinMode(toys[i].digitalPin, OUTPUT);
     ledcSetup(i, 5000, 10);
     ledcAttachPin(toys[i].digitalPin, i);
-    //digitalWrite(toys[i].digitalPin, LOW);
 
     Serial.print("Building ");
     Serial.print(toys[i].id);
@@ -167,14 +176,6 @@ void setup() {
   delay(1000);
 
   EEPROM.begin(EEPROM_SIZE);
-
-  // Start I2C Communication SDA = 5 and SCL = 4 on Wemos Lolin32 ESP32 with built-in SSD1306 OLED
-  Wire.begin(5, 4);
-
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;);
-  }
 
   showBoot();
 
@@ -535,6 +536,16 @@ char * getEpromString(int phrase, char *buffer, size_t len) {
     idx += 1;
   }
   return buffer;
+}
+
+char * getEpromServer() {
+  static char buffer[100];
+  return getEpromString(EEPROM_IRC_SERVER, buffer, 100);
+}
+
+int getEpromPort() {
+  static char buffer[100];
+  return atoi(getEpromString(EEPROM_IRC_PORT, buffer, 100));
 }
 
 #include "ap.h"
