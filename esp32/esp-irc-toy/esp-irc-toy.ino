@@ -10,6 +10,7 @@
 #include "IRCClient.h"
 #include "hardware.h"
 
+char * getEpromString(int phrase, char *buffer, size_t len);
 void setupAP(void);
 void loopAP(void);
 
@@ -22,25 +23,37 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define SSID_MAX_LEN 100
 #define PW_MAX_LEN 100
+#define DATA_MAX_LEN 100
 
 #define EEPROM_MODE_OFFSET 0
-#define EEPROM_SSID_OFFSET 1
-#define EEPROM_PW_OFFSET (SSID_MAX_LEN + 1)
+#define EEPROM_DATA_OFFSET 1
+
+#define EEPROM_SSID_NAME 0
+#define EEPROM_SSID_PW 1
+#define EEPROM_IRC_SERVER 2
+#define EEPROM_IRC_PORT 3
+#define EEPROM_IRC_NICK 4
+#define EEPROM_IRC_USER 5
+#define EEPROM_IRC_FULLNAME 6
 
 const int LED_PIN = 2;
+
 const int PROGRAM_SWITCH_PIN = 13; // FROM SCHEMATIC
 
-#define IRC_SERVER   "eu.undernet.org"
+#define IRC_SERVER   "us.undernet.org"
 #define IRC_PORT     6667
-#define IRC_NICKNAME "jilly_t2"
-#define IRC_USER     "jilly_t2"
-#define IRC_FULLNAME  "Jill's RC Gizmo"
+//#define IRC_NICKNAME "jilly_t2"
+//#define IRC_USER     "jilly_t2"
+//#define IRC_FULLNAME  "Jill's RC Gizmo"
 
 
 #define REPLY_TO     "NICK" // Reply only to this nick
 
 WiFiClient wiFiClient;
-IRCClient client(IRC_SERVER, IRC_PORT, wiFiClient);
+IRCClient client(IRC_SERVER /*getEpromString(EEPROM_IRC_SERVER) */,
+                 IRC_PORT /*atoi(getEpromString(EEPROM_IRC_PORT)) */,
+                 wiFiClient
+                );
 
 const byte MODE_AP = 1;
 const byte MODE_CLIENT = 2;
@@ -53,9 +66,10 @@ volatile bool ircRegistered = false;
 
 void setupClient() {
   char ssid_buf[SSID_MAX_LEN];
-  getSSID(ssid_buf, sizeof ssid_buf);
   char pw_buf[PW_MAX_LEN];
-  getPW(pw_buf, sizeof pw_buf);
+
+  getEpromString(EEPROM_SSID_NAME, ssid_buf, SSID_MAX_LEN);
+  getEpromString(EEPROM_SSID_PW, pw_buf, PW_MAX_LEN);
 
   /* Sometimes the wifi gets locked confused and won't connect
       Rebooting the device works -- hopefully re-attempting the
@@ -183,13 +197,18 @@ void setup() {
 
   switch (currMode) {
     case MODE_CLIENT:
-      getSSID(ssid_buf, sizeof ssid_buf);
-      getPW(pw_buf, sizeof pw_buf);
+
+      char ssid_buf[SSID_MAX_LEN];
+      getEpromString(EEPROM_SSID_NAME, ssid_buf, SSID_MAX_LEN);
+
+      char pw_buf[PW_MAX_LEN];
+      getEpromString(EEPROM_SSID_PW, pw_buf, PW_MAX_LEN);
 
       Serial.print("This was configured for ");
       Serial.print(ssid_buf);
       Serial.print(" => ");
       Serial.println(pw_buf);
+
       setupClient();
       break;
     case MODE_AP:
@@ -204,15 +223,29 @@ void tryIRCConnect() {
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
   display.println(F("Connecting to IRC"));
-  display.println(IRC_SERVER);
-  display.println(IRC_NICKNAME);
+  //  display.println(getEpromString(EEPROM_IRC_SERVER));
+  //  display.println(getEpromString(EEPROM_IRC_NICK));
 
   display.display();
+
+  char buff[100];
+  String nick_buf(getEpromString(EEPROM_IRC_NICK, buff, 100));
+
+  String user_buf(getEpromString(EEPROM_IRC_USER, buff, 100));
+  String fn_buf(getEpromString(EEPROM_IRC_FULLNAME, buff, 100));
+
+  Serial.println(nick_buf);
+  Serial.println(user_buf);
+  Serial.println(fn_buf);
 
   ircRegistered = false;
   Serial.println("Attempting IRC connection...");
   // Attempt to connect
-  if (client.connect(IRC_NICKNAME, IRC_USER, IRC_FULLNAME)) {
+  if (client.connect(
+        nick_buf,
+        user_buf,
+        fn_buf
+      )) {
     Serial.println("connected");
   } else {
     Serial.println("failed... try again in 5 seconds");
@@ -486,29 +519,22 @@ void debugSentCallback(String data) {
   Serial.println(data);
 }
 
-void getEpromBuf(int eepromidx, char *buffer, size_t len) {
+char * getEpromString(int phrase, char *buffer, size_t len) {
+  size_t i = 0;
   size_t idx = 0;
-  buffer[idx] = 0;
+  int ch = -1;
 
-  while (true) {
-    char ch = EEPROM.read(eepromidx + idx);
-
-    if (ch == 0 || idx >= len) {
-      break;
+  for (int ii = 0; ii <= phrase; ii++) {
+    i = 0;
+    while ((ch = EEPROM.read(EEPROM_DATA_OFFSET + idx)) != 0) {
+      buffer[i] = ch;
+      buffer[i + 1] = 0;
+      i++;
+      idx += 1;
     }
-
-    buffer[idx] = ch;
-    buffer[idx + 1] = 0;
     idx += 1;
   }
-
-}
-void getSSID(char *buffer, size_t len) {
-  getEpromBuf(EEPROM_SSID_OFFSET, buffer, len);
-}
-
-void getPW(char *buffer, size_t len) {
-  getEpromBuf(EEPROM_PW_OFFSET, buffer, len);
+  return buffer;
 }
 
 #include "ap.h"

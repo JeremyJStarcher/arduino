@@ -61,8 +61,21 @@ void loopAP() {
             client.print("<body><h1>ESP32 TOY Setup</h1>");
 
             client.print("<form action='' method='get'>");
-            client.print("<div><label>SSID (Wifi Name)</label><input id='ssid' name='ssid'></div>");
-            client.print("<div><label>Password</label><input id='pw' type='password' name='pw'></div>");
+            client.print("<fieldset>");
+            client.print("<legend>WIFI Configuration</legend>");
+            client.print("<div><label>SSID (Wifi Name)</label><input value='TinkerHouse' id='ssid' name='ssid'></div>");
+            client.print("<div><label>Password</label><input id='pw' value='Join us in the fun.' type='password' name='pw'></div>");
+            client.print("</fieldset>");
+
+            client.print("<fieldset>");
+            client.print("<legend>IRC Configuration</legend>");
+            client.print("<div><label>Server</label><input id='irc_server' value='us.undernet.org' name='irc_server'></div>");
+            client.print("<div><label>Port</label><input id='irc_port' value='6667' name='irc_port'></div>");
+            client.print("<div><label>Nickname</label><input id='irc_nickname' value='jilly_t2' name='irc_nickname'></div>");
+            client.print("<div><label>User</label><input id='irc_user' value='jillybot' name='irc_user'></div>");
+            client.print("<div><label>Full Name</label><input id='irc_fullname' value='jilly_t2' name='irc_fullname'></div>");
+            client.print("</fieldset>");
+
             client.print("<button type='button' onclick='save()'>Save</button></form>");
 
             // the content of the HTTP response follows the header:
@@ -70,13 +83,24 @@ void loopAP() {
             client.print("Click <a href=\"/L\">here</a> to turn OFF the LED.<br>");
 
             client.println("<script>");
-            client.println("function save() {");
+            client.println("function g(id) {");
             client.println("  const encoder = new TextEncoder();");
-            client.println("  const ssid = encoder.encode(document.getElementById('ssid').value);");
-            client.println("  const pw = encoder.encode(document.getElementById('pw').value);");
-            client.println("  const l = [...ssid, 0, ...pw, 0]");
-            client.println("//alert(l);");
-            client.println("fetch(`save/${l}`);");
+            client.println("  return encoder.encode(document.getElementById(id).value);");
+            client.println("}");
+            client.println("function save() {");
+            client.println("  const l = [");
+            client.println("    ...g('ssid'), 0,");
+            client.println("    ...g('pw'), 0,");
+            client.println("    ...g('irc_server'), 0,");
+            client.println("    ...g('irc_port'), 0,");
+            client.println("    ...g('irc_nickname'), 0,");
+            client.println("    ...g('irc_user'), 0,");
+            client.println("    ...g('irc_fullname'), 0,");
+            client.println("    -1");
+            client.println("  ];");
+
+            client.println("  debugger;");
+            client.println("  fetch(`save/${l}`);");
 
             client.println("}");
 
@@ -119,46 +143,25 @@ void loopAP() {
               // Force the string to end right there
               currentLine[fin] = 0;
 
+
               int idx = 0;
               char *ptr = NULL;
               ptr = strtok(&currentLine[start], ",");
               while (ptr != NULL) {
-                char ch = atoi(ptr);
-                if (ch == 0) {
+                signed int ch = atoi(ptr);
+                if (ch == -1) {
                   break;
                 }
-                int offset = EEPROM_SSID_OFFSET + idx;
+                int offset = EEPROM_DATA_OFFSET + idx;
                 EEPROM.write(offset, ch);
-                EEPROM.commit();
-                EEPROM.write(offset + 1, 0);
-                EEPROM.commit();
                 ptr = strtok(NULL, ",");
                 Serial.print("SSID Saving ");
-                Serial.print(ch);
+                Serial.print((int) ch);
+                Serial.print(" ");
+                Serial.print((char) ch);
                 Serial.print(" at ");
                 Serial.println(offset);
 
-                EEPROM.commit();
-                idx += 1;
-              }
-
-              ptr = strtok(NULL, ",");
-
-              idx = 0;
-              while (ptr != NULL) {
-                char ch = atoi(ptr);
-                int offset = EEPROM_PW_OFFSET + idx;
-                EEPROM.write(offset, ch);
-                EEPROM.commit();
-                EEPROM.write(offset + 1, 0);
-                EEPROM.commit();
-
-                Serial.print("PW Saving ");
-                Serial.print(ch);
-                Serial.print(" at ");
-                Serial.println(offset);
-
-                ptr = strtok(NULL, ",");
                 idx += 1;
               }
               EEPROM.commit();
@@ -167,10 +170,12 @@ void loopAP() {
             }
 
             char ssid_buf[SSID_MAX_LEN];
-            getSSID(ssid_buf, sizeof ssid_buf);
-            char pw_buf[PW_MAX_LEN];
-            getPW(pw_buf, sizeof pw_buf);
+            getEpromString(EEPROM_SSID_NAME, ssid_buf, SSID_MAX_LEN);
 
+            char pw_buf[PW_MAX_LEN];
+            getEpromString(EEPROM_SSID_PW, pw_buf, PW_MAX_LEN);
+
+            Serial.println("-=-=-=-=-=-=-=-=-=-=-=-");
             Serial.println(ssid_buf);
             Serial.println(pw_buf);
 
