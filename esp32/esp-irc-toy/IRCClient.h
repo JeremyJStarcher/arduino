@@ -41,6 +41,7 @@ class IRCClient
     void executeCallback(IRCMessage ircMessage);
 
   public:
+    IRCClient();
     IRCClient(const char*, uint16_t, Client& client);
     IRCClient& setCallback(IRC_CALLBACK_SIGNATURE);
     IRCClient& setSentCallback(IRC_SENTCALLBACK_SIGNATURE);
@@ -49,6 +50,7 @@ class IRCClient
     boolean connected();
     void sendRaw(String data);
     void sendMessage(String to, String message);
+    void begin( char* host, uint16_t port, Client& client);
 };
 
 #endif /* IRCClient_h */

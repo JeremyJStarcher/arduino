@@ -11,8 +11,18 @@
 */
 
 #include "IRCClient.h"
+IRCClient::IRCClient() {
+  this->isConnected = false;
+}
 
 IRCClient::IRCClient(const char* host, uint16_t port, Client& client) {
+  this->host = host;
+  this->port = port;
+  this->client = &client;
+  this->isConnected = false;
+}
+
+void IRCClient::begin( char* host, uint16_t port, Client& client) {
   this->host = host;
   this->port = port;
   this->client = &client;
