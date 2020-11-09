@@ -32,6 +32,8 @@ void setup()
 {
   Wire.begin();
 
+  //Wire.setClock(50000);
+
   Serial.begin(9600);
   Serial.println("\nI2C Scanner");
 }
