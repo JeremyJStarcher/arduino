@@ -1,8 +1,8 @@
-DEVICE=atmega8
-FILENAME=blink
-PROGRAMMER=stk500v1
-PORT=/dev/ttyACM0
-BAUD=19200
+DEVICE		=atmega8
+FILENAME	=blink
+PROGRAMMER	=stk500v1
+PORT		=/dev/ttyACM0
+BAUD		=19200
 
 COMPILE=avr-gcc -Wall -g -Os -mmcu=${DEVICE} 
 
@@ -15,10 +15,9 @@ compile:
 	avr-size --format=avr --mcu=${DEVICE} ${FILENAME}.elf
 
 upload:
-	avrdude -v -p${DEVICE} -c${PROGRAMMER} -P${PORT} -b${BAUD} -Uflash:w:${FILENAME}.hex:i
+#	avrdude -v -p${DEVICE} -c${PROGRAMMER} -P${PORT} -b${BAUD} -Uflash:w:${FILENAME}.hex:i
 
-	avrdude -v -p${DEVICE} -c${PROGRAMMER} -P${PORT} -b${BAUD} -Uflash:w:${FILENAME}.hex:i
-	#avrdude -v -p${DEVICE} -c${PROGRAMMER} -P${PORT} -b${BAUD} -Uflash:w:/tmp/arduino_build_959941/Blink.ino.hex
+	avrdude -v -p ${DEVICE} -c ${PROGRAMMER} -P ${PORT} -b ${BAUD} -Uflash:w:${FILENAME}.hex:i
 
 
 clean:
@@ -26,5 +25,11 @@ clean:
 	rm ${FILENAME}.elf
 	rm ${FILENAME}.hex
 
+
+readfuse:
+	avrdude -c ${PROGRAMMER} -p ${DEVICE} -P ${PORT} -b ${BAUD} -v -U lfuse:r:-:h 
+
+writefuse:
+	echo	avrdude -c ${PROGRAMMER} -p ${DEVICE} -P ${PORT} -b ${BAUD} -v -U lfuse:w:0xFF:m
 
 
