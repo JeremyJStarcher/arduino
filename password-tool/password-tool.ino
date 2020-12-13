@@ -1,5 +1,7 @@
 //#define RUN_FS_TEST
 
+void redrawScreen(void);
+
 #include <SPI.h>
 #include <OSFS.h>
 #include <extEEPROM.h>    //https://github.com/PaoloP74/extEEPROM
@@ -19,6 +21,9 @@ const int debounceTime = 20; // number of milliseconds for switch to be stable
 #include "data.h"
 
 void redrawScreen(void) {
+  tft.setCursor(0, 0);
+  tft.setTextWrap(false);
+
   tft.fillScreen(ST77XX_BLACK);
   tft.setTextSize(1);
   for (size_t i = 0; i < strlen(allKeys); i++) {

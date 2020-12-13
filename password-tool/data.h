@@ -17,9 +17,8 @@ char *readFile(char *fname, const char *def) {
   r = OSFS::getFileInfo(fname, filePtr, fileSize);
   if (r == OSFS::result::NO_ERROR) {
     r = OSFS::getFileInfo(fname, filePtr, fileSize);
-    OSFS::readNBytes(filePtr, fileSize, (byte *) BUFFER);
 
-    BUFFER[fileSize + 1] = 0;
+    OSFS::readNBytes(filePtr, fileSize, (byte *) BUFFER);
     return BUFFER;
   }
   strncpy(BUFFER, def, BUFF_SIZE);
@@ -49,7 +48,6 @@ void doReset() {
   Serial.println(F("Ready for commands.  (Try help)"));
 }
 
-
 void cmdHelp() {
   Serial.println(F("Valid commands"));
   Serial.println(F("list: List all key controls"));
@@ -60,15 +58,17 @@ void cmdHelp() {
   Serial.println("");
   Serial.println(F("text: Set the text to auto-type"));
   Serial.println(F("\ttext <key> <string>"));
-
+  Serial.println("");
+  Serial.println(F("delete: delete the given ke"));
+  Serial.println(F("\tdelete <key>"));
 }
 
 void cmdList() {
   Serial.println("List");
-  char key = 0; // 0 indicates no key pressed
+
   for (unsigned int column = 0; column < strlen(allKeys); column++)
   {
-    key = allKeys[column];
+    char key = allKeys[column];
     char *fname = getNameFile(key);
 
     Serial.print(key);
@@ -85,11 +85,13 @@ void cmdName(char *token, char *split) {
 
   if (strlen(token) == 0) {
     Serial.println(F("Not enough information"));
+    return;
   }
 
   char *fname = getNameFile(key[0]);
 
-  OSFS::newFile(fname, token, strlen(token), true);
+  OSFS::newFile(fname, token, strlen(token)+1, true);
+  redrawScreen();
 }
 
 void cmdText(char *token, char *split) {
@@ -99,11 +101,29 @@ void cmdText(char *token, char *split) {
 
   if (strlen(token) == 0) {
     Serial.println(F("Not enough information"));
+    return;
   }
 
   char *fname = getTextFile(key[0]);
+  Serial.print("Setting text: ");
+  Serial.println(token);
 
-  OSFS::newFile(fname, token, strlen(token), true);
+  OSFS::newFile(fname, token, strlen(token)+1, true);
+}
+
+void cmdDelete(char *token, char *split) {
+  token = strtok(NULL, split);
+  char *key = token;
+  if (strlen(key) == 0) {
+    Serial.println(F("Not enough information"));
+  }
+
+  char *fname1 = getNameFile(key[0]);
+  OSFS::deleteFile(fname1);
+
+  char *fname2 = getTextFile(key[0]);
+  OSFS::deleteFile(fname2);
+  redrawScreen();
 }
 
 void parseCommand() {
@@ -133,6 +153,11 @@ void parseCommand() {
 
   if (strcmp(token, "text") == 0) {
     cmdText(token, split);
+    return;
+  }
+
+  if (strcmp(token, "delete") == 0) {
+    cmdDelete(token, split);
     return;
   }
 
