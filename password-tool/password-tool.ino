@@ -17,11 +17,28 @@ const int debounceTime = 20; // number of milliseconds for switch to be stable
 
 #include "data.h"
 
+void redrawScreen(void) {
+  tft.fillScreen(ST77XX_BLACK);
+  tft.setTextSize(1);
+  for (size_t i = 0; i < strlen(allKeys); i++) {
+    char key = allKeys[i];
+    char *fname = getNameFile(key);
+    char *n = readFile(fname, "");
+
+    tft.setTextColor(ST77XX_GREEN);
+    tft.print(key);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.print(" ");
+    tft.println(n);
+  }
+
+}
+
 void setup(void) {
   Serial.begin(9600);
-//  while (!Serial) {
-//    ;
-//  }
+  //  while (!Serial) {
+  //    ;
+  //  }
 
   Serial.print(F("FREE MEM: "));
   Serial.println(freeMemory());
@@ -43,7 +60,7 @@ void setup(void) {
   keyboard_begin();
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB); // Init ST7735S chip, black tab
-  tft.fillScreen(ST77XX_BLACK);
+  redrawScreen();
 }
 
 void loop() {
@@ -53,20 +70,13 @@ void loop() {
   if ( key != 0) { // if the character is not 0 then it's a valid key press
     Serial.print("Got key! ");
     Serial.println(key);
-    tft.fillScreen(ST77XX_BLACK);
-    tft.setCursor(0, 0);
-    tft.setTextColor(ST77XX_RED);
-    tft.setTextSize(2);
-    tft.println(key);
-    tft.println("    ");
+    tft.invertDisplay(true);
+    delay(50);
+    tft.invertDisplay(false);
   }
 
   delay(10);
 
-  // tft.invertDisplay(true);
-  // delay(500);
-  // tft.invertDisplay(false);
-  // delay(500);
 }
 
 #ifdef __arm__
