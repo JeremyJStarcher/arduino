@@ -3,6 +3,7 @@
 #include <SPI.h>
 #include <OSFS.h>
 #include <extEEPROM.h>    //https://github.com/PaoloP74/extEEPROM
+#include <Keyboard.h>
 
 #include "Adafruit_Keypad.h"
 #include <Adafruit_GFX.h>    // Core graphics library
@@ -31,7 +32,6 @@ void redrawScreen(void) {
     tft.print(" ");
     tft.println(n);
   }
-
 }
 
 void setup(void) {
@@ -70,8 +70,14 @@ void loop() {
   if ( key != 0) { // if the character is not 0 then it's a valid key press
     Serial.print("Got key! ");
     Serial.println(key);
+    char *fname = getTextFile(key);
+    char *n = readFile(fname, "");
+    Keyboard.print(n);
+
+    Serial.println(n);
+
     tft.invertDisplay(true);
-    delay(50);
+    delay(100);
     tft.invertDisplay(false);
   }
 
