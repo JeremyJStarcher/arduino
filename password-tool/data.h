@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <string.h>
 
+static char allKeys[] = "0123456789ABCD*#";
 
 #define BUFF_SIZE 500
 static char BUFFER[BUFF_SIZE];
@@ -8,6 +9,12 @@ static char BUFFER[BUFF_SIZE];
 enum DataStates {reset, cmd, data};
 
 DataStates dataState = reset;
+
+char *getNameFile(char key) {
+  static char file[] = "_name";
+  file[0] = toupper(key);
+  return file;
+}
 
 void clearBuffer() {
   BUFFER[0] = 0;
@@ -20,9 +27,6 @@ void doReset() {
   Serial.println(F("Ready for commands.  (Try help)"));
 }
 
-char* nextWord(char* str) {
-
-}
 
 void cmdHelp() {
   Serial.println(F("Valid commands"));
@@ -37,23 +41,30 @@ void cmdList() {
 
   Serial.println("List");
   char key = 0; // 0 indicates no key pressed
-  for (int column = 0; column < KEYBOARD_COLS; column++)
+  for (int column = 0; column < strlen(allKeys); column++)
   {
-    for (int row = 0; row < KEYBOARD_ROWS; row++) // Scan all rows for a key press.
-    {
-      key = keys[row][column]; // Remember which key was pressed.
-      char fname[10] = "_name";
-      fname[0] = key;
+    key = allKeys[column];
+    char *fname = getNameFile(key);
 
-      uint16_t filePtr, fileSize;
+    uint16_t filePtr, fileSize;
+    r = OSFS::getFileInfo(fname, filePtr, fileSize);
+    Serial.print(fname);
+    Serial.print(" ");
+    if (r == OSFS::result::NO_ERROR) {
       r = OSFS::getFileInfo(fname, filePtr, fileSize);
-      Serial.print(fname);
-      Serial.print(" ");
-      if (r == OSFS::result::NO_ERROR) {
-        Serial.println("-file-");
-      } else {
-        Serial.println("-err-");
-      }
+      OSFS::readNBytes(filePtr, fileSize, BUFFER);
+
+      BUFFER[fileSize + 1] = 0;
+
+      Serial.print("<");
+      Serial.print(fileSize);
+      Serial.print("|");
+      Serial.print(strlen(BUFFER));
+      Serial.print("> ");
+
+      Serial.println(BUFFER);
+    } else {
+      Serial.println("-err-");
     }
   }
 }
@@ -68,10 +79,14 @@ void cmdName(char *token, char *split) {
     Serial.println(F("Not enough information"));
   }
 
-  Serial.print("key ");
+  Serial.print(F("key "));
   Serial.print(key);
-  Serial.print(" value ");
+  Serial.print(F(" value "));
   Serial.println(token);
+
+  char *fname = getNameFile(key[0]);
+
+  OSFS::newFile(fname, token, strlen(token), true);
 }
 
 void parseCommand() {
