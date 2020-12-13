@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7" lang="en-US" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8" lang="en-US" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
+<![endif]-->
+<!--[if !(IE 7) | !(IE 8)  ]><!-->
+<html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#" lang="en-US"><!--<![endif]--><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>AVR Timer Calculator | Eleccelerator</title>
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="https://eleccelerator.com/xmlrpc.php">
+<!--[if lt IE 9]>
+<script src="https://eleccelerator.com/wp-content/themes/twentytwelve/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="https://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="Eleccelerator » Feed" href="https://eleccelerator.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Eleccelerator » Comments Feed" href="https://eleccelerator.com/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="Eleccelerator » AVR Timer Calculator Comments Feed" href="https://eleccelerator.com/avr-timer-calculator/feed/">
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11.2.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11.2.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/eleccelerator.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.1.1"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/wp-emoji-release.js" type="text/javascript" defer="defer"></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel="stylesheet" id="wp-block-library-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/style_005.css" type="text/css" media="all">
+<link rel="stylesheet" id="banner-list-block-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="rotating-banner-block-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/style_004.css" type="text/css" media="all">
+<link rel="stylesheet" id="single-banner-block-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/style_003.css" type="text/css" media="all">
+<link rel="stylesheet" id="wp-banners-css-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/wp-banners.css" type="text/css" media="all">
+<link rel="stylesheet" id="collapseomatic-css-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/dark_style.css" type="text/css" media="all">
+<link rel="stylesheet" id="wp-syntax-css-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/wp-syntax.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentytwelve-fonts-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/css.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentytwelve-style-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/style_002.css" type="text/css" media="all">
+<!--[if lt IE 9]>
+<link rel='stylesheet' id='twentytwelve-ie-css'  href='https://eleccelerator.com/wp-content/themes/twentytwelve/css/ie.css?ver=20121010' type='text/css' media='all' />
+<![endif]-->
+<link rel="stylesheet" id="core3.0-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/shCore.css" type="text/css" media="all">
+<link rel="stylesheet" id="core-Midnight3.0-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/shCoreMidnight.css" type="text/css" media="all">
+<link rel="stylesheet" id="theme-Midnight3.0-css" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/shThemeMidnight.css" type="text/css" media="all">
+<script>if (document.location.protocol != "https:") {document.location = document.URL.replace(/^http:/i, "https:");}</script><script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/jquery_002.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/jquery-migrate.js"></script>
+<link rel="https://api.w.org/" href="https://eleccelerator.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://eleccelerator.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://eleccelerator.com/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="Weekly Report Sept 22 2013" href="https://eleccelerator.com/weekly-report-sept-22-2013/">
+<link rel="next" title="Weekly Report Sept 29 2013" href="https://eleccelerator.com/weekly-report-sept-29-2013/">
+<meta name="generator" content="WordPress 5.1.1">
+<link rel="canonical" href="https://eleccelerator.com/avr-timer-calculator/">
+<link rel="shortlink" href="https://eleccelerator.com/?p=104">
+<link rel="alternate" type="application/json+oembed" href="https://eleccelerator.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Feleccelerator.com%2Favr-timer-calculator%2F">
+<link rel="alternate" type="text/xml+oembed" href="https://eleccelerator.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Feleccelerator.com%2Favr-timer-calculator%2F&amp;format=xml">
+<style type="text/css" media="screen"></style><link rel="stylesheet" href="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/multi-column-taxonomy-link.css" type="text/css">		<script type="text/javascript">
+			var _statcounter = _statcounter || [];
+			_statcounter.push({"tags": {"author": "Admin"}});
+		</script>
+				<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+		<style type="text/css" id="twentytwelve-header-css">
+			.site-title,
+		.site-description {
+			position: absolute;
+			clip: rect(1px 1px 1px 1px); /* IE7 */
+			clip: rect(1px, 1px, 1px, 1px);
+		}
+		</style>
+	<style type="text/css" id="custom-background-css">
+body.custom-background { background-color: #0a0a0a; }
+</style>
+			<style type="text/css" id="wp-custom-css">
+			/*
+Welcome to Custom CSS!
+
+CSS (Cascading Style Sheets) is a kind of code that tells the browser how
+to render a web page. You may delete these comments and get started with
+your customizations.
+
+By default, your stylesheet will be loaded after the theme stylesheets,
+which means that your rules can take precedence and override the theme CSS
+rules. Just write here what you want to change, you don't need to copy all
+your theme's stylesheet content.
+*/
+.invisible {
+	display: none;
+	visibility: hidden;
+}
+
+@media screen and (max-width: 480px) {
+	.site-logo {
+		width: 240px;
+		height: 23px;
+	}
+}
+
+body.custom-background {
+	background-color: #000;
+}
+
+@media screen and (min-width: 480px) {
+	body .site {
+		margin-top: 10px;
+	}
+}
+
+.site-content {
+	margin: .7rem 0 0;
+}
+
+.entry-content a, .entry-summary a, .comment-content a, .site-content nav a, #respond form a {
+	color: #FF0;
+}
+
+.entry-content a:visited,
+.comment-content a:visited {
+	color: #FF0;
+}
+
+.widget-area .widget a,
+.widget-area .widget a:visited,
+.widget-area .widget a:active {
+	color: #AAA;
+}
+
+.widget-area .widget a:hover {
+	color: #FF0;
+}
+
+.widget-area .widget h3 {
+	margin-bottom: .5rem;
+}
+
+.widget-area .widget {
+	margin-bottom: 2rem;
+}
+
+.comments-area article header {
+	margin: 0 0 2rem;
+}
+
+.commentlist li.comment article.comment {
+	border-style: dashed;
+	border-width: 1px;
+	border-color: #444;
+}
+
+.main-navigation li a:hover {
+	color: #FF0;
+}
+
+table.franktable td {
+	vertical-align: middle;
+	border-left: 1px solid #ededed;
+	border-right: 1px solid #ededed;
+	padding-left: 4px;
+	padding-right: 4px;
+	color: #FFF;
+}
+
+.widget_recent_entries ul li a {
+	white-space: nowrap;
+	overflow: visible;
+}
+
+li.pscw-recentcomments a.url {
+	color: #FF0;
+}
+
+li.pscw-recentcomments a.url:hover {
+	color: #EE0;
+}
+
+li.pscw-recentcomments a.url:visited {
+	color: #FF0;
+}
+
+li.pscw-recentcomments a.url:active {
+	color: #FF0;
+}
+
+a.pscw-link,
+a.pscw-link:visited,
+a.pscw-link:active {
+	color: #AAA;
+	text-decoration: none;
+}
+
+a.pscw-link:hover {
+	color: #EEE;
+}
+
+.cat-item-41
+{
+	display: none;
+}
+
+.donatebox {
+	border-width: 2px;
+	border-style: dashed;
+	border-color: white;
+	border-left-width: 2px;
+	border-left-style: dashed;
+	border-left-color: white;
+	border-right-width: 2px;
+	border-right-style: dashed;
+	border-right-color: white;
+	border-top-width: 2px;
+	border-top-style: dashed;
+	border-top-color: white;
+	border-bottom-width: 2px;
+	border-bottom-style: dashed;
+	border-bottom-color: white;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.site-header.toggled .menu-primary, .site-header.toggled .menu-primary-tracks, .site-header.toggled .menu-primary-tracks {
+  left: 0 !important;
+}		</style>
+		
+<!-- START - Open Graph for Facebook, Google+ and Twitter Card Tags 2.2.5 -->
+ <!-- Facebook Open Graph -->
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Eleccelerator">
+  <meta property="og:title" content="AVR Timer Calculator">
+  <meta property="og:url" content="https://eleccelerator.com/avr-timer-calculator/">
+  <meta property="og:type" content="article">
+  <meta property="og:description" content="This is a simple javascript calculator I wrote to help me make timing calculations while working with the timers on AVR microcontrollers. The same calculations applies for all microcontrollers but the prescaler options only contain the ones possible on an AVR microcontroller (the configuration numbe">
+  <meta property="article:published_time" content="2013-09-27T23:41:50+00:00">
+  <meta property="article:modified_time" content="2018-01-13T06:39:27+00:00">
+  <meta property="og:updated_time" content="2018-01-13T06:39:27+00:00">
+  <meta property="article:section" content="Web/Software Tool">
+  <meta property="article:section" content="Tool">
+ <!-- Google+ / Schema.org -->
+  <meta itemprop="name" content="AVR Timer Calculator">
+  <meta itemprop="headline" content="AVR Timer Calculator">
+  <meta itemprop="description" content="This is a simple javascript calculator I wrote to help me make timing calculations while working with the timers on AVR microcontrollers. The same calculations applies for all microcontrollers but the prescaler options only contain the ones possible on an AVR microcontroller (the configuration numbe">
+  <meta itemprop="datePublished" content="2013-09-27">
+  <meta itemprop="dateModified" content="2018-01-13T06:39:27+00:00">
+  <meta itemprop="author" content="Admin">
+  <!--<meta itemprop="publisher" content="Eleccelerator"/>--> <!-- To solve: The attribute publisher.itemtype has an invalid value -->
+ <!-- Twitter Cards -->
+  <meta name="twitter:title" content="AVR Timer Calculator">
+  <meta name="twitter:url" content="https://eleccelerator.com/avr-timer-calculator/">
+  <meta name="twitter:description" content="This is a simple javascript calculator I wrote to help me make timing calculations while working with the timers on AVR microcontrollers. The same calculations applies for all microcontrollers but the prescaler options only contain the ones possible on an AVR microcontroller (the configuration numbe">
+  <meta name="twitter:card" content="summary_large_image">
+ <!-- SEO -->
+ <!-- Misc. tags -->
+ <!-- is_singular -->
+<!-- END - Open Graph for Facebook, Google+ and Twitter Card Tags 2.2.5 -->
+	
+</head>
+
+<body data-rsssl="1" class="post-template-default single single-post postid-104 single-format-standard custom-background custom-font-enabled single-author">
+<div id="page" class="hfeed site">
+	<header id="masthead" class="site-header" role="banner">
+		<hgroup>
+			<h1 class="site-title"><a href="https://eleccelerator.com/" title="Eleccelerator" rel="home">Eleccelerator</a></h1>
+			<h2 class="site-description"></h2>
+		</hgroup>
+
+					<a href="https://eleccelerator.com/"><img src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/logo.png" class="header-image" alt="" width="480" height="46"></a>
+			<div nowrap="">The website of Frank Zhao, electrical engineer and DIY hobbyist</div>
+		
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<button class="menu-toggle">Menu</button>
+			<a class="assistive-text" href="#content" title="Skip to content">Skip to content</a>
+			<div class="menu-menu-1-container"><ul id="menu-menu-1" class="nav-menu"><li id="menu-item-6" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-6"><a href="https://eleccelerator.com/">Home</a></li>
+<li id="menu-item-14" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-14"><a href="https://eleccelerator.com/blog/">Posts</a></li>
+<li id="menu-item-13" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-13"><a href="https://eleccelerator.com/wiki/">Wiki</a></li>
+<li id="menu-item-23" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23"><a href="https://eleccelerator.com/contact/">Contact</a></li>
+<li id="menu-item-1781" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1781"><a title="Our Hyperloop Pod" href="https://eleccelerator.com/rloop-victory/">rLoop</a></li>
+<li id="menu-item-1820" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1820"><a href="https://eleccelerator.com/robot-army/">Robot-Army</a></li>
+<li id="menu-item-1787" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1787"><a href="https://eleccelerator.com/charities/">Charities</a></li>
+</ul></div>		</nav><!-- #site-navigation -->
+
+	</header><!-- #masthead -->
+
+	<div id="main" class="wrapper">
+	<div id="primary" class="site-content">
+		<div id="content" role="main">
+
+			
+				
+	<article id="post-104" class="post-104 post type-post status-publish format-standard hentry category-websoftware-tool category-tool wpautop">
+				<header class="entry-header">
+			
+						<h1 class="entry-title">AVR Timer Calculator</h1>
+										<div class="comments-link">
+					<a href="https://eleccelerator.com/avr-timer-calculator/#comments">30 Replies</a>				</div><!-- .comments-link -->
+					</header><!-- .entry-header -->
+
+				<div class="entry-content">
+			<p>This is a simple javascript calculator I wrote to help me make 
+timing calculations while working with the timers on AVR 
+microcontrollers. The same calculations applies for all microcontrollers
+ but the prescaler options only contain the ones possible on an AVR 
+microcontroller (the configuration number is indicated in the brackets).</p>
+<p>Javascript must be enabled on this page for the calculator to work. 
+Choose what value you want to use as input by pressing the button beside
+ the textbox(es) you want to use as the input. The output will be 
+reflected in the other textboxes.</p>
+<p><span id="more-104"></span></p>
+<p>Source code can be viewed through your browser.</p>
+<p><!-- script used to be here, moved to another file since wordpress update messed up the page --><br>
+<script src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/avrtimercalc.js"></script></p>
+<table border="1">
+<tbody><tr>
+<td>
+    System Clock Frequency (Hz):
+  </td>
+<td>
+    <input type="text" id="ClkFreq" value="16000000">
+  </td>
+<td rowspan="3" style="vertical-align:middle; border-left: 1px solid #ededed">&nbsp;&nbsp;Calculate Using …</td>
+</tr>
+<tr>
+<td>
+    Timer Resolution:
+  </td>
+<td>
+    <select id="TimerRes"><option value="8" selected="selected">8 bit</option><option value="16">16 bit</option><option value="32">32 bit</option></select>
+  </td>
+</tr>
+<tr>
+<td>
+    Prescaler:
+  </td>
+<td>
+    <select id="Prescaler"><option value="1">(1) Clk/1</option><option value="8">(2) Clk/8</option><option value="64">(3) Clk/64</option><option value="256">(4) Clk/256</option><option value="1024" selected="selected">(5) Clk/1024</option><option value="1">(1) Clk/1</option><option value="8">(2) Clk/8</option><option value="32">(3) Clk/32</option><option value="64">(4) Clk/64</option><option value="128">(5) Clk/128</option><option value="256">(6) Clk/256</option><option value="1024">(7) Clk/1024</option></select>
+  </td>
+</tr>
+<tr>
+<td>
+    Total Timer Ticks:
+  </td>
+<td>
+    <input type="text" id="TotalTicks" value="156.25">
+  </td>
+<td style="vertical-align:middle; border-left: 1px solid #ededed">
+    <input type="button" value="... Total Timer Ticks" onclick="calc_total();">
+  </td>
+</tr>
+<tr>
+<td>
+    Overflow Count:
+  </td>
+<td>
+    <input type="text" id="Overflows" value="0">
+  </td>
+<td rowspan="2" style="vertical-align:middle; border-left: 1px solid #ededed">
+    <input type="button" value="... Overflows and Remainder" onclick="calc_ofrm();">
+  </td>
+</tr>
+<tr>
+<td>
+    Remainder Timer Ticks:
+  </td>
+<td>
+    <input type="text" id="Remainder" value="156.25">
+  </td>
+</tr>
+<tr>
+<td>
+    Real Time (sec):
+  </td>
+<td>
+    <input type="text" id="RealTime" value=".01">
+  </td>
+<td style="border-left: 1px solid #ededed">
+    <input type="button" value="... Real Time" onclick="calc_rt();">
+  </td>
+</tr>
+<tr>
+<td>
+    New Freq (Hz):
+  </td>
+<td>
+    <input type="text" id="NewFreq" value="100">
+  </td>
+<td style="border-left: 1px solid #ededed">
+    <input type="button" value="... New Freq" onclick="calc_nf();">
+  </td>
+</tr>
+</tbody></table>
+<div class="donatebox"><b>Thanks for visiting!</b> If you appreciate my content, please consider making a <a href="https://eleccelerator.com/charities/" target="_blank">donation to a charity</a>. Thank you ~ Frank</div>
+<p></p>
+<div class="invisible">search term: avrtimercalc</div>
+					</div><!-- .entry-content -->
+		
+		<footer class="entry-meta">
+			This entry was posted in <a href="https://eleccelerator.com/category/tool/websoftware-tool/" rel="category tag">Web/Software Tool</a>, <a href="https://eleccelerator.com/category/tool/" rel="category tag">Tool</a> on <a href="https://eleccelerator.com/avr-timer-calculator/" title="11:41 PM" rel="bookmark"><time class="entry-date" datetime="2013-09-27T23:41:50+00:00">September 27, 2013</time></a><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://eleccelerator.com/author/Admin/" title="View all posts by Admin" rel="author">Admin</a></span></span>.								</footer><!-- .entry-meta -->
+	</article><!-- #post -->
+
+				<nav class="nav-single">
+					<h3 class="assistive-text">Post navigation</h3>
+					<span class="nav-previous"><a href="https://eleccelerator.com/weekly-report-sept-22-2013/" rel="prev"><span class="meta-nav">←</span> Weekly Report Sept 22 2013</a></span>
+					<span class="nav-next"><a href="https://eleccelerator.com/weekly-report-sept-29-2013/" rel="next">Weekly Report Sept 29 2013 <span class="meta-nav">→</span></a></span>
+				</nav><!-- .nav-single -->
+
+				
+<div id="comments" class="comments-area">
+
+	
+			<h2 class="comments-title">
+			30 thoughts on “<span>AVR Timer Calculator</span>”		</h2>
+
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-2">
+		<article id="comment-2" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/819936130b7f006f95b9fefd7df692e1.png" srcset="https://secure.gravatar.com/avatar/819936130b7f006f95b9fefd7df692e1?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Kevin Daniels</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-2"><time datetime="2013-10-26T17:59:14+00:00">October 26, 2013 at 5:59 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Great website, it is very helpful. Thank you.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=2#respond" data-commentid="2" data-postid="104" data-belowelement="comment-2" data-respondelement="respond" aria-label="Reply to Kevin Daniels">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-6">
+		<article id="comment-6" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/55b9d9425486b1e11e26afd928437193.png" srcset="https://secure.gravatar.com/avatar/55b9d9425486b1e11e26afd928437193?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Thanuka Roshan</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-6"><time datetime="2013-11-19T03:58:23+00:00">November 19, 2013 at 3:58 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Excellent  website!! finished my final project!! thank you very much.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=6#respond" data-commentid="6" data-postid="104" data-belowelement="comment-6" data-respondelement="respond" aria-label="Reply to Thanuka Roshan">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-7">
+		<article id="comment-7" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/6b19590fc2b4fd61c303933b1dcea61f.png" srcset="https://secure.gravatar.com/avatar/6b19590fc2b4fd61c303933b1dcea61f?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Alex</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-7"><time datetime="2013-11-20T09:35:34+00:00">November 20, 2013 at 9:35 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thanks for you Calculator. Helps me a lot to find the right timer configurations <img draggable="false" class="emoji" alt="🙂" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/1f642.svg"></p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=7#respond" data-commentid="7" data-postid="104" data-belowelement="comment-7" data-respondelement="respond" aria-label="Reply to Alex">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-136">
+		<article id="comment-136" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/8333c48e82bcad0d54541b0858f4283c.png" srcset="https://secure.gravatar.com/avatar/8333c48e82bcad0d54541b0858f4283c?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Michael</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-136"><time datetime="2014-04-07T12:21:35+00:00">April 7, 2014 at 12:21 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thanks a lot for this helpfull calculator… If you are planning a german Version, I can translate for you… <img draggable="false" class="emoji" alt="😉" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/1f609.svg"></p>
+<p>regards<br>
+Michael</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=136#respond" data-commentid="136" data-postid="104" data-belowelement="comment-136" data-respondelement="respond" aria-label="Reply to Michael">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-149">
+		<article id="comment-149" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/e55441b4dd0312216739b0ea18cdf9ee.png" srcset="https://secure.gravatar.com/avatar/e55441b4dd0312216739b0ea18cdf9ee?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Zack</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-149"><time datetime="2014-04-18T22:22:10+00:00">April 18, 2014 at 10:22 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Infinite thanks for making this indispensable.  I use it all the time.</p>
+<p>Thanks,<br>
+Zack<br>
+IIT Chicago, IL</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=149#respond" data-commentid="149" data-postid="104" data-belowelement="comment-149" data-respondelement="respond" aria-label="Reply to Zack">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	<ol class="children">
+	<li class="comment odd alt depth-2" id="li-comment-150">
+		<article id="comment-150" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/e55441b4dd0312216739b0ea18cdf9ee.png" srcset="https://secure.gravatar.com/avatar/e55441b4dd0312216739b0ea18cdf9ee?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Zack</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-150"><time datetime="2014-04-18T22:23:19+00:00">April 18, 2014 at 10:23 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>This indispensable tool.  Wow.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=150#respond" data-commentid="150" data-postid="104" data-belowelement="comment-150" data-respondelement="respond" aria-label="Reply to Zack">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment even thread-odd thread-alt depth-1" id="li-comment-160">
+		<article id="comment-160" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/74bec1816bb341c3e3e33f3891a01cee.png" srcset="https://secure.gravatar.com/avatar/74bec1816bb341c3e3e33f3891a01cee?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Nidhin</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-160"><time datetime="2014-05-15T09:17:05+00:00">May 15, 2014 at 9:17 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Oh great!! bookmarked <img draggable="false" class="emoji" alt="😀" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/1f600.svg"></p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=160#respond" data-commentid="160" data-postid="104" data-belowelement="comment-160" data-respondelement="respond" aria-label="Reply to Nidhin">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-even depth-1" id="li-comment-164">
+		<article id="comment-164" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/9f90b3da79ba5513493fd978e4ccd9de.png" srcset="https://secure.gravatar.com/avatar/9f90b3da79ba5513493fd978e4ccd9de?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="http://blogison.com/" rel="external nofollow" class="url">kalpesh</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-164"><time datetime="2014-05-29T19:10:13+00:00">May 29, 2014 at 7:10 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>hi..</p>
+<p>where i can get c code of the same ? i am unable to find the source 
+code for the same ? i want to make free running timer using AVR.</p>
+<p>Thanks.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=164#respond" data-commentid="164" data-postid="104" data-belowelement="comment-164" data-respondelement="respond" aria-label="Reply to kalpesh">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	<ol class="children">
+	<li class="comment byuser comment-author-Admin bypostauthor even depth-2" id="li-comment-165">
+		<article id="comment-165" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/ecb755163505e66ee9473401481c8fc5.png" srcset="https://secure.gravatar.com/avatar/ecb755163505e66ee9473401481c8fc5?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Admin</b> <span>Post author</span></cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-165"><time datetime="2014-06-01T12:41:41+00:00">June 1, 2014 at 12:41 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>This is a Javascript tool, not microcontroller code. It is not meant to be “run”.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=165#respond" data-commentid="165" data-postid="104" data-belowelement="comment-165" data-respondelement="respond" aria-label="Reply to Admin">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-229">
+		<article id="comment-229" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/552d50ccf0c57f4a602d1204fd6913c3.png" srcset="https://secure.gravatar.com/avatar/552d50ccf0c57f4a602d1204fd6913c3?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">renesolis</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-229"><time datetime="2014-10-21T06:30:50+00:00">October 21, 2014 at 6:30 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Good post. I absolutely love this site. Keep it up!</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=229#respond" data-commentid="229" data-postid="104" data-belowelement="comment-229" data-respondelement="respond" aria-label="Reply to renesolis">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-243">
+		<article id="comment-243" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/ad48394e9b1be226d0a5385a57cb1c95.png" srcset="https://secure.gravatar.com/avatar/ad48394e9b1be226d0a5385a57cb1c95?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Ajay</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-243"><time datetime="2014-11-14T13:59:19+00:00">November 14, 2014 at 1:59 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Frank</p>
+<p>Many Thanks for this tool. This makes AVR Timer calculations *so* 
+darn easy. I can play with the prescaler, and it shows the fractions in 
+the calculations, which I like. 10/10 </p>
+<p>Ajay</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=243#respond" data-commentid="243" data-postid="104" data-belowelement="comment-243" data-respondelement="respond" aria-label="Reply to Ajay">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-245">
+		<article id="comment-245" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/d3cd1ebe1861539eac4f1c7103620774.png" srcset="https://secure.gravatar.com/avatar/d3cd1ebe1861539eac4f1c7103620774?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Marc N</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-245"><time datetime="2014-11-18T11:58:30+00:00">November 18, 2014 at 11:58 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Oh thank your vermuch,<br>
+sery great work. i luv the site.<br>
+it has help me a lot for my studium</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=245#respond" data-commentid="245" data-postid="104" data-belowelement="comment-245" data-respondelement="respond" aria-label="Reply to Marc N">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-254">
+		<article id="comment-254" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/5ed7613cc936ade7209bf48ba0ebbc98.png" srcset="https://secure.gravatar.com/avatar/5ed7613cc936ade7209bf48ba0ebbc98?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="http://erzenaircam.com/" rel="external nofollow" class="url">Aykut</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-254"><time datetime="2014-11-28T09:58:58+00:00">November 28, 2014 at 9:58 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thanks for this useful calculation..</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=254#respond" data-commentid="254" data-postid="104" data-belowelement="comment-254" data-respondelement="respond" aria-label="Reply to Aykut">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-334">
+		<article id="comment-334" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/0bf5370c26bcd1081c0f5e7f34acc688.png" srcset="https://secure.gravatar.com/avatar/0bf5370c26bcd1081c0f5e7f34acc688?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">H</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-334"><time datetime="2015-02-02T14:01:45+00:00">February 2, 2015 at 2:01 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Can we have a Hz option in here? while it’s just a 1/time division i think it would do good in here.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=334#respond" data-commentid="334" data-postid="104" data-belowelement="comment-334" data-respondelement="respond" aria-label="Reply to H">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	<ol class="children">
+	<li class="comment byuser comment-author-Admin bypostauthor even depth-2" id="li-comment-337">
+		<article id="comment-337" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/ecb755163505e66ee9473401481c8fc5.png" srcset="https://secure.gravatar.com/avatar/ecb755163505e66ee9473401481c8fc5?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Admin</b> <span>Post author</span></cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-337"><time datetime="2015-02-02T22:57:27+00:00">February 2, 2015 at 10:57 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Will look into it</p>
+<p>EDIT: done</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=337#respond" data-commentid="337" data-postid="104" data-belowelement="comment-337" data-respondelement="respond" aria-label="Reply to Admin">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment odd alt thread-even depth-1" id="li-comment-484">
+		<article id="comment-484" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/e9299aaae1ab04885cbaf04e41f84b51.png" srcset="https://secure.gravatar.com/avatar/e9299aaae1ab04885cbaf04e41f84b51?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Daniel</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-484"><time datetime="2015-04-18T19:45:17+00:00">April 18, 2015 at 7:45 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>It would be great if there were more options on prescaler and 
+timer resolution, as some AVR devices have prescaler 4 and 12bit 
+registers and such. Great tool thx <img draggable="false" class="emoji" alt="🙂" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/1f642.svg"></p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=484#respond" data-commentid="484" data-postid="104" data-belowelement="comment-484" data-respondelement="respond" aria-label="Reply to Daniel">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-odd thread-alt depth-1" id="li-comment-526">
+		<article id="comment-526" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/355baa5a42b05a6f40b1efa43155d095.jpeg" srcset="https://secure.gravatar.com/avatar/355baa5a42b05a6f40b1efa43155d095?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Manuel</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-526"><time datetime="2015-05-15T01:10:56+00:00">May 15, 2015 at 1:10 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>You have a bug in your page, every time I am trying to calculate 
+the frecuency or time, js shows me an errod saying the function is not 
+defined.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=526#respond" data-commentid="526" data-postid="104" data-belowelement="comment-526" data-respondelement="respond" aria-label="Reply to Manuel">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	<ol class="children">
+	<li class="comment byuser comment-author-Admin bypostauthor odd alt depth-2" id="li-comment-573">
+		<article id="comment-573" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/ecb755163505e66ee9473401481c8fc5.png" srcset="https://secure.gravatar.com/avatar/ecb755163505e66ee9473401481c8fc5?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Admin</b> <span>Post author</span></cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-573"><time datetime="2015-06-08T21:05:12+00:00">June 8, 2015 at 9:05 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>A WordPress update or plug-in update broke the page, I just fixed it. Thanks for the heads up.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=573#respond" data-commentid="573" data-postid="104" data-belowelement="comment-573" data-respondelement="respond" aria-label="Reply to Admin">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-537">
+		<article id="comment-537" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/5cfb418ea1b92673ac763b63c0b63a1f.png" srcset="https://secure.gravatar.com/avatar/5cfb418ea1b92673ac763b63c0b63a1f?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Nghiêm Đạt</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-537"><time datetime="2015-05-23T01:02:09+00:00">May 23, 2015 at 1:02 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Good post. Thank you.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=537#respond" data-commentid="537" data-postid="104" data-belowelement="comment-537" data-respondelement="respond" aria-label="Reply to Nghiêm Đạt">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-540">
+		<article id="comment-540" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/6cd759d8f9217962245d9a91db88a7c2.png" srcset="https://secure.gravatar.com/avatar/6cd759d8f9217962245d9a91db88a7c2?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Darekd</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-540"><time datetime="2015-05-26T14:10:20+00:00">May 26, 2015 at 2:10 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Hi, i ve tried Your calculator on win7 firefox 36.0 and it didnt work for me at all.<br>
+also in ie 11 do not work</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=540#respond" data-commentid="540" data-postid="104" data-belowelement="comment-540" data-respondelement="respond" aria-label="Reply to Darekd">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-546">
+		<article id="comment-546" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/7ada53e575eaaf641873d79707341ff9.png" srcset="https://secure.gravatar.com/avatar/7ada53e575eaaf641873d79707341ff9?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Dichoso</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-546"><time datetime="2015-05-28T14:03:37+00:00">May 28, 2015 at 2:03 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>I really appreciate that site</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=546#respond" data-commentid="546" data-postid="104" data-belowelement="comment-546" data-respondelement="respond" aria-label="Reply to Dichoso">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-548">
+		<article id="comment-548" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/f7879a545214a099e102124d9fba3725.png" srcset="https://secure.gravatar.com/avatar/f7879a545214a099e102124d9fba3725?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Layan</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-548"><time datetime="2015-05-29T22:28:06+00:00">May 29, 2015 at 10:28 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Why doesn’t it work? I really need this and it’s not working.  Such a let down!!!</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=548#respond" data-commentid="548" data-postid="104" data-belowelement="comment-548" data-respondelement="respond" aria-label="Reply to Layan">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-572">
+		<article id="comment-572" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/be8c2c9f5558405cbe28602a0a7dd5dc.png" srcset="https://secure.gravatar.com/avatar/be8c2c9f5558405cbe28602a0a7dd5dc?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Hala</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-572"><time datetime="2015-06-08T20:03:19+00:00">June 8, 2015 at 8:03 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>It did work before and I have used it often but now it doesnt work on chrome nor IE9</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=572#respond" data-commentid="572" data-postid="104" data-belowelement="comment-572" data-respondelement="respond" aria-label="Reply to Hala">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-690">
+		<article id="comment-690" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/c69fd60f126454848fba209594dc78eb.png" srcset="https://secure.gravatar.com/avatar/c69fd60f126454848fba209594dc78eb?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Dickson</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-690"><time datetime="2015-08-17T22:33:23+00:00">August 17, 2015 at 10:33 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thank you so much for this.<br>
+It is really of great help, it has simplified the work.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=690#respond" data-commentid="690" data-postid="104" data-belowelement="comment-690" data-respondelement="respond" aria-label="Reply to Dickson">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-1068">
+		<article id="comment-1068" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/d1568ba005da15fc86e4fd6d3852e98e.png" srcset="https://secure.gravatar.com/avatar/d1568ba005da15fc86e4fd6d3852e98e?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Mahmoud</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1068"><time datetime="2016-03-27T21:06:35+00:00">March 27, 2016 at 9:06 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>hi what i the default frequency of the Atmega 328</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1068#respond" data-commentid="1068" data-postid="104" data-belowelement="comment-1068" data-respondelement="respond" aria-label="Reply to Mahmoud">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1150">
+		<article id="comment-1150" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/995543cb35c3b92a2eb43275116815a7.jpeg" srcset="https://secure.gravatar.com/avatar/995543cb35c3b92a2eb43275116815a7?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn">Dustin Sallings</b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1150"><time datetime="2016-04-25T15:10:43+00:00">April 25, 2016 at 3:10 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Feature request:  Display time in milliseconds and/or microseconds.</p>
+<p>I’m needing (and getting) pretty tiny numbers.  <img draggable="false" class="emoji" alt="🙂" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/1f642.svg"></p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1150#respond" data-commentid="1150" data-postid="104" data-belowelement="comment-1150" data-respondelement="respond" aria-label="Reply to Dustin Sallings">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-1197">
+		<article id="comment-1197" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/c546cfd73bafd111ee3d372c04ba923a.png" srcset="https://secure.gravatar.com/avatar/c546cfd73bafd111ee3d372c04ba923a?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="https://gablescherrycreekblog.wordpress.com/" rel="external nofollow" class="url">gablescherrycreekblog.wordpress.com</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1197"><time datetime="2016-05-10T22:36:57+00:00">May 10, 2016 at 10:36 PM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Currently, only five states allow controlling rent. We have listed some important feature that you will want to look out for.<br>
+There is no promise that every item will be fixed, but most contracts have provisions that would allow you to cancel<br>
+the offer if something really major is found.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1197#respond" data-commentid="1197" data-postid="104" data-belowelement="comment-1197" data-respondelement="respond" aria-label="Reply to gablescherrycreekblog.wordpress.com">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1444">
+		<article id="comment-1444" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/0b87e83292ec6610f122750359bb18a7.png" srcset="https://secure.gravatar.com/avatar/0b87e83292ec6610f122750359bb18a7?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="http://www.datarespons.com/" rel="external nofollow" class="url">Dler Hasan</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1444"><time datetime="2016-10-28T08:52:04+00:00">October 28, 2016 at 8:52 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thank you for this tool, it has helped me a lot!</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1444#respond" data-commentid="1444" data-postid="104" data-belowelement="comment-1444" data-respondelement="respond" aria-label="Reply to Dler Hasan">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-1650">
+		<article id="comment-1650" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/8ea63a0c0ff832236537be8d0d1bab1a.png" srcset="https://secure.gravatar.com/avatar/8ea63a0c0ff832236537be8d0d1bab1a?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="http://none/" rel="external nofollow" class="url">Lazar</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1650"><time datetime="2017-08-07T10:41:29+00:00">August 7, 2017 at 10:41 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>Thank you for this, I have been using this for a very long time now.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1650#respond" data-commentid="1650" data-postid="104" data-belowelement="comment-1650" data-respondelement="respond" aria-label="Reply to Lazar">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1677">
+		<article id="comment-1677" class="comment">
+			<header class="comment-meta comment-author vcard">
+				<img alt="" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/6bdcd931c97febd015f6f3673f7056ea.jpeg" srcset="https://secure.gravatar.com/avatar/6bdcd931c97febd015f6f3673f7056ea?s=88&amp;d=identicon&amp;r=g 2x" class="avatar avatar-44 photo" width="44" height="44"><cite><b class="fn"><a href="https://github.com/lightningstalker" rel="external nofollow" class="url">The Lightning Stalker</a></b> </cite><a href="https://eleccelerator.com/avr-timer-calculator/#comment-1677"><time datetime="2017-10-17T11:40:47+00:00">October 17, 2017 at 11:40 AM</time></a>			</header><!-- .comment-meta -->
+
+			
+			<section class="comment-content comment">
+				<p>This is a really great calculator.  It can be used with other 
+micros as well.  I have used it for ATmega, ATtiny, and PIC12.  For 
+PIC12 just divide the System Clock Frequency by 4.</p>
+							</section><!-- .comment-content -->
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/?replytocom=1677#respond" data-commentid="1677" data-postid="104" data-belowelement="comment-1677" data-respondelement="respond" aria-label="Reply to The Lightning Stalker">Reply</a> <span>↓</span>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+	</li><!-- #comment-## -->
+		</ol><!-- .commentlist -->
+
+		
+		
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="https://eleccelerator.com/avr-timer-calculator/#respond" style="display:none;">Cancel reply</a></small></h3>			<form action="https://eleccelerator.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> Required fields are marked <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required"></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" size="30" maxlength="245" required="required"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="text" size="30" maxlength="100" aria-describedby="email-notes" required="required"></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="text" size="30" maxlength="200"></p>
+<img src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/admin-ajax.png"><br><label for="easy_captcha_captcha_simple">Prove that you are a human, please type in the text from the image into the text box.</label><br><input type="text" id="easy_captcha_captcha_simple" name="easy_captcha_captcha_simple"><input type="hidden" id="easy_captcha_sid" name="easy_captcha_sid" value="0dfd1f386fa145156e9d59497750e8c6"><p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post Comment"> <input type="hidden" name="comment_post_ID" value="104" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7391c94e5d"></p><p style="display: none;"></p>			<input type="hidden" id="ak_js" name="ak_js" value="1605829981469"></form>
+			</div><!-- #respond -->
+	
+</div><!-- #comments .comments-area -->
+			
+		</div><!-- #content -->
+	</div><!-- #primary -->
+
+
+			<div id="secondary" class="widget-area" role="complementary">
+			<aside id="categories-2" class="widget widget_categories"><h3 class="widget-title">Categories</h3>		<ul>
+				<li class="cat-item cat-item-9"><a href="https://eleccelerator.com/category/project/">Project</a>
+</li>
+	<li class="cat-item cat-item-35"><a href="https://eleccelerator.com/category/tool/websoftware-tool/">Web/Software Tool</a>
+</li>
+	<li class="cat-item cat-item-14"><a href="https://eleccelerator.com/category/small-project/">Small Project</a>
+</li>
+	<li class="cat-item cat-item-21"><a href="https://eleccelerator.com/category/tutorial/">Tutorial</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="https://eleccelerator.com/category/tool/">Tool</a>
+</li>
+	<li class="cat-item cat-item-25"><a href="https://eleccelerator.com/category/troubleshoot/">Troubleshoot</a>
+</li>
+	<li class="cat-item cat-item-26"><a href="https://eleccelerator.com/category/experiment/">Experiment</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="https://eleccelerator.com/category/review/">Review</a>
+</li>
+	<li class="cat-item cat-item-13"><a href="https://eleccelerator.com/category/weekly/">Weekly</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="https://eleccelerator.com/category/uncategorized/">Uncategorized</a>
+</li>
+	<li class="cat-item cat-item-41"><a href="https://eleccelerator.com/category/deprecated/" title="Articles that are not shown in main post list">zDeprecated</a>
+</li>
+		</ul>
+			</aside><aside id="taxonomy_list_widget-2" class="widget widget_taxonomy_list_widget"><h3 class="widget-title">Tags</h3><a href="https://eleccelerator.com/tag/business-card/" rel="nofollow">business card</a>, <a href="https://eleccelerator.com/tag/usb/" rel="nofollow">usb</a>, <a href="https://eleccelerator.com/tag/reverse-engineer/" rel="nofollow">reverse engineer</a>, <a href="https://eleccelerator.com/tag/wii/" rel="nofollow">wii</a>, <a href="https://eleccelerator.com/tag/bluetooth/" rel="nofollow">bluetooth</a>, <a href="https://eleccelerator.com/tag/raspberry-pi/" rel="nofollow">raspberry pi</a>, <a href="https://eleccelerator.com/tag/android/" rel="nofollow">android</a>, <a href="https://eleccelerator.com/tag/arduino/" rel="nofollow">arduino</a>, <a href="https://eleccelerator.com/tag/rant/" rel="nofollow">rant</a>, <a href="https://eleccelerator.com/tag/pebble/" rel="nofollow">pebble</a>, <a href="https://eleccelerator.com/tag/ps4/" rel="nofollow">ps4</a>, <a href="https://eleccelerator.com/tag/linux/" rel="nofollow">linux</a>, <a href="https://eleccelerator.com/tag/multicopter/" rel="nofollow">multicopter</a>, <a href="https://eleccelerator.com/tag/3d-print/" rel="nofollow">3D print</a>, <a href="https://eleccelerator.com/tag/rc/" rel="nofollow">RC</a>, <a href="https://eleccelerator.com/tag/computer/" rel="nofollow">computer</a>, <a href="https://eleccelerator.com/tag/robot/" rel="nofollow">robot</a>, <a href="https://eleccelerator.com/tag/car/" rel="nofollow">car</a>, <a href="https://eleccelerator.com/tag/cnc/" rel="nofollow">CNC</a>, <a href="https://eleccelerator.com/tag/event/" rel="nofollow">event</a>, <a href="https://eleccelerator.com/tag/combat-robot/" rel="nofollow">combat robot</a>, <a href="https://eleccelerator.com/tag/hyperloop/" rel="nofollow">hyperloop</a>, <a href="https://eleccelerator.com/tag/laser/" rel="nofollow">laser</a>, <a href="https://eleccelerator.com/tag/public-library/" rel="nofollow">public library</a>, <a href="https://eleccelerator.com/tag/stained-glass/" rel="nofollow">stained glass</a>, </aside><aside id="search-2" class="widget widget_search"><form role="search" method="get" id="searchform" class="searchform" action="https://eleccelerator.com/">
+				<div>
+					<label class="screen-reader-text" for="s">Search for:</label>
+					<input type="text" name="s" id="s">
+					<input type="submit" id="searchsubmit" value="Search">
+				</div>
+			</form></aside><aside id="archives-2" class="widget widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+				<li><a href="https://eleccelerator.com/2020/06/">June 2020</a></li>
+	<li><a href="https://eleccelerator.com/2019/11/">November 2019</a></li>
+	<li><a href="https://eleccelerator.com/2019/10/">October 2019</a></li>
+	<li><a href="https://eleccelerator.com/2019/09/">September 2019</a></li>
+	<li><a href="https://eleccelerator.com/2019/05/">May 2019</a></li>
+	<li><a href="https://eleccelerator.com/2019/04/">April 2019</a></li>
+	<li><a href="https://eleccelerator.com/2019/01/">January 2019</a></li>
+	<li><a href="https://eleccelerator.com/2018/07/">July 2018</a></li>
+	<li><a href="https://eleccelerator.com/2018/06/">June 2018</a></li>
+	<li><a href="https://eleccelerator.com/2018/03/">March 2018</a></li>
+	<li><a href="https://eleccelerator.com/2018/01/">January 2018</a></li>
+	<li><a href="https://eleccelerator.com/2017/12/">December 2017</a></li>
+	<li><a href="https://eleccelerator.com/2017/08/">August 2017</a></li>
+	<li><a href="https://eleccelerator.com/2017/07/">July 2017</a></li>
+	<li><a href="https://eleccelerator.com/2017/06/">June 2017</a></li>
+	<li><a href="https://eleccelerator.com/2017/03/">March 2017</a></li>
+	<li><a href="https://eleccelerator.com/2016/08/">August 2016</a></li>
+	<li><a href="https://eleccelerator.com/2016/04/">April 2016</a></li>
+	<li><a href="https://eleccelerator.com/2016/03/">March 2016</a></li>
+	<li><a href="https://eleccelerator.com/2016/01/">January 2016</a></li>
+	<li><a href="https://eleccelerator.com/2015/12/">December 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/11/">November 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/09/">September 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/08/">August 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/07/">July 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/05/">May 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/04/">April 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/03/">March 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/02/">February 2015</a></li>
+	<li><a href="https://eleccelerator.com/2015/01/">January 2015</a></li>
+	<li><a href="https://eleccelerator.com/2014/12/">December 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/11/">November 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/10/">October 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/09/">September 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/08/">August 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/07/">July 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/06/">June 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/03/">March 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/02/">February 2014</a></li>
+	<li><a href="https://eleccelerator.com/2014/01/">January 2014</a></li>
+	<li><a href="https://eleccelerator.com/2013/12/">December 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/11/">November 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/10/">October 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/09/">September 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/08/">August 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/07/">July 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/06/">June 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/04/">April 2013</a></li>
+	<li><a href="https://eleccelerator.com/2013/01/">January 2013</a></li>
+	<li><a href="https://eleccelerator.com/2012/12/">December 2012</a></li>
+	<li><a href="https://eleccelerator.com/2012/11/">November 2012</a></li>
+		</ul>
+			</aside><aside id="meta-2" class="widget widget_meta"><h3 class="widget-title">Meta</h3>			<ul>
+						<li><a href="https://eleccelerator.com/wp-login.php">Log in</a></li>
+			<li><a href="https://eleccelerator.com/feed/">Entries <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="https://eleccelerator.com/comments/feed/">Comments <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="https://wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.org</a></li>			</ul>
+			</aside>		</div><!-- #secondary -->
+		</div><!-- #main .wrapper -->
+	<footer id="colophon" role="contentinfo">
+<style>
+.divTable{
+	display: table;
+	width: 100%;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+}
+.divTableCell, .divTableHead {
+	border: 0px solid #000;
+	display: inline-block;
+	vertical-align: top;
+	padding: 3px 10px;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
+}
+</style>
+<div class="divTable" style="width: 100%;">
+<div class="divTableBody">
+<div class="divTableRow">
+<div class="divTableCell" id="footer_frank_img"><img src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/myself_small.jpg" title="Frank Zhao" alt="Frank Zhao" height="120"></div>
+<div class="divTableCell">Frank is an incredible electrical engineer who loves to make things and help people.<br>Economical Expeditious Excellent Electrical Engineering Exceeding Expectations<br>Engineer at <a href="https://www.playstation.com/" target="_blank">Sony PlayStation</a>. Volunteer at <a href="https://eleccelerator.com/teaching-a-robotics-class-2018/" target="_blank">SSF Public Library</a>.<br>Formerly at <a href="https://eleccelerator.com/rloop-victory">rLoop</a>, Adafruit Industries, and more.<br><span style="color:black;">I am usually using the name frank26080115 on other online communities</span></div>
+</div>
+</div>
+</div>
+		<div class="site-info">
+		</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+<script type="text/javascript">
+var colomatduration = 'fast';
+var colomatslideEffect = 'slideFade';
+var colomatpauseInit = '';
+var colomattouchstart = '';
+</script>		<!-- Start of StatCounter Code -->
+		<script>
+			<!--
+			var sc_project=9159147;
+			var sc_security="017e186e";
+			      var sc_invisible=1;
+			var scJsHost = (("https:" == document.location.protocol) ?
+				"https://secure." : "http://www.");
+			//-->
+					</script>
+		
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/counter.js" async=""></script>		<noscript><div class="statcounter"><a title="web analytics" href="https://statcounter.com/"><img class="statcounter" src="https://c.statcounter.com/9159147/0/017e186e/1/" alt="web analytics" /></a></div></noscript>
+		<!-- End of StatCounter Code -->
+		<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/jquery.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/custom-banners.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/collapse.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/wp-syntax.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/comment-reply.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/navigation.js"></script>
+<script type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/wp-embed.js"></script>
+<script async="async" type="text/javascript" src="AVR%20Timer%20Calculator%20|%20Eleccelerator_files/form.js"></script>
+
+
+
+
+
+</body></html>
+<!-- Dynamic page generated in 0.723 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2020-11-19 23:28:52 -->
+<!-- Compression = gzip -->
