@@ -77,6 +77,10 @@
 Adafruit_ST7735 tft =
     Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
+
+//Adafruit_ST7735 tft =
+//    Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+
 // OR for the ST7789-based displays, we will use this call
 // Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK,
 // TFT_RST);
@@ -85,9 +89,9 @@ float p = 3.1415926;
 
 void setup(void) {
   Serial.begin(9600);
-  while (!Serial) {
-    ;
-  }
+ // while (!Serial) {
+ //   ;
+ // }
 
   Serial.print(F("Hello! ST77xx TFT Test"));
 
