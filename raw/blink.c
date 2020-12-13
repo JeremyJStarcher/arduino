@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-const int delay_ms = 600;
+const int delay_ms = 250;
 
 int main(void) 
 {
@@ -13,7 +13,13 @@ int main(void)
   while (1) 
   {
     PORTB ^= (1 << LED_PIN);
-    _delay_ms(delay_ms);
+    _delay_ms(50);
+    PORTB ^= (1 << LED_PIN);
+    _delay_ms(50);
+    PORTB ^= (1 << LED_PIN);
+    _delay_ms(50);
+    PORTB ^= (1 << LED_PIN);
+    _delay_ms(50);
     PORTB ^= (1 << LED_PIN);
     _delay_ms(delay_ms);
   }
