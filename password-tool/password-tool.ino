@@ -1,38 +1,27 @@
-#define PROGRAM_MODE
 //#define RUN_FS_TEST
 
 #include <SPI.h>
 #include <OSFS.h>
 #include <extEEPROM.h>    //https://github.com/PaoloP74/extEEPROM
 
-#ifndef PROGRAM_MODE
 #include "Adafruit_Keypad.h"
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
-#endif
-
-#ifdef PROGRAM_MODE
-#include "data.h"
-#endif
 
 const int debounceTime = 20; // number of milliseconds for switch to be stable
 
-
-
 #include "hardware-config.h"
 #include "eeprom-test.h"
+
 #include "keyboard.h"
+
+#include "data.h"
 
 void setup(void) {
   Serial.begin(9600);
-#ifdef PROGRAM_MODE
-  while (!Serial) {
-    ;
-  }
-  Serial.println(F("PROGRAMMING MODE"));
-#else
-  Serial.println(F("KEYPAD MODE"));
-#endif
+//  while (!Serial) {
+//    ;
+//  }
 
   Serial.print(F("FREE MEM: "));
   Serial.println(freeMemory());
@@ -51,23 +40,14 @@ void setup(void) {
   readTest();
 #endif
 
-#ifndef PROGRAM_MODE
   keyboard_begin();
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB); // Init ST7735S chip, black tab
   tft.fillScreen(ST77XX_BLACK);
-#endif
 }
 
-#ifdef PROGRAM_MODE
 void loop() {
   data_loop();
-}
-#endif
-
-
-#ifndef PROGRAM_MODE
-void loop() {
 
   char key = getKey();
   if ( key != 0) { // if the character is not 0 then it's a valid key press
@@ -88,8 +68,6 @@ void loop() {
   // tft.invertDisplay(false);
   // delay(500);
 }
-#endif
-
 
 #ifdef __arm__
 // should use uinstd.h to define sbrk but Due causes a conflict

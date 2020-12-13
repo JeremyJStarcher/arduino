@@ -19,10 +19,6 @@ void OSFS::writeNBytes(uint16_t address, unsigned int num, const byte* input) {
   eep.write(address, input, num);
 }
 
-
-
-
-#ifndef PROGRAM_MODE
 // For the breakout board, you can use any 2 or 3 pins.
 // These pins will also work for the 1.8" TFT shield.
 #define TFT_CS 10
@@ -36,11 +32,6 @@ void OSFS::writeNBytes(uint16_t address, unsigned int num, const byte* input) {
 // For ST7735-based displays, we will use this call
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
-#endif
-
-
-#ifndef PROGRAM_MODE
-
 const byte KEYBOARD_ROWS = 4; // KEYBOARD_ROWS
 const byte KEYBOARD_COLS = 4; // columns
 //define the symbols on the buttons of the keypads
@@ -53,4 +44,3 @@ char keys[KEYBOARD_ROWS][KEYBOARD_COLS] = {
 
 byte colPins[KEYBOARD_ROWS] = {4, 5, 6, 7}; //connect to the row pinouts of the keypad
 byte rowPins[KEYBOARD_COLS] = {8, A3, A2, A1}; //connect to the column pinouts of the keypad
-#endif

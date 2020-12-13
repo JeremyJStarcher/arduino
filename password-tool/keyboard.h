@@ -1,4 +1,3 @@
-#ifndef PROGRAM_MODE
 void keyboard_begin() {
   for (int row = 0; row < KEYBOARD_ROWS; row++)
   {
@@ -35,4 +34,3 @@ char getKey()
   }
   return key; // returns the key pressed or 0 if none
 }
-#endif
