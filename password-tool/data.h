@@ -10,8 +10,30 @@ enum DataStates {reset, cmd, data};
 
 DataStates dataState = reset;
 
+char *readFile(char *fname, const char *def) {
+  OSFS::result r;
+
+  uint16_t filePtr, fileSize;
+  r = OSFS::getFileInfo(fname, filePtr, fileSize);
+  if (r == OSFS::result::NO_ERROR) {
+    r = OSFS::getFileInfo(fname, filePtr, fileSize);
+    OSFS::readNBytes(filePtr, fileSize, (byte *) BUFFER);
+
+    BUFFER[fileSize + 1] = 0;
+    return BUFFER;
+  }
+  strncpy(BUFFER, def, BUFF_SIZE);
+  return BUFFER;
+}
+
 char *getNameFile(char key) {
   static char file[] = "_name";
+  file[0] = toupper(key);
+  return file;
+}
+
+char *getTextFile(char key) {
+  static char file[] = "_text";
   file[0] = toupper(key);
   return file;
 }
@@ -30,48 +52,34 @@ void doReset() {
 
 void cmdHelp() {
   Serial.println(F("Valid commands"));
-  Serial.println(F("name: Set the name of a key control"));
-  Serial.println(F("\tname <key> <string>"));
   Serial.println(F("list: List all key controls"));
   Serial.println(F("\tlist"));
+  Serial.println("");
+  Serial.println(F("name: Set the name of a key control"));
+  Serial.println(F("\tname <key> <string>"));
+  Serial.println("");
+  Serial.println(F("text: Set the text to auto-type"));
+  Serial.println(F("\ttext <key> <string>"));
+
 }
 
 void cmdList() {
-  OSFS::result r;
-
   Serial.println("List");
   char key = 0; // 0 indicates no key pressed
-  for (int column = 0; column < strlen(allKeys); column++)
+  for (unsigned int column = 0; column < strlen(allKeys); column++)
   {
     key = allKeys[column];
     char *fname = getNameFile(key);
 
-    uint16_t filePtr, fileSize;
-    r = OSFS::getFileInfo(fname, filePtr, fileSize);
-    Serial.print(fname);
+    Serial.print(key);
     Serial.print(" ");
-    if (r == OSFS::result::NO_ERROR) {
-      r = OSFS::getFileInfo(fname, filePtr, fileSize);
-      OSFS::readNBytes(filePtr, fileSize, BUFFER);
 
-      BUFFER[fileSize + 1] = 0;
-
-      Serial.print("<");
-      Serial.print(fileSize);
-      Serial.print("|");
-      Serial.print(strlen(BUFFER));
-      Serial.print("> ");
-
-      Serial.println(BUFFER);
-    } else {
-      Serial.println("-err-");
-    }
+    Serial.println(readFile(fname, "-err-"));
   }
 }
 
 void cmdName(char *token, char *split) {
   token = strtok(NULL, split);
-  Serial.println(F("Setting name ..."));
   char *key = token;
   token = strtok(NULL, "");
 
@@ -79,12 +87,21 @@ void cmdName(char *token, char *split) {
     Serial.println(F("Not enough information"));
   }
 
-  Serial.print(F("key "));
-  Serial.print(key);
-  Serial.print(F(" value "));
-  Serial.println(token);
-
   char *fname = getNameFile(key[0]);
+
+  OSFS::newFile(fname, token, strlen(token), true);
+}
+
+void cmdText(char *token, char *split) {
+  token = strtok(NULL, split);
+  char *key = token;
+  token = strtok(NULL, "");
+
+  if (strlen(token) == 0) {
+    Serial.println(F("Not enough information"));
+  }
+
+  char *fname = getTextFile(key[0]);
 
   OSFS::newFile(fname, token, strlen(token), true);
 }
@@ -111,6 +128,11 @@ void parseCommand() {
 
   if (strcmp(token, "name") == 0) {
     cmdName(token, split);
+    return;
+  }
+
+  if (strcmp(token, "text") == 0) {
+    cmdText(token, split);
     return;
   }
 

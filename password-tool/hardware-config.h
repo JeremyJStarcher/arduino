@@ -11,12 +11,12 @@ uint16_t OSFS::endOfEEPROM = totalKBytes * 1024;
 
 // 3) How do I read from the medium?
 void OSFS::readNBytes(uint16_t address, unsigned int num, byte* output) {
-  eep.read(address, output, num);
+  eep.read(address, (byte *) output, num);
 }
 
 // 4) How to I write to the medium?
 void OSFS::writeNBytes(uint16_t address, unsigned int num, const byte* input) {
-  eep.write(address, input, num);
+  eep.write(address, (byte *) input, num);
 }
 
 // For the breakout board, you can use any 2 or 3 pins.

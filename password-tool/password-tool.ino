@@ -11,7 +11,7 @@
 const int debounceTime = 20; // number of milliseconds for switch to be stable
 
 #include "hardware-config.h"
-#include "eeprom-test.h"
+// #include "eeprom-test.h"
 
 #include "keyboard.h"
 
