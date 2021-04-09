@@ -73,11 +73,11 @@ void loop() {
 
   char key = getKey();
   if ( key != 0) { // if the character is not 0 then it's a valid key press
-    Serial.print("Got key! ");
+    Serial.print(F("Got key! "));
     Serial.println(key);
     char *fname = getTextFile(key);
     char *n = readFile(fname, "");
-    Keyboard.print(n);
+    sendString(n);
 
     Serial.println(n);
 
@@ -87,7 +87,6 @@ void loop() {
   }
 
   delay(10);
-
 }
 
 #ifdef __arm__
@@ -106,4 +105,41 @@ int freeMemory() {
 #else  // __arm__
   return __brkval ? &top - __brkval : &top - __malloc_heap_start;
 #endif  // __arm__
+}
+
+
+size_t str_i = 0;
+static const char B_ENTER[] PROGMEM = "{ENTER}";
+
+const char * const codes[] PROGMEM = {B_ENTER};
+
+bool prefix(const char pre[] PROGMEM, const char *str) {
+  const char *s = &str[0] + str_i;
+  return strncmp_P(s, pre, strlen_P(pre)) == 0;
+}
+
+void sendBrace(const char *s) {
+  if (prefix(codes[0], s)) {
+    Serial.println("***ENTER***");
+  }
+}
+
+void sendString(const char *s) {
+ // char *buffer = pgm_read_word((B_ENTER));
+ // Serial.print("TEST: ");
+ // Serial.println(buffer);
+
+  str_i = 0;
+  while (str_i < strlen(s)) {
+    char ch = s[str_i];
+    if (ch == '{') {
+      Serial.println("--FOUND BRACE --");
+      sendBrace(s);
+      str_i += 1;
+      continue;
+    }
+    Keyboard.press(ch);
+    Keyboard.releaseAll();
+    str_i += 1;
+  }
 }

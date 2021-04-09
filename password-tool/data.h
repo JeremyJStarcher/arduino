@@ -75,6 +75,9 @@ void cmdList() {
     Serial.print(" ");
 
     Serial.println(readFile(fname, "-err-"));
+
+    char *fname2 = getTextFile(key);
+    Serial.println(readFile(fname2, "-N/A-"));
   }
 }
 
