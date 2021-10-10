@@ -168,17 +168,6 @@ F 3 "~" H 5350 3450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:D_Small_ALT D57
-U 1 1 5FCAE6BE
-P 5800 3550
-F 0 "D57" V 5846 3482 50  0000 R CNN
-F 1 "ESC" V 5755 3482 50  0000 R CNN
-F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" V 5800 3550 50  0001 C CNN
-F 3 "~" V 5800 3550 50  0001 C CNN
-	1    5800 3550
-	0    -1   -1   0   
-$EndComp
-$Comp
 L Switch:SW_SPST SW57
 U 1 1 5FCAECE0
 P 6000 3450
@@ -667,7 +656,7 @@ L Device:D_Small_ALT D48
 U 1 1 5FCB50BC
 P 4500 7050
 F 0 "D48" V 4546 6982 50  0000 R CNN
-F 1 "RSHIFT" V 4455 6982 50  0000 R CNN
+F 1 "FN" V 4455 6982 50  0000 R CNN
 F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" V 4500 7050 50  0001 C CNN
 F 3 "~" V 4500 7050 50  0001 C CNN
 	1    4500 7050
@@ -1019,7 +1008,7 @@ L Switch:SW_SPST SW23
 U 1 1 5FCCB6C9
 P 2750 6450
 F 0 "SW23" H 2750 6685 50  0000 C CNN
-F 1 "LSHIFT" H 2750 6594 50  0000 C CNN
+F 1 "LSHIFT" H 2450 6650 50  0000 C CNN
 F 2 "Button_Switch_Keyboard:SW_Cherry_MX_2.25u_PCB" H 2750 6450 50  0001 C CNN
 F 3 "~" H 2750 6450 50  0001 C CNN
 	1    2750 6450
@@ -1239,7 +1228,7 @@ L Switch:SW_SPST SW48
 U 1 1 5FCDBE33
 P 4700 6950
 F 0 "SW48" H 4700 7185 50  0000 C CNN
-F 1 "RSHIFT" H 4700 7094 50  0000 C CNN
+F 1 "FN" H 4700 7094 50  0000 C CNN
 F 2 "Button_Switch_Keyboard:SW_Cherry_MX_1.75u_PCB" H 4700 6950 50  0001 C CNN
 F 3 "~" H 4700 6950 50  0001 C CNN
 	1    4700 6950
@@ -1394,7 +1383,7 @@ U 1 1 5FCDDE07
 P 6000 6950
 F 0 "SW64" H 6000 7185 50  0000 C CNN
 F 1 "SPC" H 6000 7094 50  0000 C CNN
-F 2 "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB" H 6000 6950 50  0001 C CNN
+F 2 "Button_Switch_Keyboard:SW_Cherry_MX_6.25u_PCB" H 6000 6950 50  0001 C CNN
 F 3 "~" H 6000 6950 50  0001 C CNN
 	1    6000 6950
 	1    0    0    -1  
@@ -1442,8 +1431,6 @@ Connection ~ 4500 3650
 Wire Wire Line
 	4500 3650 5150 3650
 Connection ~ 5150 3650
-Wire Wire Line
-	5150 3650 5800 3650
 Wire Wire Line
 	1050 4150 1250 4150
 Connection ~ 1250 4150
@@ -1569,7 +1556,7 @@ Wire Wire Line
 	1250 6650 1900 6650
 Connection ~ 1900 6650
 Wire Wire Line
-	1900 6650 2550 6650
+	1900 6650 2450 6650
 Connection ~ 2550 6650
 Wire Wire Line
 	2550 6650 3200 6650
@@ -1673,7 +1660,7 @@ Wire Wire Line
 	2950 5450 2950 5950
 Connection ~ 2950 5950
 Wire Wire Line
-	2950 5950 2950 6450
+	2950 5950 2950 6300
 Connection ~ 2950 6450
 Wire Wire Line
 	2950 6450 2950 6950
@@ -1792,17 +1779,6 @@ Wire Wire Line
 Connection ~ 6200 6450
 Wire Wire Line
 	6200 6450 6200 6950
-$Comp
-L promicro:ProMicro U1
-U 1 1 5FD48D7C
-P 1750 2050
-F 0 "U1" H 1750 3193 60  0000 C CNN
-F 1 "ProMicro" H 1750 3087 60  0000 C CNN
-F 2 "promicro:ProMicro" H 1750 2981 60  0000 C CNN
-F 3 "" H 1850 1000 60  0000 C CNN
-	1    1750 2050
-	1    0    0    -1  
-$EndComp
 Text GLabel 1000 1700 0    50   Input ~ 0
 R1
 Text GLabel 1000 1800 0    50   Input ~ 0
@@ -1835,8 +1811,6 @@ Wire Wire Line
 	1000 2300 1050 2300
 Wire Wire Line
 	1000 2400 1050 2400
-Text GLabel 2500 1700 2    50   Input ~ 0
-C1
 Text GLabel 2500 1800 2    50   Input ~ 0
 C2
 Text GLabel 2500 1900 2    50   Input ~ 0
@@ -1907,5 +1881,111 @@ NoConn ~ 1050 1300
 NoConn ~ 1050 1400
 NoConn ~ 1050 1500
 NoConn ~ 1050 1600
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5FFF9FD0
+P 8000 1500
+F 0 "H1" H 8100 1546 50  0000 L CNN
+F 1 "MountingHole" H 8100 1455 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 8000 1500 50  0001 C CNN
+F 3 "~" H 8000 1500 50  0001 C CNN
+	1    8000 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5FFFA140
+P 8000 1700
+F 0 "H2" H 8100 1746 50  0000 L CNN
+F 1 "MountingHole" H 8100 1655 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 8000 1700 50  0001 C CNN
+F 3 "~" H 8000 1700 50  0001 C CNN
+	1    8000 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 5FFFA55B
+P 8000 1900
+F 0 "H3" H 8100 1946 50  0000 L CNN
+F 1 "MountingHole" H 8100 1855 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 8000 1900 50  0001 C CNN
+F 3 "~" H 8000 1900 50  0001 C CNN
+	1    8000 1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 5FFFA77E
+P 8000 2100
+F 0 "H4" H 8100 2146 50  0000 L CNN
+F 1 "MountingHole" H 8100 2055 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3" H 8000 2100 50  0001 C CNN
+F 3 "~" H 8000 2100 50  0001 C CNN
+	1    8000 2100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_SPST SW65
+U 1 1 60197888
+P 2750 6300
+F 0 "SW65" H 2750 6535 50  0000 C CNN
+F 1 "RSHIFT" H 2450 6250 50  0000 C CNN
+F 2 "Button_Switch_Keyboard:SW_Cherry_MX_1.75u_PCB" H 2750 6300 50  0001 C CNN
+F 3 "~" H 2750 6300 50  0001 C CNN
+	1    2750 6300
+	1    0    0    -1  
+$EndComp
+Connection ~ 2950 6300
+Wire Wire Line
+	2950 6300 2950 6450
+Wire Wire Line
+	2550 6300 2550 6450
+Connection ~ 2550 6450
+Wire Wire Line
+	5150 3650 5800 3650
+$Comp
+L Device:D_Small_ALT D57
+U 1 1 601ACCD9
+P 5800 3550
+F 0 "D57" V 5846 3482 50  0000 R CNN
+F 1 "ESC" V 5755 3482 50  0000 R CNN
+F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" V 5800 3550 50  0001 C CNN
+F 3 "~" V 5800 3550 50  0001 C CNN
+	1    5800 3550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D_Small_ALT D65
+U 1 1 601C9222
+P 2450 6550
+F 0 "D65" V 2496 6482 50  0000 R CNN
+F 1 "LSHIFT" V 2405 6482 50  0000 R CNN
+F 2 "Diode_THT:D_A-405_P7.62mm_Horizontal" V 2450 6550 50  0001 C CNN
+F 3 "~" V 2450 6550 50  0001 C CNN
+	1    2450 6550
+	0    -1   -1   0   
+$EndComp
+Connection ~ 2450 6650
+Wire Wire Line
+	2450 6650 2550 6650
+Wire Wire Line
+	2550 6300 2450 6300
+Wire Wire Line
+	2450 6300 2450 6450
+Connection ~ 2550 6300
 NoConn ~ 3700 2400
+Text GLabel 2500 1700 2    50   Input ~ 0
+C1_1
+$Comp
+L promicro:ProMicro U1
+U 1 1 5FD48D7C
+P 1750 2050
+F 0 "U1" H 1750 3193 60  0000 C CNN
+F 1 "ProMicro" H 1750 3087 60  0000 C CNN
+F 2 "promicro:ProMicro" H 1750 2981 60  0000 C CNN
+F 3 "" H 1850 1000 60  0000 C CNN
+	1    1750 2050
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
