@@ -3,7 +3,7 @@ import json
 import pprint
 import svgwrite
 from svgwrite import cm, mm
-
+from sexpdata import loads, dumps
 
 class MetaData:
     keyname: str
@@ -103,7 +103,7 @@ def render_svg(data, name: str):
             h = key.h*KEY_SIZE
 
             shapes.add(dwg.rect(insert=(x*mm, y*mm), size=(w*mm, h*mm),
-                                fill='white', stroke='gray', stroke_width=3))
+                                fill='white', stroke='gray', stroke_width=1*mm))
 
             atext = dwg.text(key.keyname[0],
                              insert=((x + w/2)*mm, (y+h/2)*mm),
