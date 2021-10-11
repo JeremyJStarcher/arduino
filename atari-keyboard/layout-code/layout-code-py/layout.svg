@@ -1,2 +1,218 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<svg baseProfile="full" height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs /><g fill="red" id="shapes"><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="0.0mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="33.32mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="57.12mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="147.56mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="171.35999999999999mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="195.16mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="218.95999999999998mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="242.76mm" y="0.0mm" /><rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="266.56mm" y="0.0mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="0.0mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="23.799999999999997mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="42.839999999999996mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="61.879999999999995mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="80.92mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="99.96mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="119.0mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="138.04mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="157.07999999999998mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="176.12mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="195.16mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="214.2mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="233.23999999999998mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="38.08mm" x="252.28mm" y="28.56mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="33.32mm" x="0.0mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="33.32mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="52.36mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="71.39999999999999mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="90.44mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="109.47999999999999mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="128.51999999999998mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="147.56mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="166.6mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="185.64mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="204.67999999999998mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="223.72mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="242.76mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="28.56mm" x="261.8mm" y="47.599999999999994mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="38.08mm" x="0.0mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="38.08mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="57.12mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="76.16mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="95.19999999999999mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="114.24mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="133.28mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="152.32mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="171.35999999999999mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="190.39999999999998mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="209.44mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="228.48mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="247.51999999999998mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="266.56mm" y="66.64mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="47.599999999999994mm" x="0.0mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="47.599999999999994mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="66.64mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="85.67999999999999mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="104.72mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="123.75999999999999mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="142.79999999999998mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="161.84mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="180.88mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="199.92mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="218.95999999999998mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="33.32mm" x="238.0mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="271.32mm" y="85.67999999999999mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="14.28mm" y="104.72mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="119.0mm" x="90.44mm" y="104.72mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="252.28mm" y="104.72mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="271.32mm" y="104.72mm" /><rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="290.36mm" y="104.72mm" /></g><g fill="black" font-size="4.76mm"><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="11.899999999999999mm" y="11.899999999999999mm">RESET</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="45.22mm" y="11.899999999999999mm">MENU</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="69.02mm" y="11.899999999999999mm">TURBO</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="159.46mm" y="11.899999999999999mm">START</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="183.26mm" y="11.899999999999999mm">SELECT</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="207.06mm" y="11.899999999999999mm">OPTION</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="230.85999999999999mm" y="11.899999999999999mm">HELP</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="254.66mm" y="11.899999999999999mm">INV</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="278.46mm" y="11.899999999999999mm">BREAK</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="11.899999999999999mm" y="38.08mm">ESC</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="33.31999999999999mm" y="38.08mm">1</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="52.36mm" y="38.08mm">2</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="71.39999999999999mm" y="38.08mm">3</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="90.44mm" y="38.08mm">4</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="109.47999999999999mm" y="38.08mm">5</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="128.52mm" y="38.08mm">6</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="147.56mm" y="38.08mm">7</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="166.6mm" y="38.08mm">8</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="185.64000000000001mm" y="38.08mm">9</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="204.68mm" y="38.08mm">0</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="223.72mm" y="38.08mm">&lt;</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="242.76mm" y="38.08mm">&gt;</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="271.32mm" y="38.08mm">BS</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="16.66mm" y="57.11999999999999mm">TAB</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="42.84mm" y="57.11999999999999mm">Q</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="61.879999999999995mm" y="57.11999999999999mm">W</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="80.91999999999999mm" y="57.11999999999999mm">E</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="99.96mm" y="57.11999999999999mm">R</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="118.99999999999999mm" y="57.11999999999999mm">T</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="138.04mm" y="57.11999999999999mm">Y</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="157.08mm" y="57.11999999999999mm">U</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="176.12mm" y="57.11999999999999mm">I</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="195.16mm" y="57.11999999999999mm">O</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="214.2mm" y="57.11999999999999mm">P</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="233.24mm" y="57.11999999999999mm">-</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="252.28mm" y="57.11999999999999mm">=</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="276.08mm" y="57.11999999999999mm">RETURN</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="19.04mm" y="76.16mm">CONTROL</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="47.599999999999994mm" y="76.16mm">A</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="66.64mm" y="76.16mm">S</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="85.67999999999999mm" y="76.16mm">D</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="104.71999999999998mm" y="76.16mm">F</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="123.75999999999999mm" y="76.16mm">G</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="142.8mm" y="76.16mm">H</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="161.84mm" y="76.16mm">J</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="180.88mm" y="76.16mm">K</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="199.92mm" y="76.16mm">L</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="218.96mm" y="76.16mm">;</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="238.0mm" y="76.16mm">+</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="257.03999999999996mm" y="76.16mm">*</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="278.46mm" y="76.16mm">CAPS</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="23.799999999999997mm" y="95.19999999999999mm">[L]SHIFT</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="57.11999999999999mm" y="95.19999999999999mm">Z</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="76.16mm" y="95.19999999999999mm">X</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="95.19999999999999mm" y="95.19999999999999mm">C</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="114.24mm" y="95.19999999999999mm">V</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="133.28mm" y="95.19999999999999mm">B</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="152.32mm" y="95.19999999999999mm">N</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="171.36mm" y="95.19999999999999mm">M</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="190.4mm" y="95.19999999999999mm">,</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="209.44mm" y="95.19999999999999mm">.</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="228.48mm" y="95.19999999999999mm">/</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="254.66mm" y="95.19999999999999mm">[R]SHIFT</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="280.84mm" y="95.19999999999999mm">↑</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="23.799999999999997mm" y="114.24mm">FN</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="149.94mm" y="114.24mm" /><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="261.8mm" y="114.24mm">←</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="280.84mm" y="114.24mm">↓</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="299.88mm" y="114.24mm">→</text></g></svg>
+<svg baseProfile="full" height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg"
+    xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs />
+    <g fill="red" id="shapes">
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="0.0mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="33.32mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="57.12mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="147.56mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="171.35999999999999mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="195.16mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="218.95999999999998mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="242.76mm" y="0.0mm" />
+        <rect fill="white" height="23.799999999999997mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm"
+            x="266.56mm" y="0.0mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="0.0mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="23.799999999999997mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="42.839999999999996mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="61.879999999999995mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="80.92mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="99.96mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="119.0mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="138.04mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="157.07999999999998mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="176.12mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="195.16mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="214.2mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="233.23999999999998mm"
+            y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="38.08mm" x="252.28mm" y="28.56mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="33.32mm" x="0.0mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="33.32mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="52.36mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="71.39999999999999mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="90.44mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="109.47999999999999mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="128.51999999999998mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="147.56mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="166.6mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="185.64mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="204.67999999999998mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="223.72mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="242.76mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="28.56mm" x="261.8mm"
+            y="47.599999999999994mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="38.08mm" x="0.0mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="38.08mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="57.12mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="76.16mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="95.19999999999999mm"
+            y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="114.24mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="133.28mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="152.32mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="171.35999999999999mm"
+            y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="190.39999999999998mm"
+            y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="209.44mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="228.48mm" y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="247.51999999999998mm"
+            y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="23.799999999999997mm" x="266.56mm"
+            y="66.64mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="47.599999999999994mm" x="0.0mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="47.599999999999994mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="66.64mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="85.67999999999999mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="104.72mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="123.75999999999999mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="142.79999999999998mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="161.84mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="180.88mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="199.92mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="218.95999999999998mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="33.32mm" x="238.0mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="271.32mm"
+            y="85.67999999999999mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="14.28mm" y="104.72mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="119.0mm" x="90.44mm" y="104.72mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="252.28mm"
+            y="104.72mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="271.32mm"
+            y="104.72mm" />
+        <rect fill="white" height="19.04mm" stroke="gray" stroke-width="1mm" width="19.04mm" x="290.36mm"
+            y="104.72mm" />
+    </g>
+    <g fill="black" font-size="4.76mm"><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="11.899999999999999mm" y="11.899999999999999mm">RESET</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="45.22mm"
+            y="11.899999999999999mm">MENU</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="69.02mm" y="11.899999999999999mm">TURBO</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="159.46mm" y="11.899999999999999mm">START</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="183.26mm"
+            y="11.899999999999999mm">SELECT</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="207.06mm" y="11.899999999999999mm">OPTION</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="230.85999999999999mm"
+            y="11.899999999999999mm">HELP</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="254.66mm" y="11.899999999999999mm">INV</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="278.46mm" y="11.899999999999999mm">BREAK</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="11.899999999999999mm"
+            y="38.08mm">ESC</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="33.31999999999999mm" y="38.08mm">1</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="52.36mm" y="38.08mm">2</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="71.39999999999999mm" y="38.08mm">3</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="90.44mm"
+            y="38.08mm">4</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="109.47999999999999mm" y="38.08mm">5</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="128.52mm" y="38.08mm">6</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="147.56mm" y="38.08mm">7</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="166.6mm"
+            y="38.08mm">8</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="185.64000000000001mm" y="38.08mm">9</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="204.68mm" y="38.08mm">0</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="223.72mm" y="38.08mm">&lt;</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="242.76mm"
+            y="38.08mm">&gt;</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="271.32mm" y="38.08mm">BS</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="16.66mm" y="57.11999999999999mm">TAB</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="42.84mm" y="57.11999999999999mm">Q</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="61.879999999999995mm"
+            y="57.11999999999999mm">W</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="80.91999999999999mm" y="57.11999999999999mm">E</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="99.96mm"
+            y="57.11999999999999mm">R</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="118.99999999999999mm" y="57.11999999999999mm">T</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="138.04mm"
+            y="57.11999999999999mm">Y</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="157.08mm" y="57.11999999999999mm">U</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="176.12mm" y="57.11999999999999mm">I</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="195.16mm"
+            y="57.11999999999999mm">O</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="214.2mm" y="57.11999999999999mm">P</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="233.24mm" y="57.11999999999999mm">-</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="252.28mm"
+            y="57.11999999999999mm">=</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="276.08mm" y="57.11999999999999mm">RETURN</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="19.04mm" y="76.16mm">CONTROL</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="47.599999999999994mm"
+            y="76.16mm">A</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="66.64mm" y="76.16mm">S</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="85.67999999999999mm" y="76.16mm">D</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="104.71999999999998mm" y="76.16mm">F</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="123.75999999999999mm"
+            y="76.16mm">G</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="142.8mm" y="76.16mm">H</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="161.84mm" y="76.16mm">J</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="180.88mm" y="76.16mm">K</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="199.92mm"
+            y="76.16mm">L</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="218.96mm" y="76.16mm">;</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="238.0mm" y="76.16mm">+</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="257.03999999999996mm" y="76.16mm">*</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="278.46mm"
+            y="76.16mm">CAPS</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="23.799999999999997mm" y="95.19999999999999mm">[L]SHIFT</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="57.11999999999999mm"
+            y="95.19999999999999mm">Z</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="76.16mm" y="95.19999999999999mm">X</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="95.19999999999999mm"
+            y="95.19999999999999mm">C</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="114.24mm" y="95.19999999999999mm">V</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="133.28mm" y="95.19999999999999mm">B</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="152.32mm"
+            y="95.19999999999999mm">N</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="171.36mm" y="95.19999999999999mm">M</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="190.4mm" y="95.19999999999999mm">,</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="209.44mm"
+            y="95.19999999999999mm">.</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="228.48mm" y="95.19999999999999mm">/</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="254.66mm" y="95.19999999999999mm">[R]SHIFT</text><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="280.84mm"
+            y="95.19999999999999mm">↑</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="23.799999999999997mm" y="114.24mm">FN</text><text dominant-baseline="middle"
+            style="text-shadow: 2px 2px;" text-anchor="middle" x="149.94mm" y="114.24mm" /><text
+            dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle" x="261.8mm"
+            y="114.24mm">←</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;" text-anchor="middle"
+            x="280.84mm" y="114.24mm">↓</text><text dominant-baseline="middle" style="text-shadow: 2px 2px;"
+            text-anchor="middle" x="299.88mm" y="114.24mm">→</text></g>
+</svg>
