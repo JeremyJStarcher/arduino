@@ -4,6 +4,8 @@ from typing import List
 import svgwrite
 from svgwrite import mm
 
+layout_file = "keyboard-layout.json"
+
 # from sexpdata import loads, dumps
 
 # Keyboard placement aliases
@@ -61,7 +63,9 @@ def convert_json_to_full_meta(full_data) -> List[List[KeyDetail]]:
     alignment = 4
 
     for row in full_data:
-        if type(row) == str:
+        if type(row) == dict:
+            pass
+        elif type(row) == str:
             pass
             # This is some kind of header metadata.
             #   We are going to skip it for now
@@ -220,7 +224,7 @@ def standardize_keymaps(full_data: List[List[KeyDetail]]):
             print(key.key_legends)
 
 
-with open('./layout-2.json') as f:
+with open(layout_file) as f:
     data = json.load(f)
 
     full_list: List[List[KeyDetail]] = convert_json_to_full_meta(data)

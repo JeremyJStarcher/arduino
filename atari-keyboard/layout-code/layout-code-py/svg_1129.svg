@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+    <svg
+         xmlns="http://www.w3.org/2000/svg" 
+         xmlns:xlink="http://www.w3.org/1999/xlink" 
+         width="15px"
+         height="15px"
+         viewBox="96 -1.3333333333333333 1022 788"
+         version="1.1">
+    xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs />
+    <g fill="grey">
+        <path glyph-name="apple" unicode="&#xf8ff;"  d="M490 542q0 -220 -85 -366q-106 -178 -309 -176v118q201 -3 281 179q57 128 57 356q0 32 -1 65.5t-2 69.5h59v-246zM510 0v788h98v-788h-98zM1016 0q-203 0 -305 178q-83 145 -83 364v246h59v-95q0 -246 50 -377q76 -201 285 -198v-118h-6z" />
+   </g>
+</svg>

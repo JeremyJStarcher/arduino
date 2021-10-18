@@ -1,13 +1,15 @@
 import os
 import pprint
 import re
-from typing import Dict
+import urllib.parse
+from typing import Dict, List
 
 pp = pprint.PrettyPrinter(indent=4)
 
+cssPath = "./layout.css"
 outPath = './svg'
-bgColor = "black"
-fgColor = "gray"
+bgColor = "transparent"
+fgColor = "black"
 
 if not os.path.isdir(outPath):
     print('Creating:', outPath)
@@ -142,16 +144,28 @@ def get_svg_paths() -> Dict[str, str]:
     return bodies
 
 
-def compact_svg(svg: str) -> str:
-    compacted1 = re.sub(r'\s+', " ", svg)
-    return compacted1
+def normalize_svg(svg: str) -> str:
+    svg = "             " + svg
+    # No leading spaces
+    out = svg.strip()
+    # No multiple spaces in inside the string
+    out = re.sub(r'\s+', " ", out)
+    # Normalize the quotes to be single quotes
+    out = re.sub(r'"', '\'', out)
+    # Don't need a space between opening and closing tags
+    out = re.sub(r"> <", "><", out)
+    # Or before the closing tag itself
+    out = re.sub(r" />", "/>", out)
+    return out
 
 
 def wrap_svg_path(s: str) -> str:
-    svg_fill = f"""<rect x="0" y="0" width="8" height="8" 
-               style="fill:{bgColor};stroke-width:1;stroke:pink"  />"""
+    border_color = "transparent"
 
-    s = f"""<svg width="8" height="8">
+    svg_fill = f"""<rect x="0" y="0" width="8" height="8" 
+               style="fill:{bgColor};stroke-width:1;stroke:{border_color}"  />"""
+
+    s = f"""<svg xmlns='http://www.w3.org/2000/svg' width="8" height="8">
     {svg_fill}
     {s}
     </svg>"""
@@ -159,10 +173,61 @@ def wrap_svg_path(s: str) -> str:
     return s
 
 
-paths = get_svg_paths()
-for key, path in paths.items():
-    full_svg = wrap_svg_path(path)
-    compacted = compact_svg(full_svg)
-    #    pp.pprint(compacted)
-    with open(f"{outPath}/{key}.svg", 'w') as f:
-        f.write(compacted)
+def html_encode(s: str) -> str:
+    to_convert: Dict[str, str] = {
+        "\r": "%0D",
+        "\n": "%0A",
+        "%": "%25",
+        "#": "#",
+        "<": "%3C",
+        ">": "%3E",
+        "?": "?",
+        "[": "%5B",
+        "]": "%5D",
+        "^": "%5E",
+        "`": "%60",
+        "{": "%7B",
+        "|": "%7C",
+        "}": "%7D",
+    }
+
+    for c, c2 in to_convert.items():
+        s = s.replace(c, c2)
+
+    return s
+
+def make_svgs() -> None:
+    paths = get_svg_paths()
+    for key, path in paths.items():
+        full_svg = wrap_svg_path(path)
+        normalized = normalize_svg(full_svg)
+        pp.pprint(normalized)
+        with open(f"{outPath}/{key}.svg", 'w') as f:
+            f.write(normalized)
+
+
+def make_css() -> None:
+    t = """.at-ascii {
+  display: inline-block;
+  transform: translate(0, 0);
+  border: solid 1px;
+  
+    border: 1px solid red;
+    min-height: 20px;
+    width: 10px;
+}""".splitlines(False)
+
+    out: List[str] = t
+
+    paths = get_svg_paths()
+    for key, path in paths.items():
+        full_svg = wrap_svg_path(path)
+        normalized = normalize_svg(full_svg)
+        encoded = normalized # html_encode(normalized)
+        out.append(f'.at-ascii-{key}:after {{content: url("data:image/svg+xml,{encoded}"); }}')
+
+    with open(f"{cssPath}", 'w') as f:
+        f.writelines("\r\n".join(out))
+
+
+make_css()
