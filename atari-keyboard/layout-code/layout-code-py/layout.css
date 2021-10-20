@@ -4,6 +4,12 @@
     min-height: 20px;
     width: 10px;
 }
+
+.ctrl {
+    background-color: navy;
+    color: white;
+}
+
 .at-ascii-ctrl-a:after {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect x='0' y='0' width='8' height='8' style='fill:transparent;stroke-width:1;stroke:gray'/><rect x='3' y='0' width='2' height='4' style='fill:gray'/><rect x='3' y='4' width='2' height='4' style='fill:gray'/><rect x='3' y='3' width='5' height='2' style='fill:gray'/></svg>"); }
 .at-ascii-ctrl-b:after {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect x='0' y='0' width='8' height='8' style='fill:transparent;stroke-width:1;stroke:gray'/><rect x='7' y='0' width='2' height='8' style='fill:gray'/></svg>"); }
 .at-ascii-ctrl-c:after {content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect x='0' y='0' width='8' height='8' style='fill:transparent;stroke-width:1;stroke:gray'/><rect x='3' y='0' width='2' height='4' style='fill:gray'/><rect x='0' y='3' width='5' height='2' style='fill:gray'/></svg>"); }

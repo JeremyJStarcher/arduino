@@ -237,12 +237,16 @@ def make_svgs() -> None:
 
 
 def make_css() -> None:
-    t = """.at-ascii {
-    display: inline-block;
-    transform: translate(0, 0);
-    min-height: 20px;
-    width: 10px;
-}""".splitlines(False)
+    t = """
+.at-ascii {
+}
+
+.ctrl {
+    background-color: navy;
+    color: white;
+    padding:0.15em;
+}
+""".splitlines(False)
 
     out: List[str] = t
 
