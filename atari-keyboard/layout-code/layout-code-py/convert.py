@@ -1,12 +1,18 @@
 import json
+import os
 from typing import List
-
 import svgwrite
 from svgwrite import mm
+from sexpdata import loads, dumps
+import pprint
 
-layout_file = "keyboard-layout.json"
+key_size: float = 19.04
 
-# from sexpdata import loads, dumps
+pp = pprint.PrettyPrinter(indent=4)
+
+layout_file_name = "keyboard-layout.json"
+pcb_file_name = 'atari-keyboard.kicad_pcb' \
+                ''
 
 # Keyboard placement aliases
 K_TL = 0  # top left
@@ -52,17 +58,14 @@ class KeyDetail:
             str(item) + ' = ' + str(self.__dict__[item]) for item in sorted(self.__dict__))
 
 
-def convert_json_to_full_meta(full_data) -> List[List[KeyDetail]]:
-    key_list: List[List[KeyDetail]]
-    # noinspection PyTypeChecker
-    key_list = []
-
+def convert_keyboard_json_to_full_meta(keyboard_layout) -> List[List[KeyDetail]]:
+    key_list: List[List[KeyDetail]] = []
     key_list.clear()
 
     meta_data = KeyDetail()
     alignment = 4
 
-    for row in full_data:
+    for row in keyboard_layout:
         if type(row) == dict:
             pass
         elif type(row) == str:
@@ -124,8 +127,6 @@ def calculate_absolute_position(full_data: List[List[KeyDetail]]):
 
 
 def render_svg(full_data: List[List[KeyDetail]], name: str):
-    key_size: float = 19.04
-
     dwg = svgwrite.Drawing(filename=name, debug=True)
     shapes = dwg.add(dwg.g(id='shapes', fill='red'))
 
@@ -153,7 +154,54 @@ def render_svg(full_data: List[List[KeyDetail]], name: str):
     dwg.save()
 
 
-def standardize_keymaps(full_data: List[List[KeyDetail]]):
+def encode(s: str) -> str:
+    char_list = list(s)
+
+    int_values = list(map(lambda s1: ord(s1), char_list))
+    short_hex = list(map(lambda s2: hex(s2).replace("0x", ""), int_values))
+    long_hex = list(map(lambda s2: "\\U" + s2.zfill(6), short_hex))
+
+    g = "".join(list(long_hex))
+    print(g)
+    return g
+
+def remove_htm_tags(text):
+    import re
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
+def render_scad(full_data: List[List[KeyDetail]], name: str):
+    scad: List[str] = []
+
+    for row in full_data:
+        for key in row:
+            w = key.w * key_size
+            h = key.h * key_size
+            x = (key.pos_x * key_size) + w / 2
+            y = key.pos_y * key_size
+
+            no_html = list(map(lambda s: remove_htm_tags(s), key.key_legends))
+            encoded_list = list(map(lambda s: "\"" + encode(s) + "\"", no_html))
+            exportable_labels = ','.join(encoded_list)
+
+            scad.append(f'// Key: {key.cannon_name}')
+            scad.append(f'translate([{x}, {-y}, 0])')
+            scad.append(f'key_profile(key_profile, row) legend("",size=5)')
+            scad.append('{')
+            scad.append(f'  legend_map = [ {exportable_labels} ];')
+            scad.append(f'  render_txt({w}, {h}, legend_map);')
+            scad.append(f'  $key_length = {key.w};')
+            if key.w >= 2:
+                scad.append('    stabilized()')
+            scad.append('      key();')
+            scad.append('}')
+
+    l: List[str] = list(map(lambda s: s + os.linesep, scad))
+    with open(name, 'w') as f:
+        f.writelines(l)
+
+
+def standardize_keymaps(keyboard_layout: List[List[KeyDetail]]):
     layout_grid = [
         [  # 0
             0, 8, 2,
@@ -204,37 +252,56 @@ def standardize_keymaps(full_data: List[List[KeyDetail]]):
         ]
     ]
 
-    for row in full_data:
+    for row in keyboard_layout:
         for key in row:
             # print(key)
             xlate = layout_grid[key.a]
             # print(xlate)
 
-            print(xlate)
             for i in range(len(xlate)):
                 key.key_legends.append("")
 
-                print("&&&", "i=", i, "xlate[i]=",  xlate[i], "key.a=", key.a, key.key_names, len(key.key_names))
                 if xlate[i] != -1 and len(key.key_names) >= xlate[i]:
                     label = key.key_names[xlate[i]]
                     key.key_legends[i] = label
 
             key.cannon_name = key.key_legends[K_CM] or key.key_legends[K_BM]
 
-            print(key.key_legends)
+            # print(key.key_legends)
 
 
-with open(layout_file) as f:
-    data = json.load(f)
+def print_pcb(plist: List[str]):
+    for s in plist:
+        print(':: ')
+        print(s)
+    pass
 
-    full_list: List[List[KeyDetail]] = convert_json_to_full_meta(data)
-    calculate_absolute_position(full_list)
 
-    standardize_keymaps(full_list)
+def run():
+    with open(layout_file_name) as f:
+        data = json.load(f)
 
-    render_svg(full_list, "layout.svg")
+        # Open a file: file
+        file = open(pcb_file_name, mode='r')
 
-    #    pp = pprint.PrettyPrinter(indent = 4)
-    #    pp.pprint(full_list)
+        all_of_it = file.read()
+        # print(all_of_it)
+        file.close()
+        pcb_file = loads(all_of_it)
+        print_pcb(pcb_file)
 
-    # print(data)
+        keyboard_layout: List[List[KeyDetail]] = convert_keyboard_json_to_full_meta(data)
+        calculate_absolute_position(keyboard_layout)
+
+        standardize_keymaps(keyboard_layout)
+
+        render_svg(keyboard_layout, "layout.svg")
+        render_scad(keyboard_layout, "scad/layout.scad")
+
+        #    pp = pprint.PrettyPrinter(indent = 4)
+        #    pp.pprint(full_list)
+
+        # print(data)
+
+
+run()
