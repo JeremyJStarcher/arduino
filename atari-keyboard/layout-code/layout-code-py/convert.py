@@ -171,7 +171,11 @@ def remove_htm_tags(text):
     return re.sub(clean, '', text)
 
 def render_scad(full_data: List[List[KeyDetail]], name: str):
-    scad: List[str] = []
+    scad: List[str] = [
+        "// This is an auto-generated file created by 'convert.py'",
+        "//",
+        "module atari_keyboard() {"
+    ]
 
     for row in full_data:
         for key in row:
@@ -184,6 +188,7 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
             encoded_list = list(map(lambda s: "\"" + encode(s) + "\"", no_html))
             exportable_labels = ','.join(encoded_list)
 
+            scad.append(f'')
             scad.append(f'// Key: {key.cannon_name}')
             scad.append(f'translate([{x}, {-y}, 0])')
             scad.append(f'key_profile(key_profile, row) legend("",size=5)')
@@ -196,6 +201,7 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
             scad.append('      key();')
             scad.append('}')
 
+    scad.append("} // Atari Keyboard")
     l: List[str] = list(map(lambda s: s + os.linesep, scad))
     with open(name, 'w') as f:
         f.writelines(l)
@@ -296,7 +302,7 @@ def run():
         standardize_keymaps(keyboard_layout)
 
         render_svg(keyboard_layout, "layout.svg")
-        render_scad(keyboard_layout, "scad/layout.scad")
+        render_scad(keyboard_layout, "scad/generated-file.scad")
 
         #    pp = pprint.PrettyPrinter(indent = 4)
         #    pp.pprint(full_list)
