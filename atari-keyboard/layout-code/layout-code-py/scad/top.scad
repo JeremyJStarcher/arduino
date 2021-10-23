@@ -11,9 +11,9 @@ module r(x, y, w, h, t, halign = "center") {
  text = "Align";
  font = "Liberation Sans";
  size = h / 3 /2;
- rise = 1;
+ rise = 2;
     
-     translate([x, y, 0])
+     translate([x, y, -1])
      linear_extrude(height = rise) {
        text(
          text = t,
@@ -22,12 +22,11 @@ module r(x, y, w, h, t, halign = "center") {
          valign = "center",
          halign = halign
          );   
-}
+    }
 }
 
 module render_txt(w, h, legends) {
-    echo(legends);
-    top_of_key() {
+    top_of_key()  {
         r(0, 0, w, h, legends[4]);
         r(0, -h/4, w, h, legends[7]);
         r(0, +h/4, w, h, legends[1]);

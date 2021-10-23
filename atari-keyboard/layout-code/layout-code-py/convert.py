@@ -194,11 +194,15 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
             scad.append(f'key_profile(key_profile, row) legend("",size=5)')
             scad.append('{')
             scad.append(f'  legend_map = [ {exportable_labels} ];')
-            scad.append(f'  render_txt({w}, {h}, legend_map);')
-            scad.append(f'  $key_length = {key.w};')
+            scad.append('  difference() {')
+
+            scad.append(f'  u({key.w}) uh({key.h})')
             if key.w >= 2:
                 scad.append('    stabilized()')
             scad.append('      key();')
+            scad.append(f'  render_txt({w}, {h}, legend_map);')
+
+            scad.append('} // difference')
             scad.append('}')
 
     scad.append("} // Atari Keyboard")
