@@ -1,4 +1,4 @@
-include <../scad-orig/KeyV2/includes.scad>
+include <./KeyV2/includes.scad>
 include <./generated-file.scad>
 
 $stabilizer_type = "cherry_stabilizer";
@@ -6,8 +6,8 @@ key_profile = "disable";
 
 row = 0;
 
-// LEAVE BLAK FOR ALL KEYS, ELSE USE CANNON NAME
-PRINT_KEY = "S";
+// LEAVE BLANK FOR ALL KEYS, ELSE USE CANNON NAME
+PRINT_KEY = "MENU";
 
 
 
