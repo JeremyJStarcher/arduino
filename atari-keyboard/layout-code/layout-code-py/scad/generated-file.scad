@@ -3,7 +3,7 @@
 module atari_keyboard() {
 
 // Key: RESET
-translate([11.899999999999999, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000052\U000045\U000053\U000045\U000054") translate([11.899999999999999, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000052\U000045\U000042\U00004f\U00004f\U000054","","","\U000052\U000045\U000053\U000045\U000054","","","","","","","" ];
@@ -15,7 +15,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: MENU
-translate([45.22, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004d\U000045\U00004e\U000055") translate([45.22, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004d\U000045\U00004e\U000055","","","","","","","" ];
@@ -27,7 +27,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: TURBO
-translate([69.02, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000054\U000055\U000052\U000042\U00004f") translate([69.02, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000054\U000055\U000052\U000042\U00004f","","","","","","","" ];
@@ -39,7 +39,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: START
-translate([159.46, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000053\U000054\U000041\U000052\U000054") translate([159.46, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000053\U000054\U000041\U000052\U000054","","","","","","","" ];
@@ -51,7 +51,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: SELECT
-translate([183.26, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000053\U000045\U00004c\U000045\U000043\U000054") translate([183.26, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000053\U000045\U00004c\U000045\U000043\U000054","","","","","","","" ];
@@ -63,7 +63,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: OPTION
-translate([207.06, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004f\U000050\U000054\U000049\U00004f\U00004e") translate([207.06, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004f\U000050\U000054\U000049\U00004f\U00004e","","","","","","","" ];
@@ -75,7 +75,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: HELP
-translate([230.85999999999999, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000048\U000045\U00004c\U000050") translate([230.85999999999999, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000048\U000045\U00004c\U000050","","","","","","","" ];
@@ -87,7 +87,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: INV
-translate([254.66, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000049\U00004e\U000056") translate([254.66, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000049\U00004e\U000056","","","","","","","" ];
@@ -99,7 +99,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: BREAK
-translate([278.46, -0.0, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000042\U000052\U000045\U000041\U00004b") translate([278.46, -0.0, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000042\U000052\U000045\U000041\U00004b","","","","","","","" ];
@@ -111,7 +111,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: ESC
-translate([11.899999999999999, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000045\U000053\U000043") translate([11.899999999999999, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000045\U000053\U000043","","","","","","","" ];
@@ -123,7 +123,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 1
-translate([33.31999999999999, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000031") translate([33.31999999999999, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000021","","","","","","\U000031","","","","" ];
@@ -135,7 +135,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 2
-translate([52.36, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000032") translate([52.36, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000022","","","","","","\U000032","","","","" ];
@@ -147,7 +147,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 3
-translate([71.39999999999999, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000033") translate([71.39999999999999, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000023","","","","","","\U000033","","","","" ];
@@ -159,7 +159,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 4
-translate([90.44, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000034") translate([90.44, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000024","","","","","","\U000034","","","","" ];
@@ -171,7 +171,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 5
-translate([109.47999999999999, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000035") translate([109.47999999999999, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000025","","","","","","\U000035","","","","" ];
@@ -183,7 +183,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 6
-translate([128.52, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000036") translate([128.52, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000026","","","","","","\U000036","","","","" ];
@@ -195,7 +195,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 7
-translate([147.56, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000037") translate([147.56, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000027","","","","","","\U000037","","","","" ];
@@ -207,7 +207,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 8
-translate([166.6, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000038") translate([166.6, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000040","","","","","","\U000038","","","","" ];
@@ -219,7 +219,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 9
-translate([185.64000000000001, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000039") translate([185.64000000000001, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000028","","","","","","\U000039","","","","" ];
@@ -231,7 +231,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 0
-translate([204.68, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000030") translate([204.68, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000029","","","","","","\U000030","","","","" ];
@@ -243,7 +243,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: <
-translate([223.72, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00003c") translate([223.72, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000043\U00004c\U000052","","","","","","\U00003c","","","","" ];
@@ -255,7 +255,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: >
-translate([242.76, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00003e") translate([242.76, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000049\U00004e\U000053","","","","","","\U00003e","","","","" ];
@@ -267,7 +267,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: BS
-translate([271.32, -28.56, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000042\U000053") translate([271.32, -28.56, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U000044\U000045\U00004c","","","","","","\U000042\U000053","","","","" ];
@@ -280,7 +280,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: TAB
-translate([16.66, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000054\U000041\U000042") translate([16.66, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "\U000043\U00004c\U000052","","\U000053\U000045\U000054","","","","","\U000054\U000041\U000042","","","","" ];
@@ -292,7 +292,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: Q
-translate([42.84, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000051") translate([42.84, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000051","","","","","","","" ];
@@ -307,7 +307,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: W
-translate([61.879999999999995, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000057") translate([61.879999999999995, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000057","","","","","","","" ];
@@ -322,7 +322,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: E
-translate([80.91999999999999, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000045") translate([80.91999999999999, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000045","","","","","","","" ];
@@ -337,7 +337,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: R
-translate([99.96, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000052") translate([99.96, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000052","","","","","","","" ];
@@ -352,7 +352,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: T
-translate([118.99999999999999, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000054") translate([118.99999999999999, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000054","","","","","","","" ];
@@ -367,7 +367,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: Y
-translate([138.04, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000059") translate([138.04, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000059","","","","","","","" ];
@@ -382,7 +382,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: U
-translate([157.08, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000055") translate([157.08, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000055","","","","","","","" ];
@@ -397,7 +397,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: I
-translate([176.12, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000049") translate([176.12, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000049","","","","","","","" ];
@@ -412,7 +412,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: O
-translate([195.16, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004f") translate([195.16, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004f","","","","","","","" ];
@@ -427,7 +427,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: P
-translate([214.2, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000050") translate([214.2, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000050","","","","","","","" ];
@@ -442,7 +442,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: -
-translate([233.24, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002d") translate([233.24, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "\U002191","\U00005f","","","","","","\U00002d","","","","" ];
@@ -454,7 +454,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: =
-translate([252.28, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00003d") translate([252.28, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "\U002193","\U00007c","","","","","","\U00003d","","","","" ];
@@ -466,7 +466,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: RETURN
-translate([276.08, -47.599999999999994, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000052\U000045\U000054\U000055\U000052\U00004e") translate([276.08, -47.599999999999994, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000052\U000045\U000054\U000055\U000052\U00004e","","","","","","","" ];
@@ -478,7 +478,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: <span class="ctrl">CONTROL</span>
-translate([19.04, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00003c\U000073\U000070\U000061\U00006e\U000020\U000063\U00006c\U000061\U000073\U000073\U00003d\U000022\U000063\U000074\U000072\U00006c\U000022\U00003e\U000043\U00004f\U00004e\U000054\U000052\U00004f\U00004c\U00003c\U00002f\U000073\U000070\U000061\U00006e\U00003e") translate([19.04, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000043\U00004f\U00004e\U000054\U000052\U00004f\U00004c","","","","","","","" ];
@@ -491,7 +491,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: A
-translate([47.599999999999994, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000041") translate([47.599999999999994, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000041","","","","","","","" ];
@@ -506,7 +506,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: S
-translate([66.64, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000053") translate([66.64, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000053","","","","","","","" ];
@@ -521,7 +521,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: D
-translate([85.67999999999999, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000044") translate([85.67999999999999, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000044","","","","","","","" ];
@@ -536,7 +536,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: F
-translate([104.71999999999998, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000046") translate([104.71999999999998, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000046","","","","","","","" ];
@@ -551,7 +551,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: G
-translate([123.75999999999999, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000047") translate([123.75999999999999, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000047","","","","","","","" ];
@@ -566,7 +566,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: H
-translate([142.8, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000048") translate([142.8, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000048","","","","","","","" ];
@@ -581,7 +581,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: J
-translate([161.84, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004a") translate([161.84, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004a","","","","","","","" ];
@@ -596,7 +596,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: K
-translate([180.88, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004b") translate([180.88, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004b","","","","","","","" ];
@@ -611,7 +611,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: L
-translate([199.92, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004c") translate([199.92, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004c","","","","","","","" ];
@@ -626,7 +626,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: ;
-translate([218.96, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00003b") translate([218.96, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U00003a","","","","","","\U00003b","","","","" ];
@@ -641,7 +641,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: +
-translate([238.0, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002b") translate([238.0, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "\U002190","\U00005c","","","","","","\U00002b","","","","" ];
@@ -653,7 +653,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: *
-translate([257.03999999999996, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002a") translate([257.03999999999996, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "\U002192","\U00005e","","","","","","\U00002a","","","","" ];
@@ -665,7 +665,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: CAPS
-translate([278.46, -66.64, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000043\U000041\U000050\U000053") translate([278.46, -66.64, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000043\U000041\U000050\U000053","","","","","","","" ];
@@ -677,7 +677,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: [L]SHIFT
-translate([23.799999999999997, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00005b\U00004c\U00005d\U000053\U000048\U000049\U000046\U000054") translate([23.799999999999997, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00005b\U00004c\U00005d\U000053\U000048\U000049\U000046\U000054","","","","","","","" ];
@@ -690,7 +690,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: Z
-translate([57.11999999999999, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00005a") translate([57.11999999999999, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00005a","","","","","","","" ];
@@ -705,7 +705,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: X
-translate([76.16, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000058") translate([76.16, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000058","","","","","","","" ];
@@ -720,7 +720,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: C
-translate([95.19999999999999, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000043") translate([95.19999999999999, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000043","","","","","","","" ];
@@ -735,7 +735,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: V
-translate([114.24, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000056") translate([114.24, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000056","","","","","","","" ];
@@ -750,7 +750,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: B
-translate([133.28, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000042") translate([133.28, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000042","","","","","","","" ];
@@ -765,7 +765,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: N
-translate([152.32, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004e") translate([152.32, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004e","","","","","","","" ];
@@ -780,7 +780,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: M
-translate([171.36, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00004d") translate([171.36, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00004d","","","","","","","" ];
@@ -795,7 +795,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: ,
-translate([190.4, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002c") translate([190.4, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U00005b","","","","","","\U00002c","","","","" ];
@@ -810,7 +810,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: .
-translate([209.44, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002e") translate([209.44, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U00005d","","","","","","\U00002e","","","","" ];
@@ -825,7 +825,7 @@ color("white") front_placement()  rotate([90, 0, 0])
 }
 
 // Key: /
-translate([228.48, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00002f") translate([228.48, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","\U00003f","","","","","","\U00002f","","","","" ];
@@ -837,7 +837,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: [R]SHIFT
-translate([254.66, -85.67999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U00005b\U000052\U00005d\U000053\U000048\U000049\U000046\U000054") translate([254.66, -85.67999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U00005b\U000052\U00005d\U000053\U000048\U000049\U000046\U000054","","","","","","","" ];
@@ -849,7 +849,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: ↑
-translate([285.59999999999997, -90.44, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U002191") translate([285.59999999999997, -90.44, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U002191","","","","","","","" ];
@@ -861,7 +861,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: FN
-translate([23.799999999999997, -104.72, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U000046\U00004e") translate([23.799999999999997, -104.72, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U000046\U00004e","","","","","","","" ];
@@ -873,7 +873,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: 
-translate([149.94, -104.72, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "") translate([149.94, -104.72, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","","","","","","","","" ];
@@ -886,7 +886,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: ←
-translate([266.55999999999995, -109.47999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U002190") translate([266.55999999999995, -109.47999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U002190","","","","","","","" ];
@@ -898,7 +898,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: ↓
-translate([285.59999999999997, -109.47999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U002193") translate([285.59999999999997, -109.47999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U002193","","","","","","","" ];
@@ -910,7 +910,7 @@ key_profile(key_profile, row) legend("",size=5)
 }
 
 // Key: →
-translate([304.64, -109.47999999999999, 0])
+if (PRINT_KEY == "" || PRINT_KEY == "\U002192") translate([304.64, -109.47999999999999, 0])
 key_profile(key_profile, row) legend("",size=5)
 {
   legend_map = [ "","","","","\U002192","","","","","","","" ];

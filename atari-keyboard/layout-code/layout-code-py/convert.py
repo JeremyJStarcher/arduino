@@ -10,9 +10,8 @@ key_size: float = 19.04
 
 pp = pprint.PrettyPrinter(indent=4)
 
-layout_file_name = "keyboard-layout.json"
-pcb_file_name = 'atari-keyboard.kicad_pcb' \
-                ''
+layout_file_name = "input-files/keyboard-layout.json"
+pcb_file_name = 'input-files/atari-keyboard.kicad_pcb'
 
 # Keyboard placement aliases
 K_TL = 0  # top left
