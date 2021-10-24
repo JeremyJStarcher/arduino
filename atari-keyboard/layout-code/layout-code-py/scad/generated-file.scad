@@ -301,6 +301,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-q.svg", center=true); 
 }
 
 // Key: W
@@ -313,6 +316,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-w.svg", center=true); 
 }
 
 // Key: E
@@ -325,6 +331,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-e.svg", center=true); 
 }
 
 // Key: R
@@ -337,6 +346,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-r.svg", center=true); 
 }
 
 // Key: T
@@ -349,6 +361,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-t.svg", center=true); 
 }
 
 // Key: Y
@@ -361,6 +376,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-y.svg", center=true); 
 }
 
 // Key: U
@@ -373,6 +391,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-u.svg", center=true); 
 }
 
 // Key: I
@@ -385,6 +406,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-i.svg", center=true); 
 }
 
 // Key: O
@@ -397,6 +421,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-o.svg", center=true); 
 }
 
 // Key: P
@@ -409,6 +436,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-p.svg", center=true); 
 }
 
 // Key: -
@@ -470,6 +500,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-a.svg", center=true); 
 }
 
 // Key: S
@@ -482,6 +515,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-s.svg", center=true); 
 }
 
 // Key: D
@@ -494,6 +530,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-d.svg", center=true); 
 }
 
 // Key: F
@@ -506,6 +545,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-f.svg", center=true); 
 }
 
 // Key: G
@@ -518,6 +560,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-g.svg", center=true); 
 }
 
 // Key: H
@@ -530,6 +575,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-h.svg", center=true); 
 }
 
 // Key: J
@@ -542,6 +590,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-j.svg", center=true); 
 }
 
 // Key: K
@@ -554,6 +605,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-k.svg", center=true); 
 }
 
 // Key: L
@@ -566,6 +620,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-l.svg", center=true); 
 }
 
 // Key: ;
@@ -578,6 +635,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-semi.svg", center=true); 
 }
 
 // Key: +
@@ -639,6 +699,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-z.svg", center=true); 
 }
 
 // Key: X
@@ -651,6 +714,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-x.svg", center=true); 
 }
 
 // Key: C
@@ -663,6 +729,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-c.svg", center=true); 
 }
 
 // Key: V
@@ -675,6 +744,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-v.svg", center=true); 
 }
 
 // Key: B
@@ -687,6 +759,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-b.svg", center=true); 
 }
 
 // Key: N
@@ -699,6 +774,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-n.svg", center=true); 
 }
 
 // Key: M
@@ -711,6 +789,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-m.svg", center=true); 
 }
 
 // Key: ,
@@ -723,6 +804,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-comma.svg", center=true); 
 }
 
 // Key: .
@@ -735,6 +819,9 @@ key_profile(key_profile, row) legend("",size=5)
       key();
   render_txt(19.04, 19.04, legend_map);
 } // difference
+color("white") front_placement()  rotate([90, 0, 0])
+ linear_extrude(height = 0.5)  resize([$font_size, $font_size]) 
+  import ("../svg/ctrl-period.svg", center=true); 
 }
 
 // Key: /

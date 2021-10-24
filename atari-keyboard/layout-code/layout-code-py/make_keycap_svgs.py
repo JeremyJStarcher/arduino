@@ -9,7 +9,7 @@ pp = pprint.PrettyPrinter(indent=4)
 cssPath = "./layout.css"
 outPath = './svg'
 bgColor = "transparent"
-fgColor = "gray"
+fgColor = "black"
 
 if not os.path.isdir(outPath):
     print('Creating:', outPath)
@@ -191,9 +191,20 @@ def normalize_svg(svg: str) -> str:
 def wrap_svg_path(s: str) -> str:
     border_color = fgColor
 
-    svg_fill = f"""<rect x="0" y="0" width="8" height="8" 
-               style="fill:{bgColor};stroke-width:1;stroke:{border_color}"  />"""
+    #svg_fill = "" #f"""<rect x="0" y="0" width="8" height="8" 
+               # style="fill:{bgColor};stroke-width:1;stroke:{border_color}"  />"""
 
+    fillStyle = 'style="transparent;stroke-width:1;stroke:transparent"  />'
+
+    # Force the four corners of the rectangle to make sure the SVG file keeps its
+    # size and the file is not trimmed to the size of the graphic alone.
+    
+    svg_fill = ""
+    svg_fill = svg_fill + f"""<rect x="0" y="0" width="0.01" height="0.01" {fillStyle}""" 
+    svg_fill = svg_fill + f"""<rect x="0" y="8" width="0.01" height="0.01" {fillStyle}""" 
+    svg_fill = svg_fill + f"""<rect x="8" y="0" width="0.01" height="0.01" {fillStyle}""" 
+    svg_fill = svg_fill + f"""<rect x="8" y="8" width="0.01" height="0.01" {fillStyle}""" 
+             
     s = f"""<svg xmlns='http://www.w3.org/2000/svg' width="8" height="8">
     {svg_fill}
     {s}

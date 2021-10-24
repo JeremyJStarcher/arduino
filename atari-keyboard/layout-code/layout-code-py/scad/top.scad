@@ -27,6 +27,7 @@ module r(x, y, w, h, t, halign = "center") {
 
 module render_txt(w, h, legends) {
     top_of_key()  {
+       // r(0, 0, w, h, legends[4]);
         r(0, 0, w, h, legends[4]);
         r(0, -h/4, w, h, legends[7]);
         r(0, +h/4, w, h, legends[1]);
@@ -40,5 +41,4 @@ module render_txt(w, h, legends) {
 }
 
 
-
-atari_keyboard();
+ atari_keyboard();

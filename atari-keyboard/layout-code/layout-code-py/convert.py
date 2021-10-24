@@ -162,13 +162,28 @@ def encode(s: str) -> str:
     long_hex = list(map(lambda s2: "\\U" + s2.zfill(6), short_hex))
 
     g = "".join(list(long_hex))
-    print(g)
     return g
 
-def remove_htm_tags(text):
+
+def remove_html_tags(text):
     import re
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text)
+
+
+def find_svg_classes(text):
+    # <i class="at-ascii at-ascii-ctrl-q"></i>
+    import re
+    html_tag = re.compile('<.*class.*at-ascii.*>.*</i>')
+    r = re.findall(html_tag, text)
+    if len(r) == 0:
+        return ""
+    else:
+        z: str = r[0]
+        z1 = z.split("at-ascii-")[1].split("\"")[0]
+        print(z1)
+        return z1
+
 
 def render_scad(full_data: List[List[KeyDetail]], name: str):
     scad: List[str] = [
@@ -184,7 +199,8 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
             x = (key.pos_x * key_size) + w / 2
             y = key.pos_y * key_size
 
-            no_html = list(map(lambda s: remove_htm_tags(s), key.key_legends))
+            svgs = list(map(lambda s: find_svg_classes(s), key.key_legends))
+            no_html = list(map(lambda s: remove_html_tags(s), key.key_legends))
             encoded_list = list(map(lambda s: "\"" + encode(s) + "\"", no_html))
             exportable_labels = ','.join(encoded_list)
 
@@ -203,6 +219,12 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
             scad.append(f'  render_txt({w}, {h}, legend_map);')
 
             scad.append('} // difference')
+            for f in svgs:
+                if f != "":
+                    scad.append(f'color("white") front_placement()  rotate([90, 0, 0])')
+                    scad.append(f' linear_extrude(height = 0.5)  resize([$font_size, $font_size]) ')
+                    scad.append(f'  import ("../svg/{f}.svg", center=true); ')
+
             scad.append('}')
 
     scad.append("} // Atari Keyboard")
