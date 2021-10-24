@@ -326,7 +326,7 @@ def run():
 
         standardize_keymaps(keyboard_layout)
 
-        render_svg(keyboard_layout, "layout.svg")
+        render_svg(keyboard_layout, "output-files/layout.svg")
         render_scad(keyboard_layout, "scad/generated-file.scad")
 
         #    pp = pprint.PrettyPrinter(indent = 4)

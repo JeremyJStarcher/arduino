@@ -6,7 +6,7 @@ from typing import Dict, List
 
 pp = pprint.PrettyPrinter(indent=4)
 
-cssPath = "./layout.css"
+cssPath = "./output-files/layout.css"
 outPath = './svg'
 bgColor = "transparent"
 fgColor = "black"
