@@ -206,7 +206,7 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
 
             scad.append(f'')
             scad.append(f'// Key: {key.cannon_name}')
-            scad.append(f'translate([{x}, {-y}, 0])')
+            scad.append(f'if (PRINT_KEY == "" || PRINT_KEY == "{encode(key.cannon_name)}") translate([{x}, {-y}, 0])')
             scad.append(f'key_profile(key_profile, row) legend("",size=5)')
             scad.append('{')
             scad.append(f'  legend_map = [ {exportable_labels} ];')

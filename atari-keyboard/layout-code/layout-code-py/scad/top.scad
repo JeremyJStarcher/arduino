@@ -6,6 +6,10 @@ key_profile = "disable";
 
 row = 0;
 
+// LEAVE BLAK FOR ALL KEYS, ELSE USE CANNON NAME
+PRINT_KEY = "S";
+
+
 
 module r(x, y, w, h, t, halign = "center") {
  text = "Align";
