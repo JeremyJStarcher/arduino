@@ -7,7 +7,7 @@ key_profile = "disable";
 row = 0;
 
 // LEAVE BLANK FOR ALL KEYS, ELSE USE CANNON NAME
-PRINT_KEY = "MENU";
+PRINT_KEY = "";
 
 
 

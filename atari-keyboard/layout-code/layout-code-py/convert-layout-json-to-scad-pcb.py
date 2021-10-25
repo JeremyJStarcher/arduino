@@ -3,8 +3,10 @@ import os
 from typing import List
 import svgwrite
 from svgwrite import mm
-from sexpdata import loads, dumps
+from sexpdata import loads  # , dumps
 import pprint
+
+RENDER_ATASCII_SYMBOLS = True
 
 key_size: float = 19.04
 
@@ -180,7 +182,7 @@ def find_svg_classes(text):
     else:
         z: str = r[0]
         z1 = z.split("at-ascii-")[1].split("\"")[0]
-        print(z1)
+        # print(z1)
         return z1
 
 
@@ -219,7 +221,7 @@ def render_scad(full_data: List[List[KeyDetail]], name: str):
 
             scad.append('} // difference')
             for f in svgs:
-                if f != "":
+                if f != "" and RENDER_ATASCII_SYMBOLS:
                     scad.append(f'color("white") front_placement()  rotate([90, 0, 0])')
                     scad.append(f' linear_extrude(height = 0.5)  resize([$font_size, $font_size]) ')
                     scad.append(f'  import ("../svg/{f}.svg", center=true); ')
@@ -305,7 +307,6 @@ def print_pcb(plist: List[str]):
     for s in plist:
         print(':: ')
         print(s)
-    pass
 
 
 def run():

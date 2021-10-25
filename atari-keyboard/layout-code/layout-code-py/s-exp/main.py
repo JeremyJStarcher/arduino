@@ -3,19 +3,50 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 # import enum
+from __future__ import annotations
 import string
 import typing
 from typing import List
 
+TOKEN_END = list("()")
+
+
+class SExpParser:
+    @staticmethod
+    def eat_next(sexp: List[str], index: int) -> int:
+        index += 1
+        return index
+
+    @staticmethod
+    def eat_whitespace(sexp: List[str], index: int) -> int:
+        while index < len(sexp) and sexp[index] in string.whitespace:
+            index += 1
+
+        return index
+
+    @staticmethod
+    def peek(sexp: List[str], index: int) -> str:
+        if index < len(sexp):
+            return sexp[index]
+        return ""
+
+    @staticmethod
+    def read_token(sexp: List[str], index: int) -> typing.Tuple[int, str]:
+        token: str = ""
+
+        while index < len(sexp) \
+                and not sexp[index] in TOKEN_END \
+                and not sexp[index] in string.whitespace:
+            token += sexp[index]
+            index += 1
+
+        return index, token
+
 
 class SExp:
 
-    def __init__(self, name: str, sexp: List[str], index: int = 0):
-
-        if type(sexp) != list:
-            raise Exception("sexp must be a character list")
-
-        self.name: str = name
+    def __init__(self):
+        self.name: str = ""
         self.values: List[typing.Union[SExp, str, float]] = []
         self.parent: typing.Union[SExp, None] = None
 
@@ -26,11 +57,24 @@ class SExp:
         return str(self.__class__) + ' ' + ' ' + self.name
 
     @staticmethod
-    def eat_whitespace(sexp: List[str], index: int) -> int:
-        while index < len(sexp) and sexp[index] in string.whitespace:
-            index += 1
+    def load(sexp_s: str, index: int = 0) -> SExp:
+        _index, exp = SExp.load_inner(sexp_s, index)
+        return exp
 
-        return index
+    @staticmethod
+    def load_inner(sexp_s: str, index: int = 0) -> typing.Tuple[int, SExp]:
+        sexp_l = list(sexp_s)
+        out = SExp()
+        index = SExpParser.eat_whitespace(sexp_l, index)
+
+        if SExpParser.peek(sexp_l, index) != '(':
+            raise SyntaxError(f'A "(" was expected in position {index}')
+
+        index = SExpParser.eat_next(sexp_l, index)
+
+        index, name = SExpParser.read_token(sexp_l, index)
+        out.name = name
+        return index, out
 
 
 def print_hi(name):
