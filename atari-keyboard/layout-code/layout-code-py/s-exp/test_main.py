@@ -117,6 +117,26 @@ class SExpLoadTestCase(unittest.TestCase):
         next_token = SExpParser.peek(sexp_list, index)
         self.assertEqual(next_token, '', 'next token')
 
+    def test_load_nested_data(self):
+        sexp_str = '(pad "" np_thru_hole circle (at 9.36 -1.92) (size 3.05 3.05) (drill 3.05) (layers *.Cu *.Mask))'
+        sexp_list = list(sexp_str)
+        index, data = SExp.load_inner(sexp_str)
+        self.assertEqual(data.name, 'pad')
+        self.assertEqual(data.values[0], '""')
+        self.assertEqual(data.values[1], 'np_thru_hole')
+        self.assertEqual(data.values[2], 'circle')
+        self.assertIsInstance(data.values[3], SExp)
+        self.assertEqual(data.values[3].name, 'at')
+        self.assertEqual(data.values[3].values[0], '9.36')
+        self.assertEqual(data.values[4].name, 'size')
+
+        self.assertIs(data.values[3].parent, data)
+
+        next_token = SExpParser.peek(sexp_list, index)
+        self.assertEqual(next_token, '', 'next token')
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
