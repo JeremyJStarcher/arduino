@@ -70,14 +70,16 @@ class SExp:
 
         index = SExpParser.eat_whitespace(sexp_l, index)
         index = SExpParser.eat_or_error(sexp_l, index, '(')
+        index = SExpParser.eat_whitespace(sexp_l, index)
 
         index, name = SExpParser.read_token(sexp_l, index)
         out.name = name
 
         # Look for something, anything to do until the expression is closed
-        if SExpParser.peek(sexp_l, index) != ')':
+        while SExpParser.peek(sexp_l, index) != ')':
             index = SExpParser.eat_whitespace(sexp_l, index)
-            # Process various values here
+            index, value = SExpParser.read_token(sexp_l, index)
+            out.values.append(value)
 
         index = SExpParser.eat_or_error(sexp_l, index, ')')
         index = SExpParser.eat_whitespace(sexp_l, index)
