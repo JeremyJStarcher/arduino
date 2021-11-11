@@ -58,6 +58,24 @@ class SExpLoadTestCase(unittest.TestCase):
         data = SExp.load('(name)')
         self.assertEqual(data.name, 'name')
 
+    def test_load_name_only_close_paren_skipped(self):
+        sexp_str = '(name)  A'
+        sexp_list = list(sexp_str)
+        index, data = SExp.load_inner(sexp_str)
+        self.assertEqual(data.name, 'name')
+
+        next_token = SExpParser.peek(sexp_list, index)
+        self.assertEqual(next_token, 'A', 'next token')
+
+    def test_load_name_only_close_paren_white_space_skipped(self):
+        sexp_str = '(name)  A'
+        sexp_list = list(sexp_str)
+        index, data = SExp.load_inner(sexp_str)
+        self.assertEqual(data.name, 'name')
+
+        next_token = SExpParser.peek(sexp_list, index)
+        self.assertEqual(next_token, 'A', 'next token')
+
     def test_load_empty_string(self):
         with self.assertRaises(SyntaxError):
             SExp.load_inner('     ')

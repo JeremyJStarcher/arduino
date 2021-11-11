@@ -13,9 +13,11 @@ TOKEN_END = list("()")
 
 class SExpParser:
     @staticmethod
-    def eat_next(sexp: List[str], index: int) -> int:
-        index += 1
-        return index
+    def eat_or_error(sexp: List[str], index: int, target: str) -> int:
+        if SExpParser.peek(sexp, index) != target:
+            raise SyntaxError(f'A "{target}" was expected in position {index}')
+
+        return index + 1
 
     @staticmethod
     def eat_whitespace(sexp: List[str], index: int) -> int:
@@ -65,15 +67,20 @@ class SExp:
     def load_inner(sexp_s: str, index: int = 0) -> typing.Tuple[int, SExp]:
         sexp_l = list(sexp_s)
         out = SExp()
+
         index = SExpParser.eat_whitespace(sexp_l, index)
-
-        if SExpParser.peek(sexp_l, index) != '(':
-            raise SyntaxError(f'A "(" was expected in position {index}')
-
-        index = SExpParser.eat_next(sexp_l, index)
+        index = SExpParser.eat_or_error(sexp_l, index, '(')
 
         index, name = SExpParser.read_token(sexp_l, index)
         out.name = name
+
+        # Look for something, anything to do until the expression is closed
+        if SExpParser.peek(sexp_l, index) != ')':
+            index = SExpParser.eat_whitespace(sexp_l, index)
+            # Process various values here
+
+        index = SExpParser.eat_or_error(sexp_l, index, ')')
+        index = SExpParser.eat_whitespace(sexp_l, index)
         return index, out
 
 
