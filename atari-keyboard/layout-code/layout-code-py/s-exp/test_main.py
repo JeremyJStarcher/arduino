@@ -104,6 +104,19 @@ class SExpLoadTestCase(unittest.TestCase):
         with self.assertRaises(SyntaxError):
             SExp.load_inner('     ')
 
+    def test_load_quote_token_data(self):
+        sexp_str = '(name "q"  a b  "word()!   " )'
+        sexp_list = list(sexp_str)
+        index, data = SExp.load_inner(sexp_str)
+        self.assertEqual(data.name, 'name')
+        self.assertEqual(data.values[0], '"q"')
+        self.assertEqual(data.values[1], 'a')
+        self.assertEqual(data.values[2], 'b')
+        self.assertEqual(data.values[3], '"word()!   "')
+
+        next_token = SExpParser.peek(sexp_list, index)
+        self.assertEqual(next_token, '', 'next token')
+
 
 if __name__ == '__main__':
     unittest.main()

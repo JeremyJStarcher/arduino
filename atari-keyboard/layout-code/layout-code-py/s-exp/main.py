@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 # import enum
 from __future__ import annotations
+
 import string
 import typing
 from typing import List
@@ -33,7 +34,23 @@ class SExpParser:
         return ""
 
     @staticmethod
+    def read_quoted_token(sexp: List[str], index: int) -> typing.Tuple[int, str]:
+        q_token_end = list('"')
+        index = SExpParser.eat_or_error(sexp, index, '"')
+        token: str = ""
+
+        while index < len(sexp) and not sexp[index] in q_token_end:
+            token += sexp[index]
+            index += 1
+
+        index = SExpParser.eat_or_error(sexp, index, '"')
+        return index, f'"{token}"'
+
+    @staticmethod
     def read_token(sexp: List[str], index: int) -> typing.Tuple[int, str]:
+        if sexp[index] == '"':
+            return SExpParser.read_quoted_token(sexp, index)
+
         token: str = ""
 
         while index < len(sexp) \
