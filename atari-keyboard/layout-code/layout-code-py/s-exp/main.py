@@ -47,7 +47,7 @@ class SExpParser:
         return index, f'"{token}"'
 
     @staticmethod
-    def read_token(sexp: List[str], index: int) -> typing.Tuple[int, str | SExp]:
+    def read_token(sexp: List[str], index: int) -> typing.Tuple[int, typing.Union[str, SExp]]:
         if sexp[index] == '"':
             return SExpParser.read_quoted_token(sexp, index)
 
@@ -80,12 +80,13 @@ class SExp:
 
     @staticmethod
     def load(sexp_s: str, index: int = 0) -> SExp:
-        _index, exp = SExp.load_inner(sexp_s, index)
+        sexp_l = list(sexp_s)
+        _index, exp = SExp.load_inner(sexp_l, index)
         return exp
 
     @staticmethod
-    def load_inner(sexp_s: str, index: int = 0) -> typing.Tuple[int, SExp]:
-        sexp_l = list(sexp_s)
+    def load_inner(sexp_l: List[str], index: int = 0) -> typing.Tuple[int, SExp]:
+
         out = SExp()
 
         index = SExpParser.eat_whitespace(sexp_l, index)
