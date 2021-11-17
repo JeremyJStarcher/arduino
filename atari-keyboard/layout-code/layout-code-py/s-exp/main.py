@@ -109,6 +109,18 @@ class SExp:
         index = SExpParser.eat_whitespace(sexp_l, index)
         return index, out
 
+    def query(self, selector, res=None):
+
+        if res is None:
+            res = []
+
+        if selector == '*':
+            res.append(self)
+
+        for value in self.values:
+            if isinstance(value, SExp):
+                value.query(selector, res)
+        return res
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.

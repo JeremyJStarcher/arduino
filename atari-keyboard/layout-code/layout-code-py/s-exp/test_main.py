@@ -195,6 +195,14 @@ class SExpLoadTestCase(unittest.TestCase):
         module = SExp.load(big_sexp)
         self.assertEqual(module.name, 'module')
 
+    def test_query_star(self):
+        module = SExp.load(big_sexp)
+        res = module.query('*')
+        self.assertIsInstance(res, list)
+        self.assertEqual(len(res), 177)
+        res2 = all(isinstance(el, SExp) for el in res)
+        self.assertTrue(res2)
+
 
 if __name__ == '__main__':
     unittest.main()
