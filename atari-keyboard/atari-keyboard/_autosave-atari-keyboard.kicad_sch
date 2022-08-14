@@ -5051,7 +5051,7 @@
     (property "Value" "I2C DISPLAY" (id 1) (at 135.89 184.9119 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical_SMD_Pin1Right" (id 2) (at 135.128 184.912 0)
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" (id 2) (at 135.128 184.912 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 135.128 184.912 0)
@@ -5327,7 +5327,7 @@
       (reference "J3") (unit 1) (value "PLAYER 2") (footprint "Connector_Dsub:DSUB-9_Male_Horizontal_P2.77x2.84mm_EdgePinOffset9.90mm_Housed_MountingHolesOffset11.32mm")
     )
     (path "/9a959639-da05-4caa-86a1-43f09a92e497"
-      (reference "J101") (unit 1) (value "I2C DISPLAY") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical_SMD_Pin1Right")
+      (reference "J101") (unit 1) (value "I2C DISPLAY") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal")
     )
     (path "/851fb7ec-6f58-4ab4-9c71-5a4c84c5ea49"
       (reference "R101") (unit 1) (value "220R") (footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
