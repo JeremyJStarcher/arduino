@@ -6,6 +6,8 @@
 #include "esp_adc_cal.h"
 #include "bmp.h"
 
+#define TFT_BACKLIGHT_ON true
+
 #ifndef TFT_DISPOFF
 #define TFT_DISPOFF 0x28
 #endif
@@ -49,14 +51,15 @@ int btnCick = false;
 
 SPIClass SDSPI(HSPI);
 
-#define MY_CS       33
-#define MY_SCLK     25
-#define MY_MISO     27
-#define MY_MOSI     26
+//#define MY_CS       33
+//#define MY_SCLK     25
+//#define MY_MISO     27
+//#define MY_MOSI     26
 
 void setupSDCard()
 {
-  SDSPI.begin(MY_SCLK, MY_MISO, MY_MOSI, MY_CS);
+  // SDSPI.begin(MY_SCLK, MY_MISO, MY_MOSI, MY_CS);
+  SDSPI.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, TFT_CS);
   //Assuming use of SPI SD card
   if (!SD.begin(MY_CS, SDSPI)) {
     Serial.println("Card Mount Failed");
