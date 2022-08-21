@@ -26,40 +26,31 @@ half_size = 4;
 // example layout
 * preonic_default("dcs") key();
 
-
-tilt=[0, 0, 0];
-
 module graphicsKey(row, legend, svg) {
     difference() {
-        rotate(tilt)
         u(1)
         legend(legend, [0,0], full_size)
         oem_row(row)  key();
 
         front_of_key()
-        rotate(tilt) {
-            scale([0.75, 1, 0.75]) {
-            boundBox();
-            color("white") children();
-            }
+        scale([0.75, 1, 0.75]) {
+          boundBox();
+          color("white") children();
         }
     }
 }
 
 module graphicsKey2(row, legendBottom, legendTop, svg) {
     difference() {
-        rotate(tilt)
         u(1)
         legend(legendBottom, [0,1], half_size)
         legend(legendTop, [0,-1], half_size)
         oem_row(4) key();
 
         front_of_key()
-        rotate(tilt) {
-            scale([0.75, 1, 0.75]) {
-            boundBox();
-            color("white") children();
-            }
+        scale([0.75, 1, 0.75]) {
+          boundBox();
+          color("white") children();
         }
     }
 }
@@ -121,7 +112,6 @@ module gCharacter(t) {
 }
 
 module gridKey(legend) {
-    rotate(tilt)
     u(1.25)
     uh(1.25)
     legend(legend, [0,0], half_size)
@@ -133,7 +123,6 @@ module gridKey(legend) {
 
 module key_lshift() {
     translate_u(0, 0)
-    rotate(tilt)
     u(2.25)
     stabilized()
     legend("SHIFT", [0,0], long_size)
@@ -212,7 +201,6 @@ module key_dot() {
 
 module key_slash() {
     translate_u(1.75 +9, 0)
-    rotate(tilt)
     u(1)
     legend("/", [0,1], half_size)
     legend("?", [0,-1], half_size)
@@ -221,7 +209,6 @@ module key_slash() {
 
 module rshift() {
     translate_u(1.75 +10.5, 0)
-    rotate(tilt)
     u(1.75)
     legend("SHIFT", [0,0], long_size)
     oem_row(4) key();
@@ -233,7 +220,6 @@ module rshift() {
 
 module key_control() {
     translate_u(-.5, 1)
-    rotate(tilt)
     u(2)
     stabilized()
     legend("CONTROL", [0,0], long_size)
@@ -351,7 +337,6 @@ module key_semi() {
 
 module key_plus() {
     translate_u(-.5+1.5+10, 1)
-    rotate(tilt)
     u(1)
     legend("+", [0,1], half_size)
     legend("\\", [1,-1], half_size)
@@ -361,7 +346,6 @@ module key_plus() {
 
 module key_star() {
     translate_u(-.5+1.5+11, 1)
-    rotate(tilt)
     u(1)
     legend("*", [0,1], half_size)
     legend("^", [1,-1], half_size)
@@ -372,7 +356,6 @@ module key_star() {
 
 module key_caps() {
     translate_u(-.5+1.5+12 +.25, 1)
-    rotate(tilt)
     u(1.25)
     legend("CAPS", [0,0], long_size)
     oem_row(3) key();
@@ -384,7 +367,6 @@ module key_caps() {
 
 module key_tab() {
     translate_u(-.5, 2)
-    rotate(tilt)
     u(1.75)
     legend("TAB", [0,1], long_size)
     legend("CLR", [1,-1], long_size)
@@ -476,8 +458,7 @@ module key_p() {
 
 // ← ↑ ↓ →
 module key_dash() {
-   translate_u(-.5+1.5+10, 2)
-    rotate(tilt)
+    translate_u(-.5+1.5+10, 2)
     u(1)
     legend("-", [0,1], half_size)
     legend("_", [1,-1], half_size)
@@ -487,7 +468,6 @@ module key_dash() {
 
 module key_equal() {
     translate_u(-.5+1.5+11, 2)
-    rotate(tilt)
     u(1)
     legend("=", [0,1], half_size)
     legend("|", [1,-1], half_size)
@@ -498,7 +478,6 @@ module key_equal() {
 
 module key_return() {
     translate_u(-.5+1.5+12.25, 2)
-    rotate(tilt)
     u(1.5)
     legend("RETURN", [0,0], long_size)
     oem_row(2) key();
@@ -508,7 +487,6 @@ module key_return() {
 
 module key_esc() {
     translate_u(-.5, 3)
-    rotate(tilt)
     u(1.25)
     legend("ESC", [0,0], long_size)
     oem_row(1) key();
@@ -516,7 +494,6 @@ module key_esc() {
 
 module key_1() {
     translate_u(-.5+1.25, 3)
-    rotate(tilt)
     u(1)
     legend("1", [0,1], half_size)
     legend("!", [0,-1], half_size)
@@ -525,7 +502,6 @@ module key_1() {
 
 module key_2() {
     translate_u(-.5+1.25+1, 3)
-    rotate(tilt)
     u(1)
     legend("2", [0,1], half_size)
     legend("\"", [0,-1], half_size)
@@ -534,7 +510,6 @@ module key_2() {
 
 module key_3() {
     translate_u(-.5+1.25+2, 3)
-    rotate(tilt)
     u(1)
     legend("3", [0,1], half_size)
     legend("#", [0,-1], half_size)
@@ -543,7 +518,6 @@ module key_3() {
 
 module key_4() {
     translate_u(-.5+1.25+3, 3)
-    rotate(tilt)
     u(1)
     legend("4", [0,1], half_size)
     legend("$", [0,-1], half_size)
@@ -552,7 +526,6 @@ module key_4() {
 
 module key_5() {
     translate_u(-.5+1.25+4, 3)
-    rotate(tilt)
     u(1)
     legend("5", [0,1], half_size)
     legend("%", [0,-1], half_size)
@@ -561,7 +534,6 @@ module key_5() {
 
 module key_6() {
     translate_u(-.5+1.25+5, 3)
-    rotate(tilt)
     u(1)
     legend("6", [0,1], half_size)
     legend("&", [0,-1], half_size)
@@ -570,7 +542,6 @@ module key_6() {
 
 module key_7() {
     translate_u(-.5+1.25+6, 3)
-    rotate(tilt)
     u(1)
     legend("7", [0,1], half_size)
     legend("'", [0,-1], half_size)
@@ -579,7 +550,6 @@ module key_7() {
 
 module key_8() {
     translate_u(-.5+1.25+7, 3)
-    rotate(tilt)
     u(1)
     legend("8", [0,1], half_size)
     legend("@", [0,-1], half_size)
@@ -588,7 +558,6 @@ module key_8() {
 
 module key_9() {
     translate_u(-.5+1.25+8, 3)
-    rotate(tilt)
     u(1)
     legend("9", [0,1], half_size)
     legend("(", [0,-1], half_size)
@@ -597,7 +566,6 @@ module key_9() {
 
 module key_0() {
     translate_u(-.5+1.25+9, 3)
-    rotate(tilt)
     u(1)
     legend("0", [0,1], half_size)
     legend(")", [0,-1], half_size)
@@ -607,7 +575,6 @@ module key_0() {
 
 module key_lt() {
     translate_u(-.5+1.25+10, 3)
-    rotate(tilt)
     u(1)
     legend("<", [0,1], half_size)
     legend("CLR", [0,-1], half_size)
@@ -616,7 +583,6 @@ module key_lt() {
 
 module key_gt() {
     translate_u(-.5+1.25+11, 3)
-    rotate(tilt)
     u(1)
     legend(">", [0,1], half_size)
     legend("INS", [0,-1], half_size)
@@ -625,7 +591,6 @@ module key_gt() {
 
 module key_bs() {
     translate_u(-.5+1.25+12.25, 3)
-    rotate(tilt)
     u(2)
     stabilized()
     legend("BACKSPACE", [0,1], half_size)
@@ -692,7 +657,6 @@ module key_spacebar() {
 
 module key_up() {
     translate_u(14, 0)
-    rotate(tilt)
     u(1)
     legend("↑", [0,0], full_size)
     oem_row(2) key();
@@ -700,7 +664,6 @@ module key_up() {
 
 module key_left() {
     translate_u(13, -1)
-    rotate(tilt)
     u(1)
     legend("←", [0,0], full_size)
     oem_row(3) key();
@@ -708,7 +671,6 @@ module key_left() {
 
 module key_down() {
     translate_u(14, -1)
-    rotate(tilt)
     u(1)
     legend("↓", [0,0], full_size)
     oem_row(3) key();
@@ -716,7 +678,6 @@ module key_down() {
 
 module key_right() {
     translate_u(15, -1)
-    rotate(tilt)
     u(1)
     legend("→", [0,0], full_size)
     oem_row(3) key();
@@ -725,7 +686,6 @@ module key_right() {
 
 module key_fn() {
     translate_u(3, -1)
-    rotate(tilt)
     u(1)
     legend("FN", [0,0], long_size)
      key();
