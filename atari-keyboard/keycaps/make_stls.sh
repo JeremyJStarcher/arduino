@@ -1,10 +1,13 @@
 STL_DIR="stls"
 
 function make_stl {
-   flatpak run org.openscad.OpenSCAD -D "key=\"$1\"" -o "$STL_DIR/$1.stl" "one_atari_key.scad"
+   echo "$1"
+   flatpak run org.openscad.OpenSCAD -D "key=\"$1\"" -o "$STL_DIR/$1.stl" "one_atari_key.scad" > /dev/null
 }
 
 mkdir "$STL_DIR"
+
+make_stl layout
 
 make_stl key_lshift
 make_stl key_z

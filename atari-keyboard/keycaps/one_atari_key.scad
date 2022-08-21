@@ -5,6 +5,9 @@ key = "key_z";
 print_one();
 
 module print_one() {
+    if (key == "layout") {
+        fullkeyboard();
+    }
     if (key == "key_lshift") {
         key_lshift();
     }
