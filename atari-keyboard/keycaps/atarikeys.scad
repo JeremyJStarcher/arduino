@@ -115,6 +115,14 @@ module gCharacter(t) {
     text(text = t,  size = 8, valign = "center", halign="center");
 }
 
+module gridKey(legend) {
+    rotate(tilt)
+    u(1.25)
+    uh(1.25)
+    legend(legend, [0,0], half_size)
+    grid_row(1) key();
+}
+
 
 /// ROW 4
 
@@ -622,85 +630,49 @@ module key_bs() {
 
 /////////////////
 
+
 module key_reset() {
-    translate_u(0, 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("RESET", [0,0], half_size)
-    grid_row(1) key();
+    translate_u(0, 5);
 }
 
 module key_menu() {
     translate_u(0+1.5, 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("MENU", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("MENU");
 }
 
 module key_turbo() {
     translate_u(0+(1.5 *2), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("TURBO", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("TURBO");
 }
 
 module key_start() {
     translate_u(0+(1.5 *3), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("START", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("START");
 }
 
 module key_select() {
     translate_u(0+(1.5 *4), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("SELECT", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("SELECT");
 }
 
 module key_option() {
     translate_u(0+(1.5 *5), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("OPTION", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("OPTION");
 }
 
 module key_help() {
     translate_u(0+(1.5 *6), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("HELP", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("HELP");
 }
 
 module key_inverse() {
     translate_u(0+(1.5 *7), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("INV", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("INV");
 }
 
 module key_break() {
     translate_u(0+(1.5 *8), 5)
-    rotate(tilt)
-    u(1.25)
-    uh(1.25)
-    legend("BREAK", [0,0], half_size)
-    grid_row(1) key();
+    gridKey("BREAK");
 }
 
 /////////////////////////////////////
