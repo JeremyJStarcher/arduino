@@ -2,8 +2,14 @@ include <./KeyV2/includes.scad>
 
 RENDER_FOR_SLA=true;
 
+$keytop_thickness = 2;
+
+
 $stem_support_type =  "disable"; // "tines"
-$inset_legend_depth = .75;
+$inset_legend_depth = 1.5;
+// $clearance_check = true;
+
+$font = "Liberation Sans:style=Bold";
 
 full_size = 9;
 long_size = 4;
