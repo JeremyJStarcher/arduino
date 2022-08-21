@@ -36,7 +36,6 @@ module graphicsKey(row, legend, svg) {
         legend(legend, [0,0], full_size)
         oem_row(row)  key();
 
-
         front_of_key()
         rotate(tilt) {
             scale([0.75, 1, 0.75]) {
