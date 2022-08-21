@@ -23,32 +23,6 @@ half_size = 4;
 
 tilt=[0, 0, 0];
 
-module keysvg(file) {
-    /*
-  position = [0, 0];
-  depth = 3;
-
-  fullpath = str("svg/" , file , ".svg");
-
-  woffset = (top_total_key_width()/3.5) * position[0];
-  hoffset = (top_total_key_height()/3.5) * -position[1];
-  translate([woffset, hoffset, -depth+2]){
-
-    front_of_key()
-    rotate([90, 0, 0])
-
-    color("white")
-    scale([0.75, 0.74])
-    hull()
-    linear_extrude(height=$dish_depth + depth){
-    import(fullpath, center=true);
-
-    }
-  }*/
-
-}
-
-
 module graphicsKey(row, legend, svg) {
     difference() {
         rotate(tilt)
@@ -83,12 +57,11 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
             }
         }
     }
-
 }
 
 gCut = 2;
 module boundBox() {
-    difference() {
+*    difference() {
         cube([10, gCut, 10], center=true);
         cube([8, gCut, 8], center=true);
         }
@@ -408,94 +381,84 @@ module key_tab() {
 
 module key_q() {
     translate_u(-.5+1.5, 2)
-    rotate(tilt)
-    u(1)
-    legend("Q", [0,0], full_size)
-    keysvg("ctrl-q")
-    oem_row(2) key();
+    graphicsKey(2, "Q", "ctrl-q") {
+       gLine3();
+       gLine6();
+    }
 }
 
 module key_w() {
     translate_u(-.5+1.5+1, 2)
-    rotate(tilt)
-    u(1)
-    legend("W", [0,0], full_size)
-    keysvg("ctrl-w")
-    oem_row(2) key();
+    graphicsKey(2, "W", "ctrl-w") {
+       gLine3();
+       gLine6();
+       gLine9();
+    }
 }
 
 module key_e() {
     translate_u(-.5+1.5+2, 2)
-    rotate(tilt)
-    u(1)
-    legend("E", [0,0], full_size)
-    keysvg("ctrl-e")
-    oem_row(2) key();
+    graphicsKey(2, "E", "ctrl-e") {
+       gLine6();
+       gLine9();
+    }
 }
 
 module key_r() {
     translate_u(-.5+1.5+3, 2)
-    rotate(tilt)
-    u(1)
-    legend("R", [0,0], full_size)
-    keysvg("ctrl-r")
-    oem_row(2) key();
+    graphicsKey(2, "R", "ctrl-e") {
+       gLine9();
+       gLine3();
+   }
 }
 
 module key_t() {
     translate_u(-.5+1.5+4, 2)
-    rotate(tilt)
-    u(1)
-    legend("T", [0,0], full_size)
-    keysvg("ctrl-t")
-    oem_row(2) key();
+    graphicsKey(2, "T", "ctrl-t") {
+        translate([0, 1, 0])
+        rotate([90, 0, 0])
+        cylinder(h = gCut, r = 3);
+    }
 }
 
 module key_y() {
     translate_u(-.5+1.5+5, 2)
-    rotate(tilt)
-    u(1)
-    legend("Y", [0,0], full_size)
-    keysvg("ctrl-y")
-    oem_row(2) key();
+    graphicsKey(2, "Y", "ctrl-y") {
+        translate([-4, -1, -4])
+        cube([4, gCut, 8]);
+    }
 }
 
 module key_u() {
     translate_u(-.5+1.5+6, 2)
-    rotate(tilt)
-    u(1)
-    legend("U", [0,0], full_size)
-    keysvg("ctrl-u")
-    oem_row(2) key();
+    graphicsKey(2, "U", "ctrl-u") {
+        translate([-4, -1, -4])
+        cube([8, gCut, 4]);
+    }
 }
 
 module key_i() {
     translate_u(-.5+1.5+7, 2)
-    rotate(tilt)
-    u(1)
-    legend("I", [0,0], full_size)
-    keysvg("ctrl-i")
-    oem_row(2) key();
+    graphicsKey(2, "I", "ctrl-i") {
+        translate([0, -1, -4])
+        cube([4, gCut, 4]);
+    }
 }
 
 module key_o() {
     translate_u(-.5+1.5+8, 2)
-    rotate(tilt)
-    u(1)
-    legend("O", [0,0], full_size)
-    keysvg("ctrl-o")
-    oem_row(2) key();
+    graphicsKey(2, "I", "ctrl-i") {
+        translate([-4, -1, -4])
+        cube([4, gCut, 4]);
+    }
 }
 
 module key_p() {
     translate_u(-.5+1.5+9, 2)
-    rotate(tilt)
-    u(1)
-    legend("P", [0,0], full_size)
-    keysvg("ctrl-p")
-    oem_row(2) key();
+    graphicsKey(2, "P", "ctrl-p") {
+        gCharacter("♣️");
+    }
 }
-
 
 
 // ← ↑ ↓ →
@@ -825,7 +788,25 @@ module fullkeyboard() {
         key_caps();
     }
 
-    if (false) {
+    if (true) {
+        key_tab();
+        key_q();
+        key_w();
+        key_e();
+        key_r();
+        key_t();
+        key_y();
+        key_u();
+        key_i();
+        key_o();
+        key_p();
+        key_dash();
+        key_equal();
+        key_return();
+    }
+
+
+    if (true) {
         key_esc();
         key_1();
         key_2();
@@ -842,7 +823,7 @@ module fullkeyboard() {
         key_bs();
     }
 
-    if (false) {
+    if (true) {
         key_reset();
         key_menu();
         key_turbo();
@@ -854,7 +835,7 @@ module fullkeyboard() {
         key_break();
     }
 
-    if (false) {
+    if (true) {
         key_spacebar();
 
         key_up();
@@ -863,7 +844,7 @@ module fullkeyboard() {
         key_right()
 
         key_fn();
-}
+    }
 }
 
   fullkeyboard();
