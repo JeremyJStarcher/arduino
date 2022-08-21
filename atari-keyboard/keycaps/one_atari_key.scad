@@ -4,7 +4,7 @@ key = "key_z";
 
 print_one();
 
-ztilt=[0, 0, 0];
+ztilt=[-45, 0, 0];
 module tilt() {
     rotate(ztilt)
     children();
