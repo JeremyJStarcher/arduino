@@ -841,7 +841,7 @@ module fullkeyboard() {
         key_up();
         key_down();
         key_left();
-        key_right()
+        key_right();
 
         key_fn();
     }
