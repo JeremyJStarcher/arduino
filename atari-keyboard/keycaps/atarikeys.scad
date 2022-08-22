@@ -636,7 +636,8 @@ module key_bs() {
 
 
 module key_reset() {
-    translate_u(0, 5);
+    translate_u(0, 5)
+    gridKey("RESET");
 }
 
 module key_menu() {
