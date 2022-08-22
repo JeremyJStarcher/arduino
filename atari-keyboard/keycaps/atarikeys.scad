@@ -5,7 +5,7 @@ RENDER_FOR_SLA=true;
 $keytop_thickness = 2;
 
 
-$stem_support_type =  "disable"; // "tines"
+$stem_support_type =  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
 // $clearance_check = true;
 
@@ -112,10 +112,40 @@ module gCharacter(t) {
 }
 
 module gridKey(legend) {
-    u(1.25)
-    uh(1.25)
-    legend(legend, [0,0], half_size)
-    grid_row(1) key();
+    // The walls are WAY too thin by default and I couldn't find
+    // a parameter setting that would thicken the walls on these kinds of
+    // buttons, so we will manually re-enforce the button ourselves.
+    //
+    // Slows down processing time, but -- eh -- 
+
+    usize = 1.25;
+    uhsize = 1.25;
+
+    module key1() {
+      u(usize)
+      uh(uhsize)
+      legend(legend, [0,0], half_size)
+      grid_row(1) key();
+    }
+
+    h = 6;
+    w = total_key_width();
+
+
+    // Draw the re-enforced walls
+    color("cyan")
+    difference() {
+      hull()
+      intersection() {
+        key1();
+        translate([-50, -50, 0]) cube([100, 100, h]);
+      }
+
+      cube([w, w, 100], center=true);
+    }
+
+    // Then draw the button itself (which will redraw the thin walls)
+    key1();
 }
 
 
