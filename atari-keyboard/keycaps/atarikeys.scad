@@ -255,6 +255,8 @@ module key_d() {
 }
 
 module key_f() {
+    $key_bump = true;
+
     translate_u(-.5+1.5+3, 1)
     graphicsKey(3, "F", "ctrl-f") {
         hull() {
@@ -297,6 +299,8 @@ module key_h() {
 }
 
 module key_j() {
+    $key_bump = true;
+
     translate_u(-.5+1.5+6, 1)
     graphicsKey(3, "J", "ctrl-j") {
         hull() {
