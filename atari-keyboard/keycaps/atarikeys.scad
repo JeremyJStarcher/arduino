@@ -13,7 +13,7 @@ $font = "Liberation Sans:style=Bold";
 
 full_size = 9;
 long_size = 4;
-half_size = 4;
+half_size = 4.5;
 
 // example key
 * dcs_row(1) legend("⇪", size=9) key();
@@ -597,7 +597,7 @@ module key_bs() {
     translate_u(-.5+1.25+12.25, 3)
     u(2)
     stabilized()
-    legend("BACKSPACE", [0,1], half_size)
+    legend("BACK SP", [0,1], half_size)
     legend("DELETE", [0,-1], half_size)
     oem_row(1) key();
 }
