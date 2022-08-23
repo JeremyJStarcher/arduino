@@ -712,7 +712,13 @@ module key_gt() {
 
 module key_bs() {
     translate_u(-.5+1.25+12.25, 3)
-    graphicsKey2(1, "BACK SP", "DELETE", "ctrl-comma");
+    u(2)
+    stabilized()
+    legend("BACK SP", [0,1], half_size)
+    legend("DELETE", [0,-1], half_size)
+    oem_row(1)
+    preKey()
+    key();
 }
 
 /////////////////
@@ -797,7 +803,7 @@ module key_right() {
 
 module key_fn() {
     translate_u(3, -1)
-    graphicsKey(1, "FN", "ctrl-y");
+    graphicsKey2(1, "FN", "", "ctrl-y");
 }
 
 

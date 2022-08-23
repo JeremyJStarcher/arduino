@@ -5,9 +5,9 @@ atari_rotation = 25;
 
 key = "key_reset";
 
- print_one();
+//print_one();
 
-// prepKey() key_help();
+ prepKey() key_fn();
 
 module prepKey() {
     children();
