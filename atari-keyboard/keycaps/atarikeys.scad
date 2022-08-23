@@ -89,7 +89,6 @@ module preKey(size, w2, h2) {
         supportWidth(a, h/2 - thick/2);
     }
 
-    echo($stabilizers);
     for(s = $stabilizers) {
        support_stabilizers(s[0], s[1]);
     }
