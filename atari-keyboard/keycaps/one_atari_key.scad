@@ -1,14 +1,19 @@
 use <atarikeys.scad>
 
-key = "key_help";
+atari_rotation = 25;
 
-print_one();
 
-ztilt=[25, 0, 0];
+key = "key_lshift";
+
+ print_one();
+
+// prepKey() key_help();
+
 module prepKey() {
-    rotate(ztilt)
     children();
 }
+
+
  
 module print_one() {
     if (key == "key_lshift" || key == "layout") {

@@ -1,8 +1,14 @@
 include <./KeyV2/includes.scad>
 
-RENDER_FOR_SLA=true;
+// How far to rotate the keys when they are generated
+atari_rotation = 25;
 
 $keytop_thickness = 2;
+
+
+sink = -7;
+support_r1 = 0.5;
+support_r2 = 0.5;
 
 
 $stem_support_type =  "disable"; // "disable"; // "tines"
@@ -26,11 +32,100 @@ half_size = 4.5;
 // example layout
 * preonic_default("dcs") key();
 
+
+
+module preKey(size, w2, h2) {
+    w = w2 == undef ? total_key_width() : w2;
+    h = h2 == undef ? total_key_height() : h2;
+
+    thick = size == undef ? $wall_thickness : size;
+
+    spacing = 3;
+
+
+    rotate([atari_rotation, 0, 0]) {
+        children();
+        // % cube([w, h, 1], center = true);
+    }
+
+    module supportHeight(a, offset) {
+        hull() {
+            rotate([atari_rotation, 0, 0])
+            translate([offset, a, 0])
+            cylinder(h = 0.25, r = support_r1);
+
+            translate([offset, a, sink])
+            cylinder(h = 0.25, r = support_r2);
+        }
+        foot(offset, a);
+    }
+
+    module supportWidth(a, offset) {
+        hull() {
+            rotate([atari_rotation, 0, 0])
+            translate([a, offset, 0])
+            cylinder(h = 0.25, r = support_r1);
+
+            translate([a, offset, sink])
+            cylinder(h = 0.25, r = support_r1);
+        }
+
+        foot(a, offset);
+    }
+
+     for (a = [ -h/2 : spacing : h/2 ]) {
+        supportHeight(a, -w/2);
+        supportHeight(a, -w/2 + thick/2);
+
+        supportHeight(a, w/2);
+        supportHeight(a, w/2 - thick/2);
+    }
+
+     for (a = [ -w/2 : spacing : w/2 ]) {
+        supportWidth(a, -h/2);
+        supportWidth(a, -h/2 + thick/2);
+
+        supportWidth(a, h/2);
+        supportWidth(a, h/2 - thick/2);
+    }
+
+    echo($stabilizers);
+    for(s = $stabilizers) {
+       support_stabilizers(s[0], s[1]);
+    }
+    support_stabilizers(0, 0);
+}
+
+module foot(x, y) {
+    translate([x, y, sink])
+    cylinder(h = 0.25, r = 1);
+}
+
+module support_stabilizers(x, y) {
+    color("magenta")
+    for (m = [0:1:1])
+    mirror([m, 0, 0]) {
+    hull()
+    {
+        translate([x, y, sink])
+        cylinder(h = 0.25, r = support_r2);
+
+        translate([3 +x, y, 2])
+        cylinder(h = 0.25, r = support_r2/2);
+    }
+    translate([0, 0, 0])
+    foot(x, y);
+    }
+}
+
+
 module graphicsKey(row, legend, svg) {
     difference() {
         u(1)
         legend(legend, [0,0], full_size)
-        oem_row(row)  key();
+        oem_row(row)
+        preKey()
+        key();
 
         front_of_key()
         scale([0.75, 1, 0.75]) {
@@ -45,7 +140,9 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
         u(1)
         legend(legendBottom, [0,1], half_size)
         legend(legendTop, [0,-1], half_size)
-        oem_row(4) key();
+        oem_row(4)
+        preKey()
+        key();
 
         front_of_key()
         scale([0.75, 1, 0.75]) {
@@ -54,6 +151,25 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
         }
     }
 }
+
+module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg) {
+    difference() {
+        u(1)
+        legend(legendBottom, [0,1], half_size)
+        legend(legendTop, [0,-1], half_size)
+        legend(legendLeft, [-1,-1], half_size)
+        oem_row(4)
+        preKey()
+        key();
+
+        front_of_key()
+        scale([0.75, 1, 0.75]) {
+          boundBox();
+          color("white") children();
+        }
+    }
+}
+
 
 gCut = 2;
 module boundBox() {
@@ -112,20 +228,26 @@ module gCharacter(t) {
 }
 
 module gridKey(legend) {
+    preKey(size=1.75, w2=19.5 + 3, h2=19.5+3)
+    gridKeyRender(legend);
+}
+
+module gridKeyRender(legend) {
     // The walls are WAY too thin by default and I couldn't find
     // a parameter setting that would thicken the walls on these kinds of
     // buttons, so we will manually re-enforce the button ourselves.
     //
-    // Slows down processing time, but -- eh -- 
+    // Slows down processing time, but -- eh --
 
     usize = 1.25;
     uhsize = 1.25;
 
     module key1() {
-      u(usize)
-      uh(uhsize)
-      legend(legend, [0,0], half_size)
-      grid_row(1) key();
+        u(usize)
+        uh(uhsize)
+        legend(legend, [0,0], half_size)
+        grid_row(1)
+        key();
     }
 
     h = 6;
@@ -138,9 +260,12 @@ module gridKey(legend) {
       hull()
       intersection() {
         key1();
-        translate([-50, -50, 0]) cube([100, 100, h]);
+        translate([-50, -50, 0])
+        cube([100, 100, h]);
       }
 
+
+     rotate([atari_rotation, 0, 0])
       cube([w, w, 100], center=true);
     }
 
@@ -156,7 +281,9 @@ module key_lshift() {
     u(2.25)
     stabilized()
     legend("SHIFT", [0,0], long_size)
-    oem_row(4)  key();
+    oem_row(4)
+    preKey()
+    key();
 }
 
 module key_z() {
@@ -231,17 +358,16 @@ module key_dot() {
 
 module key_slash() {
     translate_u(1.75 +9, 0)
-    u(1)
-    legend("/", [0,1], half_size)
-    legend("?", [0,-1], half_size)
-    oem_row(4) key();
+    graphicsKey2(4, "/", "?", "ctrl-period");
 }
 
 module rshift() {
     translate_u(1.75 +10.5, 0)
     u(1.75)
     legend("SHIFT", [0,0], long_size)
-    oem_row(4) key();
+    oem_row(4)
+    preKey()
+    key();
 }
 
 
@@ -253,7 +379,9 @@ module key_control() {
     u(2)
     stabilized()
     legend("CONTROL", [0,0], long_size)
-    oem_row(3) key();
+    oem_row(3)
+    preKey()
+    key();
 }
 
 module key_a() {
@@ -371,20 +499,12 @@ module key_semi() {
 
 module key_plus() {
     translate_u(-.5+1.5+10, 1)
-    u(1)
-    legend("+", [0,1], half_size)
-    legend("\\", [1,-1], half_size)
-    legend("←", [-1,-1], half_size)
-    oem_row(3) key();
+    graphicsKey3(3, "+", "\\", "←", "ctrl-comma");
 }
 
 module key_star() {
     translate_u(-.5+1.5+11, 1)
-    u(1)
-    legend("*", [0,1], half_size)
-    legend("^", [1,-1], half_size)
-    legend("→", [-1,-1], half_size)
-    oem_row(3) key();
+    graphicsKey3(3, "*", "^", "→", "ctrl-comma");
 }
 
 
@@ -392,7 +512,9 @@ module key_caps() {
     translate_u(-.5+1.5+12 +.25, 1)
     u(1.25)
     legend("CAPS", [0,0], long_size)
-    oem_row(3) key();
+    oem_row(3)
+    preKey()
+    key();
 }
 
 // ← ↑ ↓ →
@@ -405,7 +527,9 @@ module key_tab() {
     legend("TAB", [0,1], long_size)
     legend("CLR", [1,-1], long_size)
     legend("SET", [-1,-1], long_size)
-    oem_row(2) key();
+    oem_row(2)
+    preKey()
+    key();
 }
 
 module key_q() {
@@ -493,20 +617,12 @@ module key_p() {
 // ← ↑ ↓ →
 module key_dash() {
     translate_u(-.5+1.5+10, 2)
-    u(1)
-    legend("-", [0,1], half_size)
-    legend("_", [1,-1], half_size)
-    legend("↑", [-1,-1], half_size)
-    oem_row(2) key();
+    graphicsKey3(2, "-", "_", "↑", "ctrl-comma");
 }
 
 module key_equal() {
     translate_u(-.5+1.5+11, 2)
-    u(1)
-    legend("=", [0,1], half_size)
-    legend("|", [1,-1], half_size)
-    legend("↓", [-1,-1], half_size)
-    oem_row(2) key();
+    graphicsKey3(2, "=", "|", "↓", "ctrl-comma");
 }
 
 
@@ -514,7 +630,9 @@ module key_return() {
     translate_u(-.5+1.5+12.25, 2)
     u(1.5)
     legend("RETURN", [0,0], long_size)
-    oem_row(2) key();
+    oem_row(2)
+    preKey()
+    key();
 }
 
 //////////////////////////////////////
@@ -528,108 +646,68 @@ module key_esc() {
 
 module key_1() {
     translate_u(-.5+1.25, 3)
-    u(1)
-    legend("1", [0,1], half_size)
-    legend("!", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "1", "!", "ctrl-comma");
 }
 
 module key_2() {
     translate_u(-.5+1.25+1, 3)
-    u(1)
-    legend("2", [0,1], half_size)
-    legend("\"", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "2", "\"", "ctrl-comma");
 }
 
 module key_3() {
     translate_u(-.5+1.25+2, 3)
-    u(1)
-    legend("3", [0,1], half_size)
-    legend("#", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "3", "#", "ctrl-comma");
 }
 
 module key_4() {
     translate_u(-.5+1.25+3, 3)
-    u(1)
-    legend("4", [0,1], half_size)
-    legend("$", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "4", "$", "ctrl-comma");
 }
 
 module key_5() {
     translate_u(-.5+1.25+4, 3)
-    u(1)
-    legend("5", [0,1], half_size)
-    legend("%", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "5", "%", "ctrl-comma");
 }
 
 module key_6() {
     translate_u(-.5+1.25+5, 3)
-    u(1)
-    legend("6", [0,1], half_size)
-    legend("&", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "6", "&", "ctrl-comma");
 }
 
 module key_7() {
     translate_u(-.5+1.25+6, 3)
-    u(1)
-    legend("7", [0,1], half_size)
-    legend("'", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "7", "'", "ctrl-comma");
 }
 
 module key_8() {
     translate_u(-.5+1.25+7, 3)
-    u(1)
-    legend("8", [0,1], half_size)
-    legend("@", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "8", "&", "ctrl-comma");
 }
 
 module key_9() {
     translate_u(-.5+1.25+8, 3)
-    u(1)
-    legend("9", [0,1], half_size)
-    legend("(", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "9", "(", "ctrl-comma");
 }
 
 module key_0() {
     translate_u(-.5+1.25+9, 3)
-    u(1)
-    legend("0", [0,1], half_size)
-    legend(")", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "0", ")", "ctrl-comma");
 }
 
 
 module key_lt() {
     translate_u(-.5+1.25+10, 3)
-    u(1)
-    legend("<", [0,1], half_size)
-    legend("CLR", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "<", "CLR", "ctrl-comma");
 }
 
 module key_gt() {
     translate_u(-.5+1.25+11, 3)
-    u(1)
-    legend(">", [0,1], half_size)
-    legend("INS", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, ">", "INS", "ctrl-comma");
 }
 
 module key_bs() {
     translate_u(-.5+1.25+12.25, 3)
-    u(2)
-    stabilized()
-    legend("BACK SP", [0,1], half_size)
-    legend("DELETE", [0,-1], half_size)
-    oem_row(1) key();
+    graphicsKey2(1, "BACK SP", "DELETE", "ctrl-comma");
 }
 
 /////////////////
@@ -692,38 +770,28 @@ module key_spacebar() {
 
 module key_up() {
     translate_u(14, 0)
-    u(1)
-    legend("↑", [0,0], full_size)
-    oem_row(2) key();
+    graphicsKey(2, "↑", "ctrl-y");
 }
 
 module key_left() {
     translate_u(13, -1)
-    u(1)
-    legend("←", [0,0], full_size)
-    oem_row(3) key();
+    graphicsKey(2, "←", "ctrl-y");
 }
 
 module key_down() {
     translate_u(14, -1)
-    u(1)
-    legend("↓", [0,0], full_size)
-    oem_row(3) key();
-}
+    graphicsKey(2, "↓", "ctrl-y");
+ }
 
 module key_right() {
     translate_u(15, -1)
-    u(1)
-    legend("→", [0,0], full_size)
-    oem_row(3) key();
-}
+    graphicsKey(2, "→", "ctrl-y");
+ }
 
 
 module key_fn() {
     translate_u(3, -1)
-    u(1)
-    legend("FN", [0,0], long_size)
-     key();
+    graphicsKey(1, "FN", "ctrl-y");
 }
 
 
