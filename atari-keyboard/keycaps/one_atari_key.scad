@@ -3,7 +3,7 @@ use <atarikeys.scad>
 atari_rotation = 25;
 
 
-key = "key_lshift";
+key = "key_semi";
 
  print_one();
 

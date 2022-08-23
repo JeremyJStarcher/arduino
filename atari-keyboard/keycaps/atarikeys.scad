@@ -21,18 +21,6 @@ full_size = 9;
 long_size = 4;
 half_size = 4.5;
 
-// example key
-* dcs_row(1) legend("⇪", size=9) key();
-
-// example row
- * for (x = [0:1:4]) {
-  translate_u(0,-x) dcs_row(x) key();
-}
-
-// example layout
-* preonic_default("dcs") key();
-
-
 
 module preKey(size, w2, h2) {
     w = w2 == undef ? total_key_width() : w2;
@@ -48,14 +36,17 @@ module preKey(size, w2, h2) {
         // % cube([w, h, 1], center = true);
     }
 
+    rr1 = support_r1/2;
+    rr2 = support_r2/2;
+
     module supportHeight(a, offset) {
         hull() {
             rotate([atari_rotation, 0, 0])
             translate([offset, a, 0])
-            cylinder(h = 0.25, r = support_r1);
+            cube([rr1, rr1, 0.25]);
 
-            translate([offset, a, sink])
-            cylinder(h = 0.25, r = support_r2);
+            translate([offset + rr1, a, sink])
+            cube([rr2, rr2, 0.25]);
         }
         foot(offset, a);
     }
@@ -64,29 +55,29 @@ module preKey(size, w2, h2) {
         hull() {
             rotate([atari_rotation, 0, 0])
             translate([a, offset, 0])
-            cylinder(h = 0.25, r = support_r1);
+            cube([rr1, rr1, 0.25]);
 
             translate([a, offset, sink])
-            cylinder(h = 0.25, r = support_r1);
+            cube([rr2, rr2, 0.25]);
         }
 
         foot(a, offset);
     }
 
      for (a = [ -h/2 : spacing : h/2 ]) {
-        supportHeight(a, -w/2);
-        supportHeight(a, -w/2 + thick/2);
+        supportHeight(a, -w/2 + rr1);
+        supportHeight(a, -w/2 + thick/2 - rr1);
 
-        supportHeight(a, w/2);
-        supportHeight(a, w/2 - thick/2);
+        supportHeight(a, w/2 - rr1);
+        supportHeight(a, w/2 - thick/2 + rr1);
     }
 
      for (a = [ -w/2 : spacing : w/2 ]) {
-        supportWidth(a, -h/2);
-        supportWidth(a, -h/2 + thick/2);
+        supportWidth(a, -h/2 + rr1);
+        supportWidth(a, -h/2 + thick/2 - rr1);
 
-        supportWidth(a, h/2);
-        supportWidth(a, h/2 - thick/2);
+        supportWidth(a, h/2 - rr1);
+        supportWidth(a, h/2 - thick/2 + rr2);
     }
 
     for(s = $stabilizers) {
@@ -107,16 +98,24 @@ module support_stabilizers(x, y) {
     hull()
     {
         translate([x, y, sink])
-        cylinder(h = 0.25, r = support_r2);
+        cube([support_r2/2, support_r2/2, 0.25]);
 
         translate([3 +x, y, 2])
-        cylinder(h = 0.25, r = support_r2/2);
+        cube([support_r2/4, support_r2/4, 0.25]);
     }
     translate([0, 0, 0])
     foot(x, y);
     }
 }
 
+module frontGraphic() {
+    rotate([atari_rotation, 0, 0])
+    front_of_key()
+    scale([0.75, 1, 0.75]) {
+        boundBox();
+        color("white") children();
+    }
+}
 
 module graphicsKey(row, legend, svg) {
     difference() {
@@ -126,11 +125,8 @@ module graphicsKey(row, legend, svg) {
         preKey()
         key();
 
-        front_of_key()
-        scale([0.75, 1, 0.75]) {
-          boundBox();
-          color("white") children();
-        }
+        frontGraphic()
+        children();
     }
 }
 
@@ -143,11 +139,8 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
         preKey()
         key();
 
-        front_of_key()
-        scale([0.75, 1, 0.75]) {
-          boundBox();
-          color("white") children();
-        }
+        frontGraphic()
+        children();
     }
 }
 
@@ -161,11 +154,8 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg) {
         preKey()
         key();
 
-        front_of_key()
-        scale([0.75, 1, 0.75]) {
-          boundBox();
-          color("white") children();
-        }
+        frontGraphic()
+        children();
     }
 }
 
@@ -640,7 +630,9 @@ module key_esc() {
     translate_u(-.5, 3)
     u(1.25)
     legend("ESC", [0,0], long_size)
-    oem_row(1) key();
+    oem_row(1)
+    preKey()
+    key();
 }
 
 module key_1() {
@@ -763,7 +755,8 @@ module key_spacebar() {
   $dish_type = $dish_type != "disable" ? "sideways cylindrical" : "disable";
 
   translate_u(7, -1)
-  6_25u() stabilized(mm=50) key();
+  6_25u() stabilized(mm=50)
+  key();
 }
 
 
