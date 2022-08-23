@@ -14,7 +14,6 @@ module prepKey() {
 }
 
 
- 
 module print_one() {
     if (key == "key_lshift" || key == "layout") {
         prepKey() key_lshift();

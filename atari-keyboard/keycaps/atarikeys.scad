@@ -60,7 +60,7 @@ module preKey(size, w2, h2) {
         hull() {
             rotate([atari_rotation, 0, 0])
             translate([offset, a, 0])
-            cube([rr1, rr1, 0.25]);
+            cube([rr1+thick, rr1, 0.25]);
 
             translate([offset, a, sink])
             cube([rr2, rr2, 0.25]);
@@ -72,7 +72,7 @@ module preKey(size, w2, h2) {
         hull() {
             rotate([atari_rotation, 0, 0])
             translate([a, offset, 0])
-            cube([rr1, rr1, 0.25]);
+            cube([rr1, rr1 + thick, 0.25]);
 
             translate([a, offset, sink])
             cube([rr2, rr2, 0.25]);
@@ -83,18 +83,12 @@ module preKey(size, w2, h2) {
 
      for (a = [ -h/2 : spacing : h/2 ]) {
         color("red") supportHeight(a, -w/2 + rr1);
-        color("green") supportHeight(a, -w/2 + thick/2 - rr1);
-
-        color("black") supportHeight(a, w/2 - rr1);
-        supportHeight(a, w/2 - thick/2 + rr1);
+        color("black") supportHeight(a, w/2 - rr1 -thick);
     }
 
      for (a = [ -w/2 : spacing : w/2 ]) {
         color("white") supportWidth(a, -h/2 + rr1);
-        color("cyan") supportWidth(a, -h/2 + thick/2 - rr1);
-
-        color("blue") supportWidth(a, h/2 - rr1);
-        color("gray") supportWidth(a, h/2 - thick/2 + rr2);
+        color("blue") supportWidth(a, h/2 - rr1 -thick);
     }
 
     for(s = $stabilizers) {
