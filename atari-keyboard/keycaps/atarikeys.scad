@@ -3,13 +3,24 @@ include <./KeyV2/includes.scad>
 // How far to rotate the keys when they are generated
 atari_rotation = 25;
 
-$keytop_thickness = 2;
-
-
+// how far below the "zero line" to start making the supports.
 sink = -7;
+// Diamater of supports at one end
 support_r1 = 0.5;
+// Diamater of supports at other end
 support_r2 = 0.5;
 
+// Font size of one-letter per key
+full_size = 9;
+// Font size of words written on a key
+long_size = 4;
+// Font size if there are multiple lines on a key.
+half_size = 4.5;
+
+
+base_height = 0.4;
+
+$keytop_thickness = 2;
 
 $stem_support_type =  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
@@ -17,25 +28,31 @@ $inset_legend_depth = 1.5;
 
 $font = "Liberation Sans:style=Bold";
 
-full_size = 9;
-long_size = 4;
-half_size = 4.5;
 
 
 module preKey(size, w2, h2) {
+    // Rotate and then generate the key
+    rotate([atari_rotation, 0, 0]) {
+        children();
+    }
+
+    // The supports work by placing to points and drawing a line
+    // between them.  (IE, wrapping a hull around them.)
+    // The first point goes on the "sink" plane, the other point goes
+    // on the plane where the rotated key now sits on.
+
+    // Size of the key -- may be overwritten
     w = w2 == undef ? total_key_width() : w2;
     h = h2 == undef ? total_key_height() : h2;
 
+
+    // Thickness of the walls -- may be overwritten
     thick = size == undef ? $wall_thickness : size;
 
+    // Spacing between supports. Found by trail and error.
     spacing = 3;
 
-
-    rotate([atari_rotation, 0, 0]) {
-        children();
-        // % cube([w, h, 1], center = true);
-    }
-
+    // Shorthand values for easy of use.
     rr1 = support_r1/2;
     rr2 = support_r2/2;
 
@@ -45,7 +62,7 @@ module preKey(size, w2, h2) {
             translate([offset, a, 0])
             cube([rr1, rr1, 0.25]);
 
-            translate([offset + rr1, a, sink])
+            translate([offset, a, sink])
             cube([rr2, rr2, 0.25]);
         }
         foot(offset, a);
@@ -65,30 +82,35 @@ module preKey(size, w2, h2) {
     }
 
      for (a = [ -h/2 : spacing : h/2 ]) {
-        supportHeight(a, -w/2 + rr1);
-        supportHeight(a, -w/2 + thick/2 - rr1);
+        color("red") supportHeight(a, -w/2 + rr1);
+        color("green") supportHeight(a, -w/2 + thick/2 - rr1);
 
-        supportHeight(a, w/2 - rr1);
+        color("black") supportHeight(a, w/2 - rr1);
         supportHeight(a, w/2 - thick/2 + rr1);
     }
 
      for (a = [ -w/2 : spacing : w/2 ]) {
-        supportWidth(a, -h/2 + rr1);
-        supportWidth(a, -h/2 + thick/2 - rr1);
+        color("white") supportWidth(a, -h/2 + rr1);
+        color("cyan") supportWidth(a, -h/2 + thick/2 - rr1);
 
-        supportWidth(a, h/2 - rr1);
-        supportWidth(a, h/2 - thick/2 + rr2);
+        color("blue") supportWidth(a, h/2 - rr1);
+        color("gray") supportWidth(a, h/2 - thick/2 + rr2);
     }
 
     for(s = $stabilizers) {
        support_stabilizers(s[0], s[1]);
     }
     support_stabilizers(0, 0);
+
+    // Make the "base" for the keys to adhere to the bed.
+    color("lavender")
+    translate([-w/2, -h/2, sink])
+    cube([w, h, base_height]);
 }
 
 module foot(x, y) {
     translate([x, y, sink])
-    cylinder(h = 0.25, r = 1);
+    cylinder(h = base_height, r = 1);
 }
 
 module support_stabilizers(x, y) {
@@ -239,9 +261,9 @@ module gridKeyRender(legend) {
         key();
     }
 
-    h = 6;
+    hh = 6;
     w = total_key_width();
-
+    h = total_key_height();
 
     // Draw the re-enforced walls
     color("cyan")
@@ -250,12 +272,10 @@ module gridKeyRender(legend) {
       intersection() {
         key1();
         translate([-50, -50, 0])
-        cube([100, 100, h]);
+        cube([100, 100, hh]);
       }
 
-
-     rotate([atari_rotation, 0, 0])
-      cube([w, w, 100], center=true);
+       cube([w, h, hh*5], center=true);
     }
 
     // Then draw the button itself (which will redraw the thin walls)
