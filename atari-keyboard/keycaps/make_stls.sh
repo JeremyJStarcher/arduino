@@ -20,7 +20,7 @@ make_stl key_m
 make_stl key_comma
 make_stl key_dot
 make_stl key_slash
-make_stl rshift
+make_stl key_rshift
 make_stl key_control
 make_stl key_a
 make_stl key_s

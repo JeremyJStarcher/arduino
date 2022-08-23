@@ -49,8 +49,8 @@ module print_one() {
     if (key == "key_slash" || key == "layout") {
         prepKey() key_slash();
     }
-    if (key == "rshift" || key == "layout") {
-        rshift();
+    if (key == "key_rshift" || key == "layout") {
+        key_rshift();
     }
     if (key == "key_control" || key == "layout") {
         prepKey() key_control();

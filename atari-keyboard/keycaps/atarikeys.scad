@@ -361,7 +361,7 @@ module key_slash() {
     graphicsKey2(4, "/", "?", "ctrl-period");
 }
 
-module rshift() {
+module key_rshift() {
     translate_u(1.75 +10.5, 0)
     u(1.75)
     legend("SHIFT", [0,0], long_size)
@@ -808,7 +808,7 @@ module fullkeyboard() {
         key_comma();
         key_dot();
         key_slash();
-        rshift();
+        key_rshift();
     }
 
     if (true) {
