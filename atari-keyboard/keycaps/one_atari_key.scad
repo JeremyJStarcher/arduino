@@ -1,13 +1,12 @@
-use <atarikeys.scad>
+use <key_desc.scad>
 
 atari_rotation = 25;
 
 
-key = "key_reset";
-
+key = "key_ctrl";
 //print_one();
 
- prepKey() key_fn();
+ prepKey() key_control();
 
 module prepKey() {
     children();

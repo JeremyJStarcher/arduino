@@ -7,7 +7,7 @@ function make_stl {
 
 mkdir "$STL_DIR"
 
-make_stl layout
+(make_stl layout; echo "*************LAYOUT FINISHED*******************") &
 
 make_stl key_lshift
 make_stl key_z
