@@ -3,10 +3,10 @@ use <key_desc.scad>
 atari_rotation = 25;
 
 
-key = "key_ctrl";
-//print_one();
+ key = "key_reset";
+ print_one();
 
- prepKey() key_control();
+//  prepKey() key_a();
 
 module prepKey() {
     children();

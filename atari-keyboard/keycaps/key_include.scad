@@ -1,9 +1,9 @@
 
 // How far to rotate the keys when they are generated
-atari_rotation = 0;
+atari_rotation = 45;
 
 // how far below the "zero line" to start making the supports.
-sink = -3;
+sink = -9;
 // Diamater of supports at one end
 support_r1 = 0.5;
 // Diamater of supports at other end

@@ -34,7 +34,7 @@ module preKey(size, w2, h2) {
             cube([rr1+thick, rr1, 0.25]);
 
             translate([offset, a, sink])
-            cube([rr2, rr2, 0.25]);
+            cube([rr2+thick, rr2, 0.25]);
         }
         foot(offset, a);
     }
@@ -46,7 +46,7 @@ module preKey(size, w2, h2) {
             cube([rr1, rr1 + thick, 0.25]);
 
             translate([a, offset, sink])
-            cube([rr2, rr2, 0.25]);
+            cube([rr2, rr2 + thick, 0.25]);
         }
 
         foot(a, offset);
@@ -82,6 +82,8 @@ module support_stabilizers(x, y) {
     // Offset for the supports
     ox = 2.5;
     oy = 1.5;
+    sup_len = 3;
+
 
     for (m = [0:1:1])
     mirror([m, 0, 0])
@@ -92,10 +94,10 @@ module support_stabilizers(x, y) {
         hull()
         {
             translate([x + ox, y+oy, sink])
-            cube([support_r2, support_r2, 0.25]);
+            cube([support_r2, sup_len, 0.25]);
 
             translate([x + ox, y+oy, 2])
-            cube([support_r2, support_r2, 0.25]);
+            cube([support_r2, sup_len, 0.25]);
         }
 
     // translate([ox, oy, 0])
