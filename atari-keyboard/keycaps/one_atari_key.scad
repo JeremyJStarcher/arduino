@@ -1,6 +1,6 @@
 use <key_desc.scad>
 
-atari_rotation = 25;
+atari_rotation = 0;
 
 
  key = "key_reset";

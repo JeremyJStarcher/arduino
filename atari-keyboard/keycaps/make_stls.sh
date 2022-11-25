@@ -5,9 +5,10 @@ function make_stl {
    time flatpak run org.openscad.OpenSCAD -D "key=\"$1\"" -o "$STL_DIR/$1.stl" "one_atari_key.scad" > /dev/null 2> /dev/null
 }
 
+rm -rf "$STL_DIR"
 mkdir "$STL_DIR"
 
-(make_stl layout; echo "*************LAYOUT FINISHED*******************") &
+# (make_stl layout; echo "*************LAYOUT FINISHED*******************") &
 
 make_stl key_lshift
 make_stl key_z

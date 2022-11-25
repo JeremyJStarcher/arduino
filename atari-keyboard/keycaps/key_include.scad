@@ -1,6 +1,6 @@
 
 // How far to rotate the keys when they are generated
-atari_rotation = 45;
+atari_rotation = 0; // 45;
 
 // how far below the "zero line" to start making the supports.
 sink = -9;
@@ -21,7 +21,7 @@ base_height = 0.4;
 
 $keytop_thickness = 2;
 
-$stem_support_type =  "disable"; // "disable"; // "tines"
+$stem_support_type = "tines"; //  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
 // $clearance_check = true;
 

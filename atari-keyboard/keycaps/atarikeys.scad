@@ -52,6 +52,7 @@ module preKey(size, w2, h2) {
         foot(a, offset);
     }
 
+if (false) {
      for (a = [ -h/2 : spacing : h/2 ]) {
         color("red") supportHeight(a, -w/2 + rr1);
         color("black") supportHeight(a, w/2 - rr1 -thick);
@@ -71,6 +72,7 @@ module preKey(size, w2, h2) {
     color("lavender")
     translate([-w/2, -h/2, sink])
     cube([w, h, base_height]);
+    }
 }
 
 module foot(x, y) {
