@@ -33,9 +33,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 3.2,
-          "height": 3.2,
-          "width": 3.2
+          "drill": 4.0,
+          "height": 4.0,
+          "width": 4.0
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -415,6 +415,10 @@
     [
       "f6a334f3-ee33-4c56-a7bb-b961693d3d0e",
       ""
+    ],
+    [
+      "7ce608c9-579d-47fb-84c9-158fdf17ec91",
+      "Keyboard Matrix"
     ]
   ],
   "text_variables": {}
