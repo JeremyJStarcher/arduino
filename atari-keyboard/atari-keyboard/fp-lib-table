@@ -1,4 +1,5 @@
 (fp_lib_table
-  (lib (name promicro)(type KiCad)(uri ${KIPRJMOD}/lib/ProMicroKiCad/promicro.pretty)(options "")(descr ""))
-  (lib (name teensy)(type KiCad)(uri ${KIPRJMOD}/lib/teensy.pretty)(options "")(descr ""))
+  (lib (name "promicro")(type "KiCad")(uri "${KIPRJMOD}/lib/ProMicroKiCad/promicro.pretty")(options "")(descr ""))
+  (lib (name "teensy")(type "KiCad")(uri "${KIPRJMOD}/lib/teensy.pretty")(options "")(descr ""))
+  (lib (name "diode")(type "KiCad")(uri "${KIPRJMOD}/lib/diode.pretty")(options "")(descr ""))
 )
