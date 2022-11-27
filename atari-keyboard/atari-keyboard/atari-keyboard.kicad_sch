@@ -1816,7 +1816,7 @@
       (reference "SW208") (unit 1) (value "ESC") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.25u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/281637fe-9312-4fbe-a1be-1b9f22c21547"
-      (reference "SW209") (unit 1) (value "RSHIFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB")
+      (reference "SW209") (unit 1) (value "RSHIFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.75u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/6064b8dc-dfa5-4aba-ae50-7f71170597e7"
       (reference "SW210") (unit 1) (value "1") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")

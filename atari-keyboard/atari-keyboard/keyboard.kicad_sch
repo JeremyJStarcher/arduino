@@ -1607,7 +1607,7 @@
     (uuid 281637fe-9312-4fbe-a1be-1b9f22c21547)
     (property "Reference" "SW209" (id 0) (at 217.805 37.592 0))
     (property "Value" "RSHIFT" (id 1) (at 217.805 39.751 0))
-    (property "Footprint" "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB" (id 2) (at 217.805 43.561 0)
+    (property "Footprint" "Button_Switch_Keyboard:SW_Cherry_MX_1.75u_PCB" (id 2) (at 217.805 43.561 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 217.805 43.561 0)
