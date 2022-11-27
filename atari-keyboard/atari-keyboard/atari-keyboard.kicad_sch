@@ -1208,7 +1208,7 @@
     (property "Value" "JS2_UP" (id 1) (at 208.788 78.994 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 80.01 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 80.01 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 80.01 90)
@@ -1227,7 +1227,7 @@
     (property "Value" "JS1_TRIG" (id 1) (at 208.788 113.284 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 114.3 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 114.3 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 114.3 90)
@@ -1246,7 +1246,7 @@
     (property "Value" "JS1_DOWN" (id 1) (at 208.788 115.824 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 116.84 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 116.84 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 116.84 90)
@@ -1265,7 +1265,7 @@
     (property "Value" "JS1_LEFT" (id 1) (at 208.788 120.904 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 121.92 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 121.92 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 121.92 90)
@@ -1284,7 +1284,7 @@
     (property "Value" "JS1_RIGHT" (id 1) (at 208.788 125.984 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 127 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 127 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 127 90)
@@ -1326,7 +1326,7 @@
     (property "Value" "JS1_UP" (id 1) (at 208.788 110.998 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 111.76 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 111.76 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 111.76 90)
@@ -1345,7 +1345,7 @@
     (property "Value" "JS2_TRIG" (id 1) (at 208.788 81.534 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 82.55 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 82.55 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 82.55 90)
@@ -1364,7 +1364,7 @@
     (property "Value" "JS2_DOWN" (id 1) (at 208.788 84.074 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 85.09 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 85.09 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 85.09 90)
@@ -1383,7 +1383,7 @@
     (property "Value" "JS2_LEFT" (id 1) (at 208.788 89.154 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 90.17 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 90.17 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 90.17 90)
@@ -1402,7 +1402,7 @@
     (property "Value" "JS2_RIGHT" (id 1) (at 208.788 94.234 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Diode_THT:D_A-405_P7.62mm_Horizontal" (id 2) (at 203.708 95.25 90)
+    (property "Footprint" "keebio:Diode-dual" (id 2) (at 203.708 95.25 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 203.708 95.25 90)
@@ -1432,7 +1432,7 @@
     (uuid 851fb7ec-6f58-4ab4-9c71-5a4c84c5ea49)
     (property "Reference" "R101" (id 0) (at 127.508 159.258 90))
     (property "Value" "220R" (id 1) (at 127.508 156.718 90))
-    (property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal" (id 2) (at 127.508 150.622 90)
+    (property "Footprint" "keebio:Resistor-Hybrid" (id 2) (at 127.508 150.622 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 127.508 152.4 0)
@@ -1528,244 +1528,244 @@
 
   (symbol_instances
     (path "/00000000-0000-0000-0000-000061720699"
-      (reference "D101") (unit 1) (value "JS2_UP") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D101") (unit 1) (value "JS2_UP") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000618ed608"
-      (reference "D102") (unit 1) (value "JS2_TRIG") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D102") (unit 1) (value "JS2_TRIG") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000618f82e6"
-      (reference "D103") (unit 1) (value "JS2_DOWN") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D103") (unit 1) (value "JS2_DOWN") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000619034e8"
-      (reference "D104") (unit 1) (value "JS2_LEFT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D104") (unit 1) (value "JS2_LEFT") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-00006190eb2d"
-      (reference "D105") (unit 1) (value "JS2_RIGHT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D105") (unit 1) (value "JS2_RIGHT") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000618e2da7"
-      (reference "D106") (unit 1) (value "JS1_UP") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D106") (unit 1) (value "JS1_UP") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000617286d0"
-      (reference "D107") (unit 1) (value "JS1_TRIG") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D107") (unit 1) (value "JS1_TRIG") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-0000617305f4"
-      (reference "D108") (unit 1) (value "JS1_DOWN") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D108") (unit 1) (value "JS1_DOWN") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-000061738b8b"
-      (reference "D109") (unit 1) (value "JS1_LEFT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D109") (unit 1) (value "JS1_LEFT") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-000061741709"
-      (reference "D110") (unit 1) (value "JS1_RIGHT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D110") (unit 1) (value "JS1_RIGHT") (footprint "keebio:Diode-dual")
     )
     (path "/51097f15-2b12-4eb4-bd78-0cba38e9117f"
       (reference "D111") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/e8f4794d-dacc-4c5e-9ce6-34d5500c4f9d"
-      (reference "D201") (unit 1) (value "MENU") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D201") (unit 1) (value "MENU") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2e3a85ac-ee12-4a9b-9958-88cbcc7a9f21"
-      (reference "D202") (unit 1) (value "TURBO") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D202") (unit 1) (value "TURBO") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/821a9205-61f0-4cbd-b64f-aff3371430e8"
-      (reference "D203") (unit 1) (value "RESET") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D203") (unit 1) (value "RESET") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/24d9bf01-9836-45c9-849c-5f22d7089751"
-      (reference "D204") (unit 1) (value "OPTION") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D204") (unit 1) (value "OPTION") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/da8f1458-98e8-4cad-af5f-5b4fb7dcf4db"
-      (reference "D205") (unit 1) (value "SELECT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D205") (unit 1) (value "SELECT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b8ba212f-31c0-4f8a-8962-3d7c010bd303"
-      (reference "D206") (unit 1) (value "START") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D206") (unit 1) (value "START") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b4116555-1ac2-4137-9eef-20651979f021"
-      (reference "D207") (unit 1) (value "HELP") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D207") (unit 1) (value "HELP") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/e27b078a-2d84-4955-868c-2e6e1bbc9aea"
-      (reference "D208") (unit 1) (value "ESC") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D208") (unit 1) (value "ESC") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/c27ff7f3-ec04-415b-b48a-f863157552c4"
-      (reference "D209") (unit 1) (value "RSHIFT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D209") (unit 1) (value "RSHIFT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b0b88a84-9e03-4b65-9543-23a2e524f352"
-      (reference "D210") (unit 1) (value "1") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D210") (unit 1) (value "1") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/052f7772-cb05-422f-8f50-cb6cac9542e0"
-      (reference "D211") (unit 1) (value "2") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D211") (unit 1) (value "2") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/629dc822-6873-4bf0-9248-3d74d3269598"
-      (reference "D212") (unit 1) (value "3") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D212") (unit 1) (value "3") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/77869a9f-f989-4962-94c2-a4fbe8f76e29"
-      (reference "D213") (unit 1) (value "4") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D213") (unit 1) (value "4") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/495132dc-22d4-403e-b17c-4708218427de"
-      (reference "D214") (unit 1) (value "5") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D214") (unit 1) (value "5") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/1ebe0a6d-564a-405c-9bd4-2610b4cbd179"
-      (reference "D215") (unit 1) (value "6") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D215") (unit 1) (value "6") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/027dadb3-4c1b-427f-b67c-8f6d081d9cce"
-      (reference "D216") (unit 1) (value "7") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D216") (unit 1) (value "7") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/d71d9504-6d66-48e0-b88a-7d24082ee265"
-      (reference "D217") (unit 1) (value "8") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D217") (unit 1) (value "8") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/93bab6b5-ac9b-4be4-a726-fb29d1f8e12f"
-      (reference "D218") (unit 1) (value "UP") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D218") (unit 1) (value "UP") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bdcb5b74-1f6b-4925-bb73-7aae2a758026"
-      (reference "D219") (unit 1) (value "9") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D219") (unit 1) (value "9") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/08113495-e5e0-42ec-9a38-8d2e0150f6d3"
-      (reference "D220") (unit 1) (value "0") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D220") (unit 1) (value "0") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/a63abb63-fbc0-43e6-95f7-f8ef1bb39cc2"
-      (reference "D221") (unit 1) (value "<") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D221") (unit 1) (value "<") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/fdf7b66b-02cb-4423-80ca-8cb48a52743e"
-      (reference "D222") (unit 1) (value ">") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D222") (unit 1) (value ">") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0c10f712-9afb-4612-af2c-deb97c393270"
-      (reference "D223") (unit 1) (value "BS") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D223") (unit 1) (value "BS") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bc0c9424-66e5-4a43-b309-f26896f5033b"
-      (reference "D224") (unit 1) (value "BRK") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D224") (unit 1) (value "BRK") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/531a95e8-0a0e-490d-970d-472dfb031305"
-      (reference "D225") (unit 1) (value "TAB") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D225") (unit 1) (value "TAB") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/3b4dace1-be2c-4d3a-ad9f-d1088c9662d7"
-      (reference "D226") (unit 1) (value "Q") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D226") (unit 1) (value "Q") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/8467e097-4e4f-4750-8e0c-f905e1b2502d"
-      (reference "D227") (unit 1) (value "DOWN") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D227") (unit 1) (value "DOWN") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/d835937c-0813-4986-b0c4-c55b3ca351f1"
-      (reference "D228") (unit 1) (value "W") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D228") (unit 1) (value "W") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/befce458-70dd-4f97-913c-25b887f7b18d"
-      (reference "D229") (unit 1) (value "E") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D229") (unit 1) (value "E") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/c8e5d33f-a2e3-4a0e-9473-067ed7be283d"
-      (reference "D230") (unit 1) (value "R") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D230") (unit 1) (value "R") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/fd2224c6-c9cb-4602-8d5c-190c89d716a0"
-      (reference "D231") (unit 1) (value "T") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D231") (unit 1) (value "T") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/71ec4c00-27f7-4200-ad2c-54a93d5c2cff"
-      (reference "D232") (unit 1) (value "Y") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D232") (unit 1) (value "Y") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/227f3480-071f-4606-8298-a48bcd0524ca"
-      (reference "D233") (unit 1) (value "U") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D233") (unit 1) (value "U") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/e2e65087-d4e0-4291-8f80-7df3d3a5f5e2"
-      (reference "D234") (unit 1) (value "I") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D234") (unit 1) (value "I") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/6f15f5ba-d0e6-4c7b-b080-1c9101e9efa8"
-      (reference "D235") (unit 1) (value "O") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D235") (unit 1) (value "O") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/e0691e3d-f3a5-433f-ac48-b6b32a39d90f"
-      (reference "D236") (unit 1) (value "LEFT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D236") (unit 1) (value "LEFT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0c1b683f-4563-4a80-a5a8-a8fb3ec4a3f1"
-      (reference "D237") (unit 1) (value "P") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D237") (unit 1) (value "P") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/f20bbb75-6e1c-4b87-8a94-28eed7ef2d23"
-      (reference "D238") (unit 1) (value "[-]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D238") (unit 1) (value "[-]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/31265e11-d1dd-4d7e-9dca-82e017cfbf86"
-      (reference "D239") (unit 1) (value "[=]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D239") (unit 1) (value "[=]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/06cf9672-125e-4c42-969d-2bac960c1653"
-      (reference "D240") (unit 1) (value "RET") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D240") (unit 1) (value "RET") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0d9e43e8-11fe-4681-96b4-850ab662e4c6"
-      (reference "D241") (unit 1) (value "CTRL") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D241") (unit 1) (value "CTRL") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/c368f874-b80f-4425-b501-f6d46574a747"
-      (reference "D242") (unit 1) (value "A") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D242") (unit 1) (value "A") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/34f602d0-b3b4-4b16-b8cc-de012ba63744"
-      (reference "D243") (unit 1) (value "S") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D243") (unit 1) (value "S") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/05178f91-1a51-442c-bdc2-71f0badc6014"
-      (reference "D244") (unit 1) (value "D") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D244") (unit 1) (value "D") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/27b73bad-3364-4b07-ab7b-3316c9a4e654"
-      (reference "D245") (unit 1) (value "RIGHT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D245") (unit 1) (value "RIGHT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/f44047a7-fb42-440d-b8cf-12dec7bbf2af"
-      (reference "D246") (unit 1) (value "F") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D246") (unit 1) (value "F") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bfc65672-5f12-4a61-9996-22d64cb0c680"
-      (reference "D247") (unit 1) (value "G") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D247") (unit 1) (value "G") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/caa786dc-6794-4b3a-953e-89be66ea4301"
-      (reference "D248") (unit 1) (value "H") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D248") (unit 1) (value "H") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/08ae1594-db75-468e-b539-be57316e5d3c"
-      (reference "D249") (unit 1) (value "J") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D249") (unit 1) (value "J") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/3367adf1-75cc-4129-ab94-7b9341e517bf"
-      (reference "D250") (unit 1) (value "K") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D250") (unit 1) (value "K") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/16b198f4-93b6-4092-a8eb-67ddf34ad745"
-      (reference "D251") (unit 1) (value "L") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D251") (unit 1) (value "L") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0d613ecc-0ab9-410f-9e42-9e40059d93ae"
-      (reference "D252") (unit 1) (value "[;]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D252") (unit 1) (value "[;]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/93dbd43b-ef0c-4cd0-ba07-6c58097861bb"
-      (reference "D253") (unit 1) (value "[+]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D253") (unit 1) (value "[+]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b66acc6d-fe0c-430b-80f1-369308d81ea4"
-      (reference "D254") (unit 1) (value "N") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D254") (unit 1) (value "N") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/41906be9-def6-4ec7-b5dd-3b98c009b00d"
-      (reference "D255") (unit 1) (value "MULT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D255") (unit 1) (value "MULT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/33497429-98b1-4ca7-936b-1330c65e35f0"
-      (reference "D256") (unit 1) (value "CAPS") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D256") (unit 1) (value "CAPS") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/cd2581ab-b664-486e-afcd-c1af700cbbda"
-      (reference "D257") (unit 1) (value "LSHIFT") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D257") (unit 1) (value "LSHIFT") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/29607c23-8200-48da-bd08-2143cf739dcf"
-      (reference "D258") (unit 1) (value "Z") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D258") (unit 1) (value "Z") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/a6d8ea23-dc3d-4712-b64c-b73ead2d57f7"
-      (reference "D259") (unit 1) (value "X") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D259") (unit 1) (value "X") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/7fbfb29b-f309-427a-8bb6-31df35e0d54d"
-      (reference "D260") (unit 1) (value "C") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D260") (unit 1) (value "C") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/8577a6fe-f7de-4409-9099-ba13839c439a"
-      (reference "D261") (unit 1) (value "V") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D261") (unit 1) (value "V") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/7b65747b-b99a-4eb8-be0b-18401d3dabc1"
-      (reference "D262") (unit 1) (value "B") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D262") (unit 1) (value "B") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/d73c3b18-9d00-4e7d-9eae-d7b939d5c46f"
-      (reference "D263") (unit 1) (value "M") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D263") (unit 1) (value "M") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/d6c53bbf-dc17-44ea-9c1a-004e0561a315"
-      (reference "D264") (unit 1) (value "FN") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D264") (unit 1) (value "FN") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/66fb3ff2-0141-4ed3-ad36-01db6b0e42d2"
-      (reference "D265") (unit 1) (value "INV") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D265") (unit 1) (value "INV") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/78bdd35f-a1d9-43e1-bee4-4dc4856c923c"
-      (reference "D266") (unit 1) (value "SPC") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D266") (unit 1) (value "SPC") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/634f4e9f-ef29-49ae-b4d4-01853988083f"
-      (reference "D267") (unit 1) (value "[,]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D267") (unit 1) (value "[,]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/805c2145-1325-426b-b05a-e245f6a62a93"
-      (reference "D268") (unit 1) (value "[.]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D268") (unit 1) (value "[.]") (footprint "keebio:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2a6e9558-ed1b-417f-917f-f2d251487ca1"
-      (reference "D269") (unit 1) (value "[/]") (footprint "Diode_THT:D_A-405_P7.62mm_Horizontal")
+      (reference "D269") (unit 1) (value "[/]") (footprint "keebio:Diode-dual")
     )
     (path "/00000000-0000-0000-0000-00005fff9fd0"
       (reference "H101") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
@@ -1789,7 +1789,7 @@
       (reference "J103") (unit 1) (value "I2C DISPLAY") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal")
     )
     (path "/851fb7ec-6f58-4ab4-9c71-5a4c84c5ea49"
-      (reference "R101") (unit 1) (value "220R") (footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+      (reference "R101") (unit 1) (value "220R") (footprint "keebio:Resistor-Hybrid")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/5285c016-3524-4bef-afb0-fab8d0a67cdb"
       (reference "SW201") (unit 1) (value "MENU") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
