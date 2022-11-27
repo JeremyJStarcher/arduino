@@ -1767,6 +1767,9 @@
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2a6e9558-ed1b-417f-917f-f2d251487ca1"
       (reference "D269") (unit 1) (value "[/]") (footprint "keebio:Diode-dual")
     )
+    (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bce8dcfb-ce2b-4423-ac10-6a057fc3b0b8"
+      (reference "D270") (unit 1) (value "POWER") (footprint "keebio:Diode-dual")
+    )
     (path "/00000000-0000-0000-0000-00005fff9fd0"
       (reference "H101") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
     )
@@ -1997,6 +2000,9 @@
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b6f1da38-68c3-481e-8220-09221a8b2c95"
       (reference "SW269") (unit 1) (value "[/]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+    )
+    (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2f170201-a346-425f-ac5c-60533c0b40bf"
+      (reference "SW270") (unit 1) (value "POWER") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/8fbf99e6-ffae-4abc-b168-56873feffb71"
       (reference "U101") (unit 1) (value "Elite-C") (footprint "keebio:Elite-C-castellated-29pin-holes")
