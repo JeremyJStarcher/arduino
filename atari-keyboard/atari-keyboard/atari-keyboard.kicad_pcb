@@ -8941,6 +8941,7 @@
     )
   )
 
-  (gr_rect (start 61 177.75) (end 396.4975 306.66) (layer "Edge.Cuts") (width 0.2) (fill none) (tstamp 0d6b9d82-d528-45d5-82d2-0d360e1d8a09))
+  (gr_rect (start 120.3725 182.704) (end 144.185 206.5165) (layer "B.SilkS") (width 0.12) (fill none) (tstamp 7fbce408-6449-4d2d-9818-78cc9ad630d4))
+  (gr_rect (start 58.46 182.704) (end 396.5975 306.654) (layer "Edge.Cuts") (width 0.12) (fill none) (tstamp e17c3cee-fb2f-4779-9200-92eb3ce0bbb1))
 
 )
