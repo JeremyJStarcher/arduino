@@ -2,4 +2,5 @@
   (lib (name "promicro")(type "KiCad")(uri "${KIPRJMOD}/lib/ProMicroKiCad/promicro.pretty")(options "")(descr ""))
   (lib (name "teensy")(type "KiCad")(uri "${KIPRJMOD}/lib/teensy.pretty")(options "")(descr ""))
   (lib (name "diode")(type "KiCad")(uri "${KIPRJMOD}/lib/diode.pretty")(options "")(descr ""))
+  (lib (name "retro-kbd")(type "KiCad")(uri "${KIPRJMOD}/lib/retro-kbd.pretty")(options "")(descr ""))
 )
