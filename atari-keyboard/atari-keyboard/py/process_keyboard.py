@@ -6,6 +6,8 @@ pcb_name = "../atari-keyboard.kicad_pcb"
 
 STARTING_INDEX = 201
 
+UNIT = 19.05
+
 X_ORIG = 61
 Y_ORIG = 177.75
 
@@ -28,7 +30,7 @@ class KeyInfo:
     h = 0
     matrix_r = 0
     matrix_c = 0
-    designator = "--"
+    designator = None
     label = ""
 
     def __init__(self):
@@ -90,8 +92,8 @@ def get_layout():
 
         keyInfo = KeyInfo()
 
-        keyInfo.x =  key.get('x')
-        keyInfo.y =  key.get('y')
+        keyInfo.x =  key.get('x') * UNIT
+        keyInfo.y =  key.get('y') * UNIT
         keyInfo.w =  key.get('w', 1)
         keyInfo.h =  key.get('h', 1)
         keyInfo.label = key.get("label")
@@ -115,12 +117,26 @@ def run_it():
 
     layout = get_layout()
 
-    print (layout)
+    #print (layout)
 
     pcb_sexp = read_sexp(pcb_name)
     parser = SParser(pcb_sexp)
-    a = parser.toArray()
-    l = parser.arrayToSexp([a])
+    parser.toArray()
+
+    for item in layout:
+
+        if item.designator == None:
+            continue
+        else:
+            print("Searching for" + item.designator)
+
+        at = parser.findAtByReference("SW" + item.designator)
+        if at != None:
+            at[1] = item.x
+            at[2] = item.y
+            #print(item)
+
+    l = parser.arrayToSexp()
     out = "\r\n".join(l)
 
     with open(pcb_name, 'w') as f:

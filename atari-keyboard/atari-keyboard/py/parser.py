@@ -4,6 +4,7 @@ TOKEN_ENDER = WHITESPACE + ")"
 class SParser:
     str = ""
     idx = 0
+    arr = []
 
     def __init__(self, str):
         self.str = str
@@ -71,6 +72,7 @@ class SParser:
             ch = self.peekNextCharacter()
             if (ch == ")"):
                 self.eatNextCharacter()
+                self.arr = ret
                 return ret
 
             if (ch == "("):
@@ -93,15 +95,64 @@ class SParser:
             else:
                 print(indent + e)
 
-    def arrayToSexp(self, array, depth = 0, out=[]):
+
+    def arrayToSexp(self):
+        return self.arrayToSexpInner([self.arr], 0, [])
+
+    def arrayToSexpInner(self, array, depth = 0, out=[]):
 
         indent = " " * 2 * depth
 
         for e in array:
             if isinstance(e, list):
                 out.append(indent + "(")
-                self.arrayToSexp(e, depth+1, out)
+                self.arrayToSexpInner(e, depth+1, out)
                 out.append(indent + ")")
+            elif isinstance(e, float):
+                out.append(indent + str(e))
+            elif isinstance(e, int):
+                out.append(indent + str(e))
             else:
                 out.append(indent + e)
         return out
+
+    def findObjectsByNoun(self, noun, maxDepth):
+        return self.findObjectsByNounInner([self.arr], noun, maxDepth, 0, [])
+
+    def findObjectsByNounInner(self, array, noun, maxDepth, depth, out):
+        for e in array:
+            if isinstance(e, list):
+                if (len(e) > 0) and (e[0] == noun):
+                    out.append(e)
+
+                if (depth < maxDepth):
+                    self.findObjectsByNounInner(e, noun, maxDepth, depth+1, out)
+            else:
+                pass
+        return out
+
+    def findFootprintByReference(self, ref):
+        prints = self.findObjectsByNoun("footprint", 1)
+
+        for p in prints:
+            #print(p)
+
+            o = []
+            self.findObjectsByNounInner(p, "fp_text", 100, 0, o)
+            filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2] == "\"" + ref + "\""), o)
+            
+            lst = list(filtered)
+            if (len(lst) > 0):
+                return p
+
+    def findAtByReference(self, ref):
+        footprint = self.findFootprintByReference(ref)
+
+        #print(footprint)
+        o = []
+        self.findObjectsByNounInner(footprint, "at", 0, 0, o)
+
+        if (len(o) > 1):
+            raise Exception("Found too many top-level ATs for" + ref)
+
+        return o[0]

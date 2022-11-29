@@ -127,6 +127,7 @@ class TestStringMethods(unittest.TestCase):
     def test_toArrayParsesNestedTokens(self):
         parser = SParser("(  (hello)   world  )")
         a = parser.toArray();
+
         self.assertTrue(hasattr(a, "__len__"))
         self.assertEqual(a[0][0], "hello")
         self.assertEqual(a[1], "world")
@@ -134,12 +135,60 @@ class TestStringMethods(unittest.TestCase):
     def test_toArrayFinal(self):
         s = read_file()
         parser = SParser(s)
-        #parser = SParser("(  (hello)   world  )")
+        parser.toArray()
+        l = parser.arrayToSexp()
+        # print("\r\n".join(l))
 
-        a = parser.toArray()
-        l = parser.arrayToSexp(a)
-        print("\r\n".join(l))
+    def test_findObjectsByNounByRootDepth0(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findObjectsByNoun("kicad_pcb", 0)
+        self.assertEqual(len(l), 1)
+        self.assertEqual(l[0][0], "kicad_pcb")
 
+
+
+    def test_findObjectsByNounByLevel1Depth0(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findObjectsByNoun("level1-test", 0)
+        self.assertEqual(len(l), 0)
+
+    def test_findObjectsByNounByLevel1Depth1(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findObjectsByNoun("level1-test", 1)
+        self.assertEqual(len(l), 1)
+
+    def test_findFootprintByGoodReference(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findFootprintByReference("SW201")
+        self.assertTrue(l != None)
+        self.assertEqual(l[0], "footprint")
+
+    def test_findFootprintByBadReference(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findFootprintByReference("THIS_DOES_NOT_EXIST")
+        self.assertTrue(l == None)
+
+    def test_findAtGoodReference(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findAtByReference("SW201")
+        self.assertTrue(l != None)
+        self.assertEqual(l[1], "-153.1515")
+        self.assertEqual(l[2], "82.409")
+        
+        #print(l)
+        #print("    (at -153.1515 82.409)")
 
 if __name__ == '__main__':
     unittest.main()
