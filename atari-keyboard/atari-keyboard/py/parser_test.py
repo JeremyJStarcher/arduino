@@ -186,7 +186,18 @@ class TestStringMethods(unittest.TestCase):
         self.assertTrue(l != None)
         self.assertEqual(l[1], "-153.1515")
         self.assertEqual(l[2], "82.409")
-        
+
+    def test_findSetObjectLocation(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        parser.setObjectLocation("SW201", -100, -200)
+        l = parser.findAtByReference("SW201")
+        self.assertTrue(l != None)
+        self.assertEqual(l[1], -100)
+        self.assertEqual(l[2], -200)
+
+
         #print(l)
         #print("    (at -153.1515 82.409)")
 

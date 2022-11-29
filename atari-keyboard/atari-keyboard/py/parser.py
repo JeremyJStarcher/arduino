@@ -156,3 +156,15 @@ class SParser:
             raise Exception("Found too many top-level ATs for" + ref)
 
         return o[0]
+
+    def setObjectLocation(self, ref, x, y, rot = 0):
+        at = self.findAtByReference(ref)
+        if at != None:
+            while (len(at) > 0):
+                at.pop()
+            
+            at.append("at")
+            at.append(x)
+            at.append(y)
+            at.append(rot)
+            

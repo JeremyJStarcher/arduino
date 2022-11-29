@@ -32,6 +32,9 @@ class KeyInfo:
     matrix_c = 0
     designator = None
     label = ""
+    skip = True
+    diode_x = 0
+    diode_y = 0
 
     def __init__(self):
         self.bbox = BoundingBox();
@@ -65,15 +68,15 @@ def read_json(name):
 
 def setdesignators(startingIndex, keys):
 
-    filtered = list(filter(lambda key: key.x != -1, keys))
+    filtered = list(filter(lambda key: not key.skip, keys))
 
     # Just make sure that "xx" and "yy" are far greater than your grid.
     # Any spots that are unused will be skipped, just like there are no
     # references assigned to empty spots on your schematic grid.
 
     idx = startingIndex
-    for row in range(10):
-        for col in range(10):
+    for col in range(10):
+        for row in range(10):
             
             items = filter(lambda zkey: (zkey.matrix_r == row) and (zkey.matrix_c == col), filtered)
 
@@ -92,11 +95,17 @@ def get_layout():
 
         keyInfo = KeyInfo()
 
+        keyInfo.skip = key.get('x') == -1
+
         keyInfo.x =  key.get('x') * UNIT
         keyInfo.y =  key.get('y') * UNIT
         keyInfo.w =  key.get('w', 1)
         keyInfo.h =  key.get('h', 1)
         keyInfo.label = key.get("label")
+
+
+        keyInfo.diode_x = keyInfo.x + DIODE_OFFSET_X
+        keyInfo.diode_y = keyInfo.y + DIODE_OFFSET_Y
 
         matrix = key.get('matrix')
         keyInfo.matrix_c = matrix[0]
@@ -123,18 +132,23 @@ def run_it():
     parser = SParser(pcb_sexp)
     parser.toArray()
 
+
+    for i in layout:
+        print(i)
+
+    
+
     for item in layout:
 
         if item.designator == None:
+            print("skipping " + item.label)
             continue
         else:
-            print("Searching for" + item.designator)
+            print("Searching for " + item.label + " " + item.designator)
 
-        at = parser.findAtByReference("SW" + item.designator)
-        if at != None:
-            at[1] = item.x
-            at[2] = item.y
-            #print(item)
+        parser.setObjectLocation("SW" + item.designator, item.x, item.y, 0)
+        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, 90)
+
 
     l = parser.arrayToSexp()
     out = "\r\n".join(l)
