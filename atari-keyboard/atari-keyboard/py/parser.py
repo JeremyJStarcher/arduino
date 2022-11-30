@@ -191,3 +191,15 @@ class SParser:
             at.append(y)
             at.append(rot)
             
+    def addBoundingBox(self, x1, y1, x2, y2, width):
+        box = ['gr_rect', \
+                    ['start', x1, y1], \
+                    ['end',  x2, y2], \
+                    ['layer',  "F.SilkS"], \
+                    ["width",  width], \
+                    ["fill", "none"] \
+                ]
+             
+        self.arr.append(box)
+        #print(self.arr)
+    
