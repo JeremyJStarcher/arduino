@@ -1,5 +1,65 @@
+from enum import Enum
+
 WHITESPACE = " \n\r\t"
 TOKEN_ENDER = WHITESPACE + ")"
+
+
+class Layer(str, Enum):
+    F_CU = "\"F.Cu\""
+    B_CU = "\"B.Cu\""
+    B_Adhesive = "\"B.Adhes\""
+    F_Adhesive = "\"F.Adhes\""
+    B_Paste = "\"B.Paste\""
+    F_Paste = "\"F.Paste\""
+    B_Silkscreen = "\"B.SilkS\""
+    F_Silkscreen = "\"F.SilkS\""
+    B_Mask = "\"B.Mask\""
+    F_Mask = "\"F.Mask\""
+    User_Drawings = "\"Dwgs.User\""
+    User_Comments = "\"Cmts.User\""
+    User_Eco1 = "\"Eco1.User\""
+    User_Eco2 = "\"Eco2.User\""
+    Edge_Cuts = "\"Edge.Cuts\""
+    Margin = "\"Margin\""
+    B_Courtyard = "\"B.CrtYd\""
+    F_Courtyard = "\"F.CrtYd\""
+    B_Fab = "\"B.Fab\""
+    F_Fab = "\"F.Fab\""
+   
+
+class BoundingBox:
+    def __init__(self, x1: None, y1: None, x2: None, y2: None):
+        if (x1 == None):
+            self.x1 = float('inf')
+            self.y1 = float('inf')
+            self.x2 = float('-inf')
+            self.y2 = float('-inf')
+        else:
+            self.x1 = x1
+            self.y1 = y1
+            self.x2 = x2
+            self.y2 = y2
+
+    def update_xy(self, sx, sy):
+        x = float(sx)
+        y = float(sy)
+
+        self.x1 = min(self.x1, x)
+        self.y1 = min(self.y1, y)
+        self.x2 = max(self.x2, x)
+        self.y2 = max(self.y2, y)
+
+    def __repr__(self):
+        l = []
+
+        l.append('x1: ' + str(self.x1))
+        l.append('y1: ' + str(self.y1))
+        l.append('x2: ' + str(self.x2))
+        l.append('y2: ' + str(self.y2))
+     
+        return "{ " +  ", ".join(l) + " }"
+
+
 
 class SParser:
     str = ""
@@ -116,8 +176,11 @@ class SParser:
                 out.append(indent + e)
         return out
 
-    def findObjectsByNoun(self, noun, maxDepth):
-        return self.findObjectsByNounInner([self.arr], noun, maxDepth, 0, [])
+    def findObjectsByNoun(self, noun, maxDepth = float("inf"), root = None):
+        if root == None:
+            root = self.arr
+        
+        return self.findObjectsByNounInner([root], noun, maxDepth, 0, [])
 
     def findObjectsByNounInner(self, array, noun, maxDepth, depth, out):
         for e in array:
@@ -163,11 +226,13 @@ class SParser:
         all_ats = []
         self.findObjectsByNounInner(footprint, "at", 10_000, 0, all_ats)
         for at1 in all_ats:
+            print("Before, at", at1)
             at1.append(0)         # If there isn't a rotation, add it.
 
             at1_x = at1[1]
             at1_y = at1[2]
             at1_rot = at1[3]
+
 
             while (len(at1) > 0):
                 at1.pop()
@@ -176,8 +241,7 @@ class SParser:
             at1.append(at1_x)
             at1.append(at1_y)
             at1.append(int(at1_rot) + rot)
-
-
+            print("After at", at1)
 
 
         # Set the primary location and rotation
@@ -191,10 +255,10 @@ class SParser:
             at.append(y)
             at.append(rot)
             
-    def addBoundingBox(self, x1, y1, x2, y2, width):
+    def addBoundingBox(self, box, width):
         box = ['gr_rect', \
-                    ['start', x1, y1], \
-                    ['end',  x2, y2], \
+                    ['start', box.x1, box.y1], \
+                    ['end',  box.x2, box.y2], \
                     ['layer',  "F.SilkS"], \
                     ["width",  width], \
                     ["fill", "none"] \
@@ -202,4 +266,38 @@ class SParser:
              
         self.arr.append(box)
         #print(self.arr)
+
+
+    def getBoundingBoxOfLayerLines(self, parent, layerName):
+        lines = []
+
+        g_lines = self.findObjectsByNoun("fp_line", float("inf"), parent)
+        at = self.findObjectsByNoun("at", 1, parent)
+
+        origin_x = float(at[0][1])
+        origin_y = float(at[0][2])
+        
+
+        for g_line in g_lines:
+            layers = self.findObjectsByNoun("layer", float("inf"), g_line)
+            for layer in layers:
+                if layer[1] == layerName:
+                    lines.append(g_line)
+
+        box = BoundingBox(None, None, None, None)
+        for line in lines:
+            start = self.findObjectsByNoun("start", float("inf"), line)
+            end = self.findObjectsByNoun("end", float("inf"), line)
+
+
+            x1 = float(start[0][1])
+            y1 = float(start[0][2])
+            x2 = float(end[0][1])
+            y2 = float(end[0][2])
+
+            box.update_xy(x1 + origin_x, y1 + origin_y)
+            box.update_xy(x2 + origin_x, y2 + origin_y)
+
+        return box
+
     

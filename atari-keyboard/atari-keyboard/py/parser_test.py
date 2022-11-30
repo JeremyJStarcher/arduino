@@ -1,5 +1,6 @@
 import unittest
 from parser import SParser
+from parser import Layer
 
 def read_file():
     data_file = open("sample_pcb", "r")
@@ -198,8 +199,20 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(l[2], -200)
 
 
-        #print(l)
-        #print("    (at -153.1515 82.409)")
+
+    def test_getBoundingBoxOfLayerLines(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        switch = parser.findFootprintByReference("SW201")
+        #box = parser.getBoundingBoxOfLayerLines(switch, "\"Dwgs.User\"")
+        box = parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
+        #print(Layer.User_Drawings)
+
+        self.assertEqual(box.x1, -12.065)
+        self.assertEqual(box.y1, -4.445)
+        self.assertEqual(box.x2, 6.985)
+        self.assertEqual(box.y2, 14.605)
 
 if __name__ == '__main__':
     unittest.main()

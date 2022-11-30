@@ -1,5 +1,7 @@
 import json
 from parser import SParser
+from parser import BoundingBox
+from parser import Layer
 
 layout_json_filename = "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
 pcb_name = "../atari-keyboard.kicad_pcb"
@@ -16,18 +18,6 @@ DIODE_OFFSET_X = 6.5;
 DIODE_OFFSET_Y = 5.52; 
 
 
-class BoundingBox:
-    def __init__(self, x1: None, y1: None, x2: None, y2: None):
-        if (x1 == None):
-            self.x1 = float('inf')
-            self.y1 = float('inf')
-            self.x2 = float('-inf')
-            self.y2 = float('-inf')
-        else:
-            self.x1 = x1
-            self.y1 = y1
-            self.x2 = x2
-            self.y2 = y2
 
 class KeyInfo:
     key_x = 0
@@ -109,59 +99,75 @@ def get_layout():
         keyInfo = KeyInfo()
 
         keyInfo.skip = key.get('x') == -1
+        keyInfo.label = key.get("label")
 
         keyInfo.w =  float(key.get('w', 1))
-        keyInfo.h =  float(key.get('h', 1))
+        keyInfo.h =  float(key.get('h', 1))        
+        
+        xfix = -1
+        if (keyInfo.w == 1.0):
+            #print("**1.0**")
+            xfix = 0
+
+        if (keyInfo.w == 1.5):
+            #print("**1.5**")
+            xfix = 0
+
+        if (keyInfo.w == 1.25):
+            #print("**1.25**")
+            xfix = 0.125
+        
+        if (keyInfo.w == 1.75):
+            #print("**1.75**")
+            xfix = 0.375
+        
+        if (keyInfo.w == 2):
+            #print("**2.0**")
+            xfix = .5
+        
+        if (keyInfo.w == 2.25):
+            #print("**2.25**")
+            xfix = .625
+        
+        if (keyInfo.w == 6.25):
+            #print("**6.250**")
+            xfix = 2.625
+
+        if xfix == -1:
+            raise Exception("Unknown width of" + str(keyInfo.w) + " found " + keyInfo.label)
+
+
 
         x = (float(key.get('x')) + (KeyInfo.w/2)) * UNIT
         y = (float(key.get('y')) + (KeyInfo.h/2)) * UNIT
 
-       # x += X_ORIG
-       # y += Y_ORIG
+        x += X_ORIG
+        y += Y_ORIG
 
 
         ww = (keyInfo.w-1) * UNIT
         hh = (keyInfo.h-1) * UNIT
-        print("keyInfo: w, h", keyInfo.h, keyInfo.w, ww, hh)
+        # print("keyInfo: w, h", keyInfo.h, keyInfo.w, ww, hh)
 
 
-        keyInfo.key_x = x
-        keyInfo.key_y = y
-        keyInfo.label = key.get("label")
+        keyInfo.key_x = x + ww/2
+        keyInfo.key_y = y + hh/2
 
 
-        keyInfo.diode_x = x + DIODE_OFFSET_X
-        keyInfo.diode_y = y + DIODE_OFFSET_Y
+        keyInfo.diode_x = keyInfo.key_x + DIODE_OFFSET_X
+        keyInfo.diode_y = keyInfo.key_y + DIODE_OFFSET_Y
 
         # The math for figuring out the actual bounding box is off, so manually correct for
         # various key sizes.  (By hand/trial and error)
      
-        kw = float(keyInfo.w)
-        
-        xfix = 0
-        if (kw == 1):
-          xfix = 0
-
-        if (kw == 1.25):
-          xfix = 0.125
-        
-        if (kw == 1.75):
-          xfix = 0.375
-        
-        if (kw == 2):
-          xfix = .5
-        
-        if (kw == 2.25):
-          xfix = .625
-        
-        if (kw == 6.25):
-          xfix = 2.625
 
         
         x1 = (keyInfo.key_x - keyInfo.w/2) - ww/2 + KEYSWITCH_FIX_X
         y1 = (keyInfo.key_y - keyInfo.h/2) - hh/2 + KEYSWITCH_FIX_Y
-        x2 = x1 + UNIT + ww;
-        y2 = y1 + UNIT + hh;
+        x2 = x1 + UNIT + ww
+        y2 = y1 + UNIT + hh
+
+        x1 += xfix
     
         keyInfo.hole_x = keyInfo.key_x + 10
         keyInfo.hole_y = keyInfo.key_y + 10
@@ -170,7 +176,7 @@ def get_layout():
         keyInfo.matrix_c = matrix[0]
         keyInfo.matrix_r = matrix[1]
 
-        keyInfo.boundingBox = BoundingBox(x1, y1, x2, y2)
+
 
         keys.append(keyInfo)
 
@@ -209,7 +215,11 @@ def run_it():
         parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
         parser.setObjectLocation("H" + item.designator, item.hole_x, item.hole_y, 0)
 
-        #   parser.addBoundingBox(item.boundingBox.x1, item.boundingBox.y1, item.boundingBox.x2, item.boundingBox.y2, 0.3)
+
+        switch = parser.findFootprintByReference("SW" + item.designator)
+        at = parser.findAtByReference("SW" + item.designator)
+        item.boundingBox = parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
+        parser.addBoundingBox(item.boundingBox, 0.3)
 
 
     l = parser.arrayToSexp()
