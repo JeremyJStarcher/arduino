@@ -17,15 +17,21 @@ DIODE_OFFSET_Y = 5.52;
 
 
 class BoundingBox:
-    def __init__(self):
-        self.x1 = float('inf')
-        self.y1 = float('inf')
-        self.x2 = float('-inf')
-        self.y2 = float('-inf')
+    def __init__(self x1: None, y1: None, x1; None, y2: None):
+        if (x1 == None):
+            self.x1 = float('inf')
+            self.y1 = float('inf')
+            self.x2 = float('-inf')
+            self.y2 = float('-inf')
+        else:
+            self.x1 = x1
+            self.y1 = y1
+            self.x2 = x2
+            self.y2 = y2
 
 class KeyInfo:
-    x = 0
-    y = 0
+    key_x = 0
+    key_y = 0
     w = 0
     h = 0
     matrix_r = 0
@@ -35,6 +41,9 @@ class KeyInfo:
     skip = True
     diode_x = 0
     diode_y = 0
+    hole_x = 0
+    hole_y = 0
+    boundingBox: None
 
     def __init__(self):
         self.bbox = BoundingBox();
@@ -44,8 +53,8 @@ class KeyInfo:
 
         l.append('label: ' + str(self.label))
         l.append('designator: ' + str(self.designator))
-        l.append('x: ' + str(self.x))
-        l.append('y: ' + str(self.y))
+        l.append('x: ' + str(self.key_x))
+        l.append('y: ' + str(self.key_y))
         l.append('w: ' + str(self.w))
         l.append('h: ' + str(self.h))
         l.append('matrix_c: ' + str(self.matrix_c))
@@ -97,19 +106,53 @@ def get_layout():
 
         keyInfo.skip = key.get('x') == -1
 
-        keyInfo.x =  key.get('x') * UNIT
-        keyInfo.y =  key.get('y') * UNIT
+        keyInfo.key_x =  key.get('x') * UNIT
+        keyInfo.key_y =  key.get('y') * UNIT
         keyInfo.w =  key.get('w', 1)
         keyInfo.h =  key.get('h', 1)
         keyInfo.label = key.get("label")
 
+        # The math for figuring out the actual bounding box is off, so manually correct for
+        # various key sizes.  (By hand/trial and error)
+        xfix = 0
 
-        keyInfo.diode_x = keyInfo.x + DIODE_OFFSET_X
-        keyInfo.diode_y = keyInfo.y + DIODE_OFFSET_Y
+        kw = float(keyInfo.w)
+        
+        if (kw == 1):
+          xfix = 0
+
+        if (kw == 1.25):
+          xfix = 0.125
+        
+        if (kw == 1.75):
+          xfix = 0.375
+        
+        if (kw == 2):
+          xfix = .5
+        
+        if (kw == 2.25):
+          xfix = .625
+        
+        if (kw == 6.25):
+          xfix = 2.625
+
+        print(kw, 1,xfix, keyInfo.key_x)
+
+        keyInfo.key_x += (xfix * UNIT)
+        print(kw, 1,xfix, keyInfo.key_x)
+        print()
+
+        keyInfo.diode_x = keyInfo.key_x + DIODE_OFFSET_X
+        keyInfo.diode_y = keyInfo.key_y + DIODE_OFFSET_Y
+
+        keyInfo.hole_x = keyInfo.key_x + 10
+        keyInfo.hole_y = keyInfo.key_y + 10
 
         matrix = key.get('matrix')
         keyInfo.matrix_c = matrix[0]
         keyInfo.matrix_r = matrix[1]
+
+        keyInfo.boundingBox = BoundingBox(keyInfo.x, keyInfo.x, keyInfo.x+(keyInfo.w*UNIT), keyInfo.y+(keyInfo.h*UNIT)
 
         keys.append(keyInfo)
 
@@ -133,8 +176,8 @@ def run_it():
     parser.toArray()
 
 
-    for i in layout:
-        print(i)
+    #for i in layout:
+    #    print(i)
 
     
 
@@ -146,8 +189,9 @@ def run_it():
         else:
             print("Searching for " + item.label + " " + item.designator)
 
-        parser.setObjectLocation("SW" + item.designator, item.x, item.y, 0)
-        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, 90)
+        parser.setObjectLocation("SW" + item.designator, item.key_x, item.key_y, 0)
+        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
+        parser.setObjectLocation("H" + item.designator, item.hole_x, item.hole_y, 0)
 
 
     l = parser.arrayToSexp()

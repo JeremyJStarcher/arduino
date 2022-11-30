@@ -158,6 +158,29 @@ class SParser:
         return o[0]
 
     def setObjectLocation(self, ref, x, y, rot = 0):
+        footprint = self.findFootprintByReference(ref)
+        
+        all_ats = []
+        self.findObjectsByNounInner(footprint, "at", 10_000, 0, all_ats)
+        for at1 in all_ats:
+            at1.append(0)         # If there isn't a rotation, add it.
+
+            at1_x = at1[1]
+            at1_y = at1[2]
+            at1_rot = at1[3]
+
+            while (len(at1) > 0):
+                at1.pop()
+            
+            at1.append("at")
+            at1.append(at1_x)
+            at1.append(at1_y)
+            at1.append(int(at1_rot) + rot)
+
+
+
+
+        # Set the primary location and rotation
         at = self.findAtByReference(ref)
         if at != None:
             while (len(at) > 0):
