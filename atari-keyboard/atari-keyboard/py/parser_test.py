@@ -209,10 +209,10 @@ class TestStringMethods(unittest.TestCase):
         box = parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
         #print(Layer.User_Drawings)
 
-        self.assertEqual(box.x1, -12.065)
-        self.assertEqual(box.y1, -4.445)
-        self.assertEqual(box.x2, 6.985)
-        self.assertEqual(box.y2, 14.605)
+        self.assertEqual(box.x1, -165.2165)
+        self.assertEqual(box.y1, 77.964)
+        self.assertEqual(box.x2, -146.16649999999998)
+        self.assertEqual(box.y2, 97.01400000000001)
 
 if __name__ == '__main__':
     unittest.main()

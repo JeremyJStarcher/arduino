@@ -2561,6 +2561,9 @@
     (property "Datasheet" "" (id 3) (at 27.94 38.1 0)
       (effects (font (size 1.524 1.524)) hide)
     )
+    (property "JJSJJS" "JOY_HOPE" (id 4) (at 27.94 38.1 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
   )
 
   (symbol (lib_id "keebio:Hole") (at 68.58 78.74 90) (unit 1)

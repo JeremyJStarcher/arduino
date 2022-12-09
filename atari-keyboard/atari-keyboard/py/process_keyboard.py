@@ -12,10 +12,11 @@ UNIT = 19.05
 
 X_ORIG = 61
 Y_ORIG = 177.75
+BOARD_BORDER = 10
 
 # How much to move the diodes
-DIODE_OFFSET_X = 6.5;
-DIODE_OFFSET_Y = 5.52; 
+DIODE_OFFSET_X = 6.5
+DIODE_OFFSET_Y = 5.52 
 
 
 
@@ -203,6 +204,8 @@ def run_it():
     #for i in layout:
     #    print(i)    
 
+    bbox = BoundingBox(None, None, None, None)
+
     for item in layout:
 
         if item.designator == None:
@@ -212,15 +215,29 @@ def run_it():
             print("Searching for " + item.label + " " + item.designator)
 
         parser.setObjectLocation("SW" + item.designator, item.key_x, item.key_y, 0)
-        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
-        parser.setObjectLocation("H" + item.designator, item.hole_x, item.hole_y, 0)
-
 
         switch = parser.findFootprintByReference("SW" + item.designator)
         at = parser.findAtByReference("SW" + item.designator)
         item.boundingBox = parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
-        parser.addBoundingBox(item.boundingBox, 0.3)
 
+        parser.addBoundingBox(item.boundingBox, 0.3, Layer.F_Silkscreen)
+        parser.addBoundingBox(item.boundingBox, 0.3, Layer.B_Silkscreen)
+
+        bbox.update_xy(item.boundingBox.x1, item.boundingBox.y1)
+        bbox.update_xy(item.boundingBox.x2, item.boundingBox.y2)
+
+        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
+        parser.setObjectLocation("H" + item.designator, item.boundingBox.x1+1.5, item.boundingBox.y1+1.5, 0)
+
+    bbox.addBorder(BOARD_BORDER)
+    parser.addBoundingBox(bbox, 0.3, Layer.Edge_Cuts)
+
+
+    bbox.addBorder(-5)
+    parser.setObjectLocation("H101", bbox.x1, bbox.y1, 0)
+    parser.setObjectLocation("H102", bbox.x1, bbox.y2, 0)
+    parser.setObjectLocation("H103", bbox.x2, bbox.y1, 0)
+    parser.setObjectLocation("H104", bbox.x2, bbox.y2, 0)
 
     l = parser.arrayToSexp()
     out = "\r\n".join(l)

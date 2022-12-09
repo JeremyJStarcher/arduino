@@ -8,7 +8,7 @@ function make_stl {
 rm -rf "$STL_DIR"
 mkdir "$STL_DIR"
 
-# (make_stl layout; echo "*************LAYOUT FINISHED*******************") &
+(make_stl layout; echo "*************LAYOUT FINISHED*******************") &
 
 make_stl key_lshift
 make_stl key_z

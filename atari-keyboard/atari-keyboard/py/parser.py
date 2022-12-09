@@ -49,6 +49,13 @@ class BoundingBox:
         self.x2 = max(self.x2, x)
         self.y2 = max(self.y2, y)
 
+
+    def addBorder(self, n):
+        self.x1 -= n
+        self.y1 -= n
+        self.x2 += n
+        self.y2 += n
+
     def __repr__(self):
         l = []
 
@@ -222,17 +229,23 @@ class SParser:
 
     def setObjectLocation(self, ref, x, y, rot = 0):
         footprint = self.findFootprintByReference(ref)
-        
+
+        cat = self.findAtByReference(ref)
+        cat.append(0)
+        current_rot = float(cat[3])
+        # If the object is already rotated, then un-rotate it
+        if (current_rot != 0):
+            cat[3] =  float(cat[3]) - current_rot
+            self.setObjectLocation(ref, x, y, -current_rot)
+
         all_ats = []
         self.findObjectsByNounInner(footprint, "at", 10_000, 0, all_ats)
         for at1 in all_ats:
-            print("Before, at", at1)
             at1.append(0)         # If there isn't a rotation, add it.
 
             at1_x = at1[1]
             at1_y = at1[2]
             at1_rot = at1[3]
-
 
             while (len(at1) > 0):
                 at1.pop()
@@ -241,12 +254,13 @@ class SParser:
             at1.append(at1_x)
             at1.append(at1_y)
             at1.append(int(at1_rot) + rot)
-            print("After at", at1)
-
+ 
 
         # Set the primary location and rotation
         at = self.findAtByReference(ref)
         if at != None:
+            at.append(0)
+            old_rot = at[3]
             while (len(at) > 0):
                 at.pop()
             
@@ -255,12 +269,12 @@ class SParser:
             at.append(y)
             at.append(rot)
             
-    def addBoundingBox(self, box, width):
+    def addBoundingBox(self, box, width, layer):
         box = ['gr_rect', \
                     ['start', box.x1, box.y1], \
                     ['end',  box.x2, box.y2], \
-                    ['layer',  "F.SilkS"], \
-                    ["width",  width], \
+                    ['layer', layer], \
+                    ["width", width], \
                     ["fill", "none"] \
                 ]
              

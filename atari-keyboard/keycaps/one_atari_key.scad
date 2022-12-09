@@ -1,15 +1,21 @@
 use <key_desc.scad>
 
-atari_rotation = 0;
 
 
- key = "key_reset";
+ key = "layout";
  print_one();
 
 //  prepKey() key_a();
 
 module prepKey() {
-    children();
+    /* Cut off key flush with baseline -- doubtful this is really needed anymore. */
+
+    difference() {
+        children();
+
+        translate([-500, -500, -1000])
+        cube([1000, 1000, 1000]);
+   }
 }
 
 

@@ -2,6 +2,16 @@ include <./KeyV2/includes.scad>
 include <key_include.scad>
 
 module preKey(size, w2, h2) {
+
+
+    // $support_type = "bars"; // [flared, bars, flat, disable]
+
+    $stem_support_type = "tines"; // [tines, brim, disabled]
+
+    // For FDM printers the stem has to reach the print bed
+    // or support issues get ... "strange."
+    $stem_inset = print_target == "fdm" ? -0 : $stem_inset;
+
     // Rotate and then generate the key
     rotate([atari_rotation, 0, 0]) {
         children();
@@ -52,7 +62,7 @@ module preKey(size, w2, h2) {
         foot(a, offset);
     }
 
-if (false) {
+    if (print_target != "fdm") {
      for (a = [ -h/2 : spacing : h/2 ]) {
         color("red") supportHeight(a, -w/2 + rr1);
         color("black") supportHeight(a, w/2 - rr1 -thick);
@@ -134,7 +144,7 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
         u(1)
         legend(legendBottom, [0,1], half_size)
         legend(legendTop, [0,-1], half_size)
-        oem_row(4)
+        oem_row(row)
         preKey()
         key();
 
@@ -149,7 +159,7 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg) {
         legend(legendBottom, [0,1], half_size)
         legend(legendTop, [0,-1], half_size)
         legend(legendLeft, [-1,-1], half_size)
-        oem_row(4)
+        oem_row(row)
         preKey()
         key();
 
@@ -260,7 +270,7 @@ module gridKeyRender(legend) {
 }
 
 
-  fullkeyboard();
+//  fullkeyboard();
 
 // key_z();
 
