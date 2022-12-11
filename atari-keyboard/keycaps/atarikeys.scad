@@ -118,9 +118,13 @@ module support_stabilizers(x, y) {
 }
 
 module frontGraphic() {
+    // this value by trial and error
+    inset = -0.3;
+
     rotate([atari_rotation, 0, 0])
     front_of_key()
-    scale([0.75, 1, 0.75]) {
+    translate([0, inset, 0])
+    scale([0.75, 2, 0.75]) {
         boundBox();
         color("white") children();
     }

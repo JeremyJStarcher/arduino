@@ -12,7 +12,9 @@ support_r1 = 0.5;
 support_r2 = 0.5;
 
 // Font size of one-letter per key
-full_size = 9;
+// full_size = 9;
+full_size = 5;
+
 // Font size of words written on a key
 long_size = 4;
 // Font size if there are multiple lines on a key.
