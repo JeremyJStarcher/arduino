@@ -67,6 +67,8 @@ class BoundingBox:
         return "{ " +  ", ".join(l) + " }"
 
 
+def qString(s):
+    return "\"" + s + "\""
 
 class SParser:
     str = ""
@@ -209,11 +211,42 @@ class SParser:
 
             o = []
             self.findObjectsByNounInner(p, "fp_text", 100, 0, o)
-            filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2] == "\"" + ref + "\""), o)
+            filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2] == qString(ref)), o)
             
             lst = list(filtered)
             if (len(lst) > 0):
                 return p
+
+    def findSymbolByReference(self, ref):
+        prints = self.findObjectsByNoun("symbol", 1)
+
+        for p in prints:
+            o = []
+            self.findObjectsByNounInner(p, "property", 100, 0, o)
+
+            filtered = filter(lambda fp: (fp[1] == qString("Reference")) and (fp[2] == qString(ref)), o)
+
+            lst = list(filtered)
+            if (len(lst) > 0):
+                return p
+
+    def getSymbolProperty(self, ref, prop, default):
+        symbol = self.findSymbolByReference(ref)
+
+        o = []
+        self.findObjectsByNounInner(symbol, "property", 100, 0, o)
+
+        filtered = filter(lambda fp: (fp[1] == qString(prop)), o)
+        lst = list(filtered)
+        if (len(lst) > 0):
+            return lst[0][2]
+        else:
+            return default
+
+    def getSymbolPropertyAsFloat(self, ref, prop, default):
+        r = self.getSymbolProperty(ref, prop, default)
+        r = str(r)
+        return float(r.strip("\""))
 
     def findAtByReference(self, ref):
         footprint = self.findFootprintByReference(ref)

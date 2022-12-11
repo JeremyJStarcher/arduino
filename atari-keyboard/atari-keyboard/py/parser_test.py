@@ -214,5 +214,40 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(box.x2, -146.16649999999998)
         self.assertEqual(box.y2, 97.01400000000001)
 
+
+    # Test the schematic
+    def test_findSymbolByGoodReference(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+        l = parser.findSymbolByReference("H257")
+        self.assertTrue(l != None)
+        self.assertEqual(l[0], "symbol")
+
+    def test_getSymbolPropertyPropertyFound(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+
+        pcb_x = parser.getSymbolProperty("H257", "PCB_X", 100)
+        self.assertEqual(pcb_x, '"-30"')
+
+    def test_getSymbolPropertyPropertyAsFloatFound(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+
+        pcb_x = parser.getSymbolPropertyAsFloat("H257", "PCB_X", 100)
+        self.assertEqual(pcb_x, -30)
+
+    def test_getSymbolPropertyPropertyAsFloatNotFound(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+
+        pcb_x = parser.getSymbolPropertyAsFloat("H257", "XYZZY", 100)
+        self.assertEqual(pcb_x, 100)
+
+
 if __name__ == '__main__':
     unittest.main()

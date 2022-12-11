@@ -1,6 +1,32 @@
 (kicad_pcb (version 20211014) (generator pcbnew)
 
 
+  (symbol (lib_id "keebio:Hole") (at 68.58 162.56 90) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 2f497440-0979-41dd-8342-2c72406d4fe1)
+    (property "Reference" "H257" (id 0) (at 67.31 155.829 0)
+      (effects (font (size 1.524 1.524)) (justify left))
+    )
+    (property "Value" "Hole" (id 1) (at 71.12 155.829 0)
+      (effects (font (size 1.524 1.524)) (justify left))
+    )
+    (property "Footprint" "MountingHole:MountingHole_2.2mm_M2" (id 2) (at 68.58 162.56 0)
+      (effects (font (size 1.524 1.524)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 68.58 162.56 0)
+      (effects (font (size 1.524 1.524)) hide)
+    )
+    (property "PCB_Y" "-3" (id 4) (at 68.58 162.56 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+
+    (property "PCB_X" "-30" (id 4) (at 68.58 162.56 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+
+  )
+
+
   (level1-test)
 
   (general

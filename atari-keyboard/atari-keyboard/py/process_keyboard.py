@@ -5,6 +5,8 @@ from parser import Layer
 
 layout_json_filename = "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
 pcb_name = "../atari-keyboard.kicad_pcb"
+key_sch_name = "../keyboard.kicad_sch"
+
 
 STARTING_INDEX = 201
 
@@ -197,8 +199,14 @@ def run_it():
     #print (layout)
 
     pcb_sexp = read_sexp(pcb_name)
-    parser = SParser(pcb_sexp)
-    parser.toArray()
+    pcb_parser = SParser(pcb_sexp)
+    pcb_parser.toArray()
+
+    key_sch_sexp = read_sexp(key_sch_name)
+    key_parser = SParser(key_sch_sexp)
+    key_parser.toArray()
+
+    # print(key_parser.printArray(key_parser.arr))
 
 
     #for i in layout:
@@ -214,32 +222,36 @@ def run_it():
         else:
             print("Searching for " + item.label + " " + item.designator)
 
-        parser.setObjectLocation("SW" + item.designator, item.key_x, item.key_y, 0)
+        pcb_parser.setObjectLocation("SW" + item.designator, item.key_x, item.key_y, 0)
 
-        switch = parser.findFootprintByReference("SW" + item.designator)
-        at = parser.findAtByReference("SW" + item.designator)
-        item.boundingBox = parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
+        switch = pcb_parser.findFootprintByReference("SW" + item.designator)
+        at = pcb_parser.findAtByReference("SW" + item.designator)
+        item.boundingBox = pcb_parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
 
-        parser.addBoundingBox(item.boundingBox, 0.3, Layer.F_Silkscreen)
-        parser.addBoundingBox(item.boundingBox, 0.3, Layer.B_Silkscreen)
+        pcb_parser.addBoundingBox(item.boundingBox, 0.3, Layer.F_Silkscreen)
+        pcb_parser.addBoundingBox(item.boundingBox, 0.3, Layer.B_Silkscreen)
 
         bbox.update_xy(item.boundingBox.x1, item.boundingBox.y1)
         bbox.update_xy(item.boundingBox.x2, item.boundingBox.y2)
 
-        parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
-        parser.setObjectLocation("H" + item.designator, item.boundingBox.x1+1.5, item.boundingBox.y1+1.5, 0)
+        pcb_parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
+      
+        hx = item.boundingBox.x1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_X", 0)
+        hy = item.boundingBox.y1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_Y", 0)
+      
+        pcb_parser.setObjectLocation("H" + item.designator, hx, hy, 0)
 
     bbox.addBorder(BOARD_BORDER)
-    parser.addBoundingBox(bbox, 0.3, Layer.Edge_Cuts)
+    pcb_parser.addBoundingBox(bbox, 0.3, Layer.Edge_Cuts)
 
 
     bbox.addBorder(-5)
-    parser.setObjectLocation("H101", bbox.x1, bbox.y1, 0)
-    parser.setObjectLocation("H102", bbox.x1, bbox.y2, 0)
-    parser.setObjectLocation("H103", bbox.x2, bbox.y1, 0)
-    parser.setObjectLocation("H104", bbox.x2, bbox.y2, 0)
+    pcb_parser.setObjectLocation("H101", bbox.x1, bbox.y1, 0)
+    pcb_parser.setObjectLocation("H102", bbox.x1, bbox.y2, 0)
+    pcb_parser.setObjectLocation("H103", bbox.x2, bbox.y1, 0)
+    pcb_parser.setObjectLocation("H104", bbox.x2, bbox.y2, 0)
 
-    l = parser.arrayToSexp()
+    l = pcb_parser.arrayToSexp()
     out = "\r\n".join(l)
 
     with open(pcb_name, 'w') as f:
