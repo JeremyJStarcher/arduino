@@ -1,4 +1,5 @@
 from enum import Enum
+import copy
 
 WHITESPACE = " \n\r\t"
 TOKEN_ENDER = WHITESPACE + ")"
@@ -216,6 +217,56 @@ class SParser:
             lst = list(filtered)
             if (len(lst) > 0):
                 return p
+
+    def _getTextObjByType(self, ref, type):
+        p = self.findFootprintByReference(ref)
+
+        o = []
+        self.findObjectsByNounInner(p, "fp_text", 100, 0, o)
+        filtered = filter(lambda fp: (fp[1] == type), o)
+        obj = list(filtered)[0]
+        return obj
+
+    def setHiddenFootprintTextByReference(self, ref, type, hidden):
+        obj = self._getTextObjByType(ref, type)
+
+        # If it is already there, remove it.
+        if ("hide" in obj):
+            obj.remove("hide")
+
+        if (hidden):
+            obj.append("hide")
+
+    def moveTextToLayer(self, ref, type, layer):
+        obj = self._getTextObjByType(ref, type)
+
+        o = []
+        self.findObjectsByNounInner(obj, "layer", 100, 0, o)
+
+        lst = list(o)
+        lst[0][1] = layer
+
+    def copyToBackSilkscreen(self, ref, type):
+        p = self.findFootprintByReference(ref)
+        obj = self._getTextObjByType(ref, type)
+        nn = copy.deepcopy(obj)
+
+        layerObject = []
+        self.findObjectsByNounInner(nn, "layer", 100, 0, layerObject)
+
+        lst = list(layerObject)
+        lst[0][1] = Layer.B_Silkscreen
+        nn[1] = "user"
+
+        effectsObject = []
+        self.findObjectsByNounInner(nn, "effects", 100, 0, effectsObject)
+        
+        effectsList = list(effectsObject)
+        effectsList[0].append(["justify", "mirror"])
+
+        #print(nn)
+
+        p.append(nn)
 
     def findSymbolByReference(self, ref):
         prints = self.findObjectsByNoun("symbol", 1)

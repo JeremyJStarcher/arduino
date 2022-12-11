@@ -179,8 +179,6 @@ def get_layout():
         keyInfo.matrix_c = matrix[0]
         keyInfo.matrix_r = matrix[1]
 
-
-
         keys.append(keyInfo)
 
     setdesignators(STARTING_INDEX, keys)
@@ -226,6 +224,11 @@ def run_it():
 
         switch = pcb_parser.findFootprintByReference("SW" + item.designator)
         at = pcb_parser.findAtByReference("SW" + item.designator)
+        pcb_parser.setHiddenFootprintTextByReference("SW" + item.designator, "value", False)
+        pcb_parser.moveTextToLayer("SW" + item.designator, "value", Layer.F_Silkscreen)
+
+        pcb_parser.copyToBackSilkscreen("SW" + item.designator, "value")
+
         item.boundingBox = pcb_parser.getBoundingBoxOfLayerLines(switch, Layer.User_Drawings)
 
         pcb_parser.addBoundingBox(item.boundingBox, 0.3, Layer.F_Silkscreen)
@@ -238,7 +241,9 @@ def run_it():
       
         hx = item.boundingBox.x1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_X", 0)
         hy = item.boundingBox.y1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_Y", 0)
-      
+        pcb_parser.setHiddenFootprintTextByReference("H" + item.designator, "reference", True)
+
+
         pcb_parser.setObjectLocation("H" + item.designator, hx, hy, 0)
 
     bbox.addBorder(BOARD_BORDER)
