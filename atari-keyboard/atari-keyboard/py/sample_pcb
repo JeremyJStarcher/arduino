@@ -1,5 +1,20 @@
 (kicad_pcb (version 20211014) (generator pcbnew)
 
+  (zone (net 0) (net_name "") (layers F&B.Cu) (tstamp 8740720f-de39-4edb-9ef3-cb1fdcd58cc3) (name "FOOBAR") (hatch full 0.508)
+    (connect_pads (clearance 0))
+    (min_thickness 0.254)
+    (keepout (tracks not_allowed) (vias not_allowed) (pads not_allowed) (copperpour allowed) (footprints allowed))
+    (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
+    (polygon
+      (pts
+        (xy 378.126 206.696)
+        (xy 373.086 206.696)
+        (xy 373.086 201.586)
+        (xy 378.126 201.586)
+      )
+    )
+  )
+
 
   (symbol (lib_id "keebio:Hole") (at 68.58 162.56 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)

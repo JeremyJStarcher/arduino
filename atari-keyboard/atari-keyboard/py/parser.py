@@ -1,5 +1,7 @@
 from enum import Enum
 import copy
+import math
+
 
 WHITESPACE = " \n\r\t"
 TOKEN_ENDER = WHITESPACE + ")"
@@ -264,8 +266,6 @@ class SParser:
         effectsList = list(effectsObject)
         effectsList[0].append(["justify", "mirror"])
 
-        #print(nn)
-
         p.append(nn)
 
     def findSymbolByReference(self, ref):
@@ -398,4 +398,54 @@ class SParser:
 
         return box
 
-    
+    def drawKeepoutZone(self, reference):
+        at = self.findAtByReference(reference)
+
+
+
+        def pointsInCircum(r,n=100):
+            pi = math.pi
+
+            return [(math.cos(2*pi/n*x)*r,math.sin(2*pi/n*x)*r) for x in range(0,n+1)]
+
+
+        pts = pointsInCircum(3, 30)
+
+        o = [
+            "zone",
+            ["net", "0"],
+            ["net_name", '""'],
+            ["layers", "F&B.Cu"],
+            ["tstamp", "4b23aa4c-b704-4f99-b8ee-66b834c9f1a2"],
+            ["name", '"FOOBAR"'],
+            ["hatch", "full", "0.508"],
+            ["connect_pads", ["clearance", "0"]],
+            ["min_thickness", "0.254"],
+            [
+                "keepout",
+                ["tracks", "not_allowed"],
+                ["vias", "not_allowed"],
+                ["pads", "not_allowed"],
+                ["copperpour", "allowed"],
+                ["footprints", "allowed"],
+            ],
+            ["fill", ["thermal_gap", "0.508"], ["thermal_bridge_width", "0.508"]],
+            [
+                "polygon",
+                [
+                    "pts",
+                    # ["xy", "367.386", "203.216"],
+                ],
+            ],
+        ]
+
+        slot = self.findObjectsByNoun("pts", float("inf"), o)
+
+        nx = float(at[1])
+        ny = float(at[2])
+
+        for r in pts:
+            rr = ["xy", r[0] + nx, r[1] + ny]
+            slot[0].append(rr)
+
+        self.arr.append(o)

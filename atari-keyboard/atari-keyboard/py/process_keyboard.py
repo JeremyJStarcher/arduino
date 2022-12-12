@@ -200,6 +200,7 @@ def run_it():
     pcb_parser = SParser(pcb_sexp)
     pcb_parser.toArray()
 
+
     key_sch_sexp = read_sexp(key_sch_name)
     key_parser = SParser(key_sch_sexp)
     key_parser.toArray()
@@ -239,12 +240,12 @@ def run_it():
 
         pcb_parser.setObjectLocation("D" + item.designator, item.diode_x, item.diode_y, -90)
       
-        hx = item.boundingBox.x1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_X", 0)
+        hx = item.boundingBox.x1+0.0 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_X", 0)
         hy = item.boundingBox.y1+1.5 + key_parser.getSymbolPropertyAsFloat("H" + item.designator, "PCB_Y", 0)
         pcb_parser.setHiddenFootprintTextByReference("H" + item.designator, "reference", True)
 
-
         pcb_parser.setObjectLocation("H" + item.designator, hx, hy, 0)
+        pcb_parser.drawKeepoutZone("H" + item.designator)
 
     bbox.addBorder(BOARD_BORDER)
     pcb_parser.addBoundingBox(bbox, 0.3, Layer.Edge_Cuts)
