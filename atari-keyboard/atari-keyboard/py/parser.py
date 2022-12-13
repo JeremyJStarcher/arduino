@@ -5,7 +5,7 @@ import math
 
 WHITESPACE = " \n\r\t"
 TOKEN_ENDER = WHITESPACE + ")"
-
+INF = float("inf")
 
 class Layer(str, Enum):
     F_CU = "\"F.Cu\""
@@ -192,16 +192,16 @@ class SParser:
         if root == None:
             root = self.arr
         
-        return self.findObjectsByNounInner([root], noun, maxDepth, 0, [])
+        return self._findObjectsByNounInner([root], noun, maxDepth, 0, [])
 
-    def findObjectsByNounInner(self, array, noun, maxDepth, depth, out):
+    def _findObjectsByNounInner(self, array, noun, maxDepth, depth, out):
         for e in array:
             if isinstance(e, list):
                 if (len(e) > 0) and (e[0] == noun):
                     out.append(e)
 
                 if (depth < maxDepth):
-                    self.findObjectsByNounInner(e, noun, maxDepth, depth+1, out)
+                    self._findObjectsByNounInner(e, noun, maxDepth, depth+1, out)
             else:
                 pass
         return out
@@ -212,8 +212,7 @@ class SParser:
         for p in prints:
             #print(p)
 
-            o = []
-            self.findObjectsByNounInner(p, "fp_text", 100, 0, o)
+            o =  self.findObjectsByNoun("fp_text", INF, p)
             filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2] == qString(ref)), o)
             
             lst = list(filtered)
@@ -223,8 +222,7 @@ class SParser:
     def _getTextObjByType(self, ref, type):
         p = self.findFootprintByReference(ref)
 
-        o = []
-        self.findObjectsByNounInner(p, "fp_text", 100, 0, o)
+        o = self.findObjectsByNoun("fp_text", INF, p)
         filtered = filter(lambda fp: (fp[1] == type), o)
         obj = list(filtered)[0]
         return obj
@@ -242,8 +240,7 @@ class SParser:
     def moveTextToLayer(self, ref, type, layer):
         obj = self._getTextObjByType(ref, type)
 
-        o = []
-        self.findObjectsByNounInner(obj, "layer", 100, 0, o)
+        o = self.findObjectsByNoun("layer", INF, obj)
 
         lst = list(o)
         lst[0][1] = layer
@@ -253,15 +250,13 @@ class SParser:
         obj = self._getTextObjByType(ref, type)
         nn = copy.deepcopy(obj)
 
-        layerObject = []
-        self.findObjectsByNounInner(nn, "layer", 100, 0, layerObject)
+        layerObject = self.findObjectsByNoun("layer", INF, nn)
 
         lst = list(layerObject)
         lst[0][1] = Layer.B_Silkscreen
         nn[1] = "user"
 
-        effectsObject = []
-        self.findObjectsByNounInner(nn, "effects", 100, 0, effectsObject)
+        effectsObject = self.findObjectsByNoun("effects", INF, nn)
         
         effectsList = list(effectsObject)
         effectsList[0].append(["justify", "mirror"])
@@ -272,8 +267,7 @@ class SParser:
         prints = self.findObjectsByNoun("symbol", 1)
 
         for p in prints:
-            o = []
-            self.findObjectsByNounInner(p, "property", 100, 0, o)
+            o = self.findObjectsByNoun("property", INF, p)
 
             filtered = filter(lambda fp: (fp[1] == qString("Reference")) and (fp[2] == qString(ref)), o)
 
@@ -284,8 +278,7 @@ class SParser:
     def getSymbolProperty(self, ref, prop, default):
         symbol = self.findSymbolByReference(ref)
 
-        o = []
-        self.findObjectsByNounInner(symbol, "property", 100, 0, o)
+        o = self.findObjectsByNoun("property", INF, symbol)
 
         filtered = filter(lambda fp: (fp[1] == qString(prop)), o)
         lst = list(filtered)
@@ -303,8 +296,7 @@ class SParser:
         footprint = self.findFootprintByReference(ref)
 
         #print(footprint)
-        o = []
-        self.findObjectsByNounInner(footprint, "at", 0, 0, o)
+        o = self.findObjectsByNoun("at", 1, footprint)
 
         if (len(o) > 1):
             raise Exception("Found too many top-level ATs for" + ref)
@@ -322,8 +314,7 @@ class SParser:
             cat[3] =  float(cat[3]) - current_rot
             self.setObjectLocation(ref, x, y, -current_rot)
 
-        all_ats = []
-        self.findObjectsByNounInner(footprint, "at", 10_000, 0, all_ats)
+        all_ats = self.findObjectsByNoun("at", INF, footprint)
         for at1 in all_ats:
             at1.append(0)         # If there isn't a rotation, add it.
 
@@ -399,17 +390,11 @@ class SParser:
         return box
 
     def drawKeepoutZone(self, reference):
-        at = self.findAtByReference(reference)
-
-
 
         def pointsInCircum(r,n=100):
             pi = math.pi
 
             return [(math.cos(2*pi/n*x)*r,math.sin(2*pi/n*x)*r) for x in range(0,n+1)]
-
-
-        pts = pointsInCircum(3, 30)
 
         o = [
             "zone",
@@ -441,9 +426,12 @@ class SParser:
 
         slot = self.findObjectsByNoun("pts", float("inf"), o)
 
+        at = self.findAtByReference(reference)
+
         nx = float(at[1])
         ny = float(at[2])
 
+        pts = pointsInCircum(3, 30)
         for r in pts:
             rr = ["xy", r[0] + nx, r[1] + ny]
             slot[0].append(rr)

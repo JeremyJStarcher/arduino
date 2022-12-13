@@ -264,6 +264,28 @@ def run_it():
         f.write(out)
 
 
+def calcPnP():
+    layout = get_layout()
+
+    #print (layout)
+
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = SParser(pcb_sexp)
+    pcb_parser.toArray()
+
+    for item in layout:
+
+        if item.designator == None:
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
+
    
+        diode = pcb_parser.findFootprintByReference("D" + item.designator)
+        print(diode)
+
+
 if __name__ == '__main__':
-    run_it() 
+    run_it()
+    #calcPnP()
