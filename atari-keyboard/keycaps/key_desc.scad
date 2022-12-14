@@ -411,7 +411,7 @@ module key_7() {
 
 module key_8() {
     translate_u(-.5+1.25+7, 3)
-    graphicsKey2(1, "8", "&", "ctrl-comma");
+    graphicsKey2(1, "8", "@", "ctrl-comma");
 }
 
 module key_9() {
