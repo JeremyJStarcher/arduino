@@ -10,7 +10,7 @@ function make_stl {
 rm -rf "$STL_DIR"
 mkdir "$STL_DIR"
 
-(make_stl layout; echo "*************LAYOUT FINISHED*******************") &
+(make_stl layout) &
 pids+=("$!")
 
 make_stl key_lshift
@@ -88,6 +88,6 @@ make_stl key_fn
 for pid in "${pids[@]}"; do
     wait "$pid"
     return_code="$?"
-    echo "PID = $pid; return_code = $return_code"
+    # echo "PID = $pid; return_code = $return_code"
 done
 echo "All $num_procs processes have ended."
