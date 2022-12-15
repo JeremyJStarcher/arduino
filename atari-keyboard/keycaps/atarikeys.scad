@@ -280,10 +280,10 @@ module gridKeyRender(legend) {
 
 
 if (false) {
-    key_spacebar();
-    key_up();
-    key_down();
-    key_left();
-    key_right();
+    key_space();
+    key_c_up();
+    key_c_down();
+    key_c_left();
+    key_c_right();
     key_fn();
 }

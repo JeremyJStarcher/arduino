@@ -1,5 +1,7 @@
 STL_DIR="stls"
 
+pids=()  # bash array
+
 function make_stl {
    echo "$1"
    time flatpak run org.openscad.OpenSCAD -D "key=\"$1\"" -o "$STL_DIR/$1.stl" "one_atari_key.scad" --export-format binstl > /dev/null 2> /dev/null
@@ -9,6 +11,7 @@ rm -rf "$STL_DIR"
 mkdir "$STL_DIR"
 
 (make_stl layout; echo "*************LAYOUT FINISHED*******************") &
+pids+=("$!")
 
 make_stl key_lshift
 make_stl key_z
@@ -19,7 +22,7 @@ make_stl key_b
 make_stl key_n
 make_stl key_m
 make_stl key_comma
-make_stl key_dot
+make_stl key_period
 make_stl key_slash
 make_stl key_rshift
 make_stl key_control
@@ -34,7 +37,7 @@ make_stl key_k
 make_stl key_l
 make_stl key_semi
 make_stl key_plus
-make_stl key_star
+make_stl key_astrix
 make_stl key_caps
 make_stl key_tab
 make_stl key_q
@@ -67,18 +70,24 @@ make_stl key_bs
 make_stl key_reset
 make_stl key_menu
 make_stl key_turbo
-make_stl key_start
+make_stl key_astrixt
 make_stl key_select
 make_stl key_option
 make_stl key_help
 make_stl key_inverse
 make_stl key_break
-make_stl key_spacebar
+make_stl key_space
 
-make_stl key_up
-make_stl key_down
-make_stl key_left
-make_stl key_right
+make_stl key_c_up
+make_stl key_c_down
+make_stl key_c_left
+make_stl key_c_right
 
 make_stl key_fn
  
+for pid in "${pids[@]}"; do
+    wait "$pid"
+    return_code="$?"
+    echo "PID = $pid; return_code = $return_code"
+done
+echo "All $num_procs processes have ended."

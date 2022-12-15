@@ -1,10 +1,9 @@
 use <key_desc.scad>
 
 
-
- key = "key_a";
+ key = "layout";
  print_one();
-
+ 
 //  prepKey() key_a();
 
 module prepKey() {
@@ -17,7 +16,6 @@ module prepKey() {
         cube([1000, 1000, 1000]);
    }
 }
-
 
 module print_one() {
     if (key == "key_lshift" || key == "layout") {
@@ -47,8 +45,8 @@ module print_one() {
     if (key == "key_comma" || key == "layout") {
         prepKey() key_comma();
     }
-    if (key == "key_dot" || key == "layout") {
-        prepKey() key_dot();
+    if (key == "key_period" || key == "layout") {
+        prepKey() key_period();
     }
     if (key == "key_slash" || key == "layout") {
         prepKey() key_slash();
@@ -92,8 +90,8 @@ module print_one() {
     if (key == "key_plus" || key == "layout") {
         prepKey() key_plus();
     }
-    if (key == "key_star" || key == "layout") {
-        prepKey() key_star();
+    if (key == "key_astrix" || key == "layout") {
+        prepKey() key_astrix();
     }
     if (key == "key_caps" || key == "layout") {
         prepKey() key_caps();
@@ -191,8 +189,8 @@ module print_one() {
     if (key == "key_turbo" || key == "layout") {
         prepKey() key_turbo();
     }
-    if (key == "key_start" || key == "layout") {
-        prepKey() key_start();
+    if (key == "key_astrix" || key == "layout") {
+        prepKey() key_astrix();
     }
     if (key == "key_select" || key == "layout") {
         prepKey() key_select();
@@ -203,26 +201,29 @@ module print_one() {
     if (key == "key_help" || key == "layout") {
         prepKey() key_help();
     }
+    if (key == "key_power" || key == "layout") {
+        prepKey() key_power();
+    }
     if (key == "key_inverse" || key == "layout") {
         prepKey() key_inverse();
     }
     if (key == "key_break" || key == "layout") {
         prepKey() key_break();
     }
-    if (key == "key_spacebar" || key == "layout") {
-        prepKey() key_spacebar();
+    if (key == "key_space" || key == "layout") {
+        prepKey() key_space();
     }
-    if (key == "key_up" || key == "layout") {
-        prepKey() key_up();
+    if (key == "key_c_up" || key == "layout") {
+        prepKey() key_c_up();
     }
-    if (key == "key_down" || key == "layout") {
-        prepKey() key_down();
+    if (key == "key_c_down" || key == "layout") {
+        prepKey() key_c_down();
     }
-    if (key == "key_left" || key == "layout") {
-        prepKey() key_left();
+    if (key == "key_c_left" || key == "layout") {
+        prepKey() key_c_left();
     }
-    if (key == "key_right" || key == "layout") {
-        prepKey() key_right();
+    if (key == "key_c_right" || key == "layout") {
+        prepKey() key_c_right();
     }
     if (key == "key_fn" || key == "layout") {
         prepKey() key_fn();

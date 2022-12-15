@@ -1,11 +1,20 @@
+
+
 include <./KeyV2/includes.scad>
 include <atarikeys.scad>
 use <key_include.scad>
+include <keyboard-position.scad>
 
 /// ROW 4
 
+module tu(a) {
+    // translate_u(a[0], -a[1]) children();
+    translate([a[2], -a[3], 0]) children();
+}
+
+
 module key_lshift() {
-    translate_u(0, 0)
+    tu(KEY_LSHIFT)
     u(2.25)
     stabilized()
     legend("SHIFT", [0,0], long_size)
@@ -15,7 +24,7 @@ module key_lshift() {
 }
 
 module key_z() {
-    translate_u(1.75, 0)
+    tu(KEY_Z)
     graphicsKey(4, "Z", "ctrl-z") {
         gLine12();
         gLine3();
@@ -23,7 +32,7 @@ module key_z() {
 }
 
 module key_x() {
-    translate_u(1.75 +1, 0)
+    tu(KEY_X)
     graphicsKey(4, "X", "ctrl-x") {
         gLine9();
         gLine3();
@@ -33,7 +42,7 @@ module key_x() {
 
 
 module key_c() {
-    translate_u(1.75 +2, 0)
+    tu(KEY_C)
     graphicsKey(4, "C", "ctrl-c") {
         gLine9();
         gLine12();
@@ -41,21 +50,21 @@ module key_c() {
 }
 
 module key_v() {
-    translate_u(1.75 +3, 0)
+    tu(KEY_V)
     graphicsKey(4, "V", "ctrl-v") {
         gLineLeft();
     }
 }
 
 module key_b() {
-    translate_u(1.75 +4, 0)
+    tu(KEY_B)
     graphicsKey(4, "B", "ctrl-b") {
         gLineRight();
     }
 }
 
 module key_n() {
-    translate_u(1.75 +5, 0)
+    tu(KEY_N)
     graphicsKey(4, "N", "ctrl-n") {
         gLineBottom();
     }
@@ -63,7 +72,7 @@ module key_n() {
 
 
 module key_m() {
-    translate_u(1.75 +6, 0)
+    tu(KEY_M)
     graphicsKey(4, "M", "ctrl-m") {
         gLineTop();
     }
@@ -71,26 +80,26 @@ module key_m() {
 
 
 module key_comma() {
-    translate_u(1.75 +7, 0)
+    tu(KEY_COMMA)
     graphicsKey2(4, ",", "[", "ctrl-comma") {
         gCharacter("♥");
     }
 }
 
-module key_dot() {
-    translate_u(1.75 +8, 0)
+module key_period() {
+    tu(KEY_PERIOD)
     graphicsKey2(4, ".", "]", "ctrl-period"){
         gCharacter("♦");
     }
 }
 
 module key_slash() {
-    translate_u(1.75 +9, 0)
+    tu(KEY_SLASH)
     graphicsKey2(4, "/", "?", "ctrl-period");
 }
 
 module key_rshift() {
-    translate_u(1.75 +10.5, 0)
+    tu(KEY_RSHIFT)
     u(1.75)
     legend("SHIFT", [0,0], long_size)
     oem_row(4)
@@ -103,7 +112,7 @@ module key_rshift() {
 
 
 module key_control() {
-    translate_u(-.5, 1)
+    tu(KEY_CONTROL)
     u(2)
     stabilized()
     legend("CONTROL", [0,0], long_size)
@@ -113,7 +122,7 @@ module key_control() {
 }
 
 module key_a() {
-    translate_u(-.5+1.5, 1)
+    tu(KEY_A)
     graphicsKey(3, "A", "ctrl-a") {
         gLine6();
         gLine12();
@@ -122,7 +131,7 @@ module key_a() {
 }
 
 module key_s() {
-    translate_u(-.5+1.5+1, 1)
+    tu(KEY_S)
     graphicsKey(3, "S", "ctrl-s") {
         gLine6();
         gLine12();
@@ -132,7 +141,7 @@ module key_s() {
 }
 
 module key_d() {
-    translate_u(-.5+1.5+2, 1)
+    tu(KEY_D)
     graphicsKey(3, "D", "ctrl-d") {
         gLine6();
         gLine12();
@@ -143,7 +152,7 @@ module key_d() {
 module key_f() {
     $key_bump = true;
 
-    translate_u(-.5+1.5+3, 1)
+    tu(KEY_F)
     graphicsKey(3, "F", "ctrl-f") {
         hull() {
         translate([3, -1, 3])
@@ -156,7 +165,7 @@ module key_f() {
 }
 
 module key_g() {
-    translate_u(-.5+1.5+4, 1)
+    tu(KEY_G)
     graphicsKey(3, "G", "ctrl-g") {
         hull() {
         translate([-4, -1, 3])
@@ -169,7 +178,7 @@ module key_g() {
 }
 
 module key_h() {
-    translate_u(-.5+1.5+5, 1)
+    tu(KEY_H)
     graphicsKey(3, "H", "ctrl-h") {
         hull() {
             translate([4, -1, 4])
@@ -187,7 +196,7 @@ module key_h() {
 module key_j() {
     $key_bump = true;
 
-    translate_u(-.5+1.5+6, 1)
+    tu(KEY_J)
     graphicsKey(3, "J", "ctrl-j") {
         hull() {
             translate([-4, -1, 4])
@@ -203,7 +212,7 @@ module key_j() {
 }
 
 module key_k() {
-    translate_u(-.5+1.5+7, 1)
+    tu(KEY_K)
     graphicsKey(3, "K", "ctrl-k") {
         translate([0, -1, 0])
         cube([4, gCut, 4]);
@@ -211,7 +220,7 @@ module key_k() {
  }
 
 module key_l() {
-    translate_u(-.5+1.5+8, 1)
+    tu(KEY_L)
     graphicsKey(3, "L", "ctrl-l") {
         translate([-4, -1, 0])
         cube([4, gCut, 4]);
@@ -219,25 +228,27 @@ module key_l() {
 }
 
 module key_semi() {
-    translate_u(-.5+1.5+9, 1)
+    tu(KEY_SEMI)
     graphicsKey2(3, ";", ":", "ctrl-semi"){
         gCharacter("♠️");
     }
 }
 
+
 module key_plus() {
-    translate_u(-.5+1.5+10, 1)
-    graphicsKey3(3, "+", "\\", "←", "ctrl-comma");
+    tu(KEY_PLUS)
+    graphicsKey3(3, "+", chr(34), "←", "ctrl-comma");
 }
 
-module key_star() {
-    translate_u(-.5+1.5+11, 1)
+
+module key_astrix() {
+    tu(KEY_ASTRIX)
     graphicsKey3(3, "*", "^", "→", "ctrl-comma");
 }
 
 
 module key_caps() {
-    translate_u(-.5+1.5+12 +.25, 1)
+    tu(KEY_CAPS)
     u(1.25)
     legend("CAPS", [0,0], long_size)
     oem_row(3)
@@ -250,7 +261,7 @@ module key_caps() {
 // ROW 2
 
 module key_tab() {
-    translate_u(-.5, 2)
+    tu(KEY_TAB)
     u(1.75)
     legend("TAB", [0,1], long_size)
     legend("CLR", [1,-1], long_size)
@@ -261,7 +272,7 @@ module key_tab() {
 }
 
 module key_q() {
-    translate_u(-.5+1.5, 2)
+    tu(KEY_Q)
     graphicsKey(2, "Q", "ctrl-q") {
        gLine3();
        gLine6();
@@ -269,7 +280,7 @@ module key_q() {
 }
 
 module key_w() {
-    translate_u(-.5+1.5+1, 2)
+    tu(KEY_W)
     graphicsKey(2, "W", "ctrl-w") {
        gLine3();
        gLine6();
@@ -278,7 +289,7 @@ module key_w() {
 }
 
 module key_e() {
-    translate_u(-.5+1.5+2, 2)
+    tu(KEY_E)
     graphicsKey(2, "E", "ctrl-e") {
        gLine6();
        gLine9();
@@ -286,7 +297,7 @@ module key_e() {
 }
 
 module key_r() {
-    translate_u(-.5+1.5+3, 2)
+    tu(KEY_R)
     graphicsKey(2, "R", "ctrl-e") {
        gLine9();
        gLine3();
@@ -294,7 +305,7 @@ module key_r() {
 }
 
 module key_t() {
-    translate_u(-.5+1.5+4, 2)
+    tu(KEY_T)
     graphicsKey(2, "T", "ctrl-t") {
         translate([0, 1, 0])
         rotate([90, 0, 0])
@@ -303,7 +314,7 @@ module key_t() {
 }
 
 module key_y() {
-    translate_u(-.5+1.5+5, 2)
+    tu(KEY_Y)
     graphicsKey(2, "Y", "ctrl-y") {
         translate([-4, -1, -4])
         cube([4, gCut, 8]);
@@ -311,7 +322,7 @@ module key_y() {
 }
 
 module key_u() {
-    translate_u(-.5+1.5+6, 2)
+    tu(KEY_U)
     graphicsKey(2, "U", "ctrl-u") {
         translate([-4, -1, -4])
         cube([8, gCut, 4]);
@@ -319,7 +330,7 @@ module key_u() {
 }
 
 module key_i() {
-    translate_u(-.5+1.5+7, 2)
+    tu(KEY_I)
     graphicsKey(2, "I", "ctrl-i") {
         translate([0, -1, -4])
         cube([4, gCut, 4]);
@@ -327,7 +338,7 @@ module key_i() {
 }
 
 module key_o() {
-    translate_u(-.5+1.5+8, 2)
+    tu(KEY_O)
     graphicsKey(2, "I", "ctrl-i") {
         translate([-4, -1, -4])
         cube([4, gCut, 4]);
@@ -335,7 +346,7 @@ module key_o() {
 }
 
 module key_p() {
-    translate_u(-.5+1.5+9, 2)
+    tu(KEY_P)
     graphicsKey(2, "P", "ctrl-p") {
         gCharacter("♣️");
     }
@@ -344,18 +355,18 @@ module key_p() {
 
 // ← ↑ ↓ →
 module key_dash() {
-    translate_u(-.5+1.5+10, 2)
+    tu(KEY_DASH)
     graphicsKey3(2, "-", "_", "↑", "ctrl-comma");
 }
 
 module key_equal() {
-    translate_u(-.5+1.5+11, 2)
+    tu(KEY_EQUAL)
     graphicsKey3(2, "=", "|", "↓", "ctrl-comma");
 }
 
 
 module key_return() {
-    translate_u(-.5+1.5+12.25, 2)
+    tu(KEY_RETURN)
     u(1.5)
     legend("RETURN", [0,0], long_size)
     oem_row(2)
@@ -366,7 +377,7 @@ module key_return() {
 //////////////////////////////////////
 
 module key_esc() {
-    translate_u(-.5, 3)
+    tu(KEY_ESC)
     u(1.25)
     legend("ESC", [0,0], long_size)
     oem_row(1)
@@ -375,68 +386,68 @@ module key_esc() {
 }
 
 module key_1() {
-    translate_u(-.5+1.25, 3)
+    tu(KEY_1)
     graphicsKey2(1, "1", "!", "ctrl-comma");
 }
 
 module key_2() {
-    translate_u(-.5+1.25+1, 3)
+    tu(KEY_2)
     graphicsKey2(1, "2", "\"", "ctrl-comma");
 }
 
 module key_3() {
-    translate_u(-.5+1.25+2, 3)
+    tu(KEY_3)
     graphicsKey2(1, "3", "#", "ctrl-comma");
 }
 
 module key_4() {
-    translate_u(-.5+1.25+3, 3)
+    tu(KEY_4)
     graphicsKey2(1, "4", "$", "ctrl-comma");
 }
 
 module key_5() {
-    translate_u(-.5+1.25+4, 3)
+    tu(KEY_5)
     graphicsKey2(1, "5", "%", "ctrl-comma");
 }
 
 module key_6() {
-    translate_u(-.5+1.25+5, 3)
+    tu(KEY_6)
     graphicsKey2(1, "6", "&", "ctrl-comma");
 }
 
 module key_7() {
-    translate_u(-.5+1.25+6, 3)
+    tu(KEY_7)
     graphicsKey2(1, "7", "'", "ctrl-comma");
 }
 
 module key_8() {
-    translate_u(-.5+1.25+7, 3)
+    tu(KEY_8)
     graphicsKey2(1, "8", "@", "ctrl-comma");
 }
 
 module key_9() {
-    translate_u(-.5+1.25+8, 3)
+    tu(KEY_9)
     graphicsKey2(1, "9", "(", "ctrl-comma");
 }
 
 module key_0() {
-    translate_u(-.5+1.25+9, 3)
+    tu(KEY_0)
     graphicsKey2(1, "0", ")", "ctrl-comma");
 }
 
 
 module key_lt() {
-    translate_u(-.5+1.25+10, 3)
+    tu(KEY_LT)
     graphicsKey2(1, "<", "CLR", "ctrl-comma");
 }
 
 module key_gt() {
-    translate_u(-.5+1.25+11, 3)
+    tu(KEY_GT)
     graphicsKey2(1, ">", "INS", "ctrl-comma");
 }
 
 module key_bs() {
-    translate_u(-.5+1.25+12.25, 3)
+    tu(KEY_BS)
     u(2)
     stabilized()
     legend("BACK SP", [0,1], half_size)
@@ -450,84 +461,90 @@ module key_bs() {
 
 
 module key_reset() {
-    translate_u(0, 5)
+    tu(KEY_RESET)
     gridKey("RESET");
 }
 
 module key_menu() {
-    translate_u(0+1.5, 5)
+    tu(KEY_MENU)
     gridKey("MENU");
 }
 
 module key_turbo() {
-    translate_u(0+(1.5 *2), 5)
+    tu(KEY_TURBO)
     gridKey("TURBO");
 }
 
 module key_start() {
-    translate_u(0+(1.5 *3), 5)
+    tu(KEY_START)
     gridKey("START");
 }
 
 module key_select() {
-    translate_u(0+(1.5 *4), 5)
+    tu(KEY_SELECT)
     gridKey("SELECT");
 }
 
 module key_option() {
-    translate_u(0+(1.5 *5), 5)
+    tu(KEY_OPTION)
     gridKey("OPTION");
 }
 
 module key_help() {
-    translate_u(0+(1.5 *6), 5)
+    tu(KEY_HELP)
     gridKey("HELP");
 }
 
 module key_inverse() {
-    translate_u(0+(1.5 *7), 5)
+    tu(KEY_INV)
     gridKey("INV");
 }
 
 module key_break() {
-    translate_u(0+(1.5 *8), 5)
+    tu(KEY_BREAK)
     gridKey("BREAK");
 }
 
-/////////////////////////////////////
-module key_spacebar() {
-  $inverted_dish = $dish_type != "disable";
-  $dish_type = $dish_type != "disable" ? "sideways cylindrical" : "disable";
-
-  translate_u(7, -1)
-  6_25u() stabilized(mm=50)
-  key();
+module key_power() {
+    tu(KEY_POWER)
+    gridKey("POWER");
 }
 
 
-module key_up() {
-    translate_u(14, 0)
+/////////////////////////////////////
+module key_space() {
+    $inverted_dish = $dish_type != "disable";
+    $dish_type = $dish_type != "disable" ? "sideways cylindrical" : "disable";
+
+    tu(KEY_SPACE)
+    u(6.25) stabilized(mm=50)
+    key();
+}
+
+
+module key_c_up() {
+    tu(KEY_C_UP)
     graphicsKey(2, "↑", "ctrl-y");
 }
 
-module key_left() {
-    translate_u(13, -1)
+module key_c_left() {
+    tu(KEY_C_LEFT)
     graphicsKey(2, "←", "ctrl-y");
 }
 
-module key_down() {
-    translate_u(14, -1)
+module key_c_down() {
+    tu(KEY_C_DOWN)
     graphicsKey(2, "↓", "ctrl-y");
  }
 
-module key_right() {
-    translate_u(15, -1)
+module key_c_right() {
+    tu(KEY_C_RIGHT)
     graphicsKey(2, "→", "ctrl-y");
  }
 
 
 module key_fn() {
-    translate_u(3, -1)
+    tu(KEY_FN)
     graphicsKey2(1, "FN", "", "ctrl-y");
 }
 
@@ -543,7 +560,7 @@ module fullkeyboard() {
         key_n();
         key_m();
         key_comma();
-        key_dot();
+        key_period();
         key_slash();
         key_rshift();
     }
@@ -561,7 +578,7 @@ module fullkeyboard() {
         key_l();
         key_semi();
         key_plus();
-        key_star();
+        key_astrix();
         key_caps();
     }
 
@@ -604,7 +621,7 @@ module fullkeyboard() {
         key_reset();
         key_menu();
         key_turbo();
-        key_start();
+        key_astrixt();
         key_select();
         key_option();
         key_help();
@@ -613,12 +630,12 @@ module fullkeyboard() {
     }
 
     if (true) {
-        key_spacebar();
+        key_space();
 
-        key_up();
-        key_down();
-        key_left();
-        key_right();
+        key_c_up();
+        key_c_down();
+        key_c_left();
+        key_c_right();
 
         key_fn();
     }

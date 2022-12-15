@@ -6,7 +6,7 @@ from parser import Layer
 layout_json_filename = "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
 pcb_name = "../atari-keyboard.kicad_pcb"
 key_sch_name = "../keyboard.kicad_sch"
-
+openscad_file = "../../keycaps/keyboard-position.scad"
 
 STARTING_INDEX = 201
 
@@ -21,8 +21,12 @@ DIODE_OFFSET_X = 6.5
 DIODE_OFFSET_Y = 5.52 
 
 
-
 class KeyInfo:
+    # Logoical position, based on key units
+    l_x = 0
+    l_y = 0
+
+    # Absolute position
     key_x = 0
     key_y = 0
     w = 0
@@ -50,6 +54,10 @@ class KeyInfo:
         l.append('y: ' + str(self.key_y))
         l.append('w: ' + str(self.w))
         l.append('h: ' + str(self.h))
+
+        l.append('l_x: ' + str(self.l_x))
+        l.append('l_y: ' + str(self.l_y))
+
         l.append('matrix_c: ' + str(self.matrix_c))
         l.append('matrix_r: ' + str(self.matrix_r))
 
@@ -139,6 +147,9 @@ def get_layout():
         if xfix == -1:
             raise Exception("Unknown width of" + str(keyInfo.w) + " found " + keyInfo.label)
 
+
+        keyInfo.l_x = key.get('x')
+        keyInfo.l_y = key.get('y')
 
 
         x = (float(key.get('x')) + (KeyInfo.w/2)) * UNIT
@@ -285,7 +296,36 @@ def calcPnP():
         diode = pcb_parser.findFootprintByReference("D" + item.designator)
         print(diode)
 
+def makeOpnscad():
+    layout = get_layout()
+    out = []
+
+    for item in layout:
+
+        if item.designator == None:
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
+            
+            oo = [
+                    str(item.l_x), 
+                    str(item.l_y),
+                    str(item.key_x),
+                    str(item.key_y),
+                ]
+
+            out.append("KEY_" + item.label + " = [" + ", ".join(oo) +  "];")
+   
+    #print(out)
+    out = "\r\n".join(out)
+
+    with open(openscad_file, 'w') as f:
+        f.write(out)
+
+
 
 if __name__ == '__main__':
-    run_it()
+    #run_it()
     #calcPnP()
+    makeOpnscad()
