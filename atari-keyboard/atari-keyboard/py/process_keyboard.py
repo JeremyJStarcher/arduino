@@ -1,4 +1,5 @@
 import json
+import csv
 from parser import SParser
 from parser import BoundingBox
 from parser import Layer
@@ -7,6 +8,10 @@ layout_json_filename = "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a
 pcb_name = "../atari-keyboard.kicad_pcb"
 key_sch_name = "../keyboard.kicad_sch"
 openscad_file = "../../keycaps/keyboard-position.scad"
+jlc_bom_file = "../gerbers/jcl_bom.csv"
+jlc_cpl_file = "../gerbers/jcl_cpl.csv"
+
+
 
 STARTING_INDEX = 201
 
@@ -323,9 +328,115 @@ def makeOpnscad():
     with open(openscad_file, 'w') as f:
         f.write(out)
 
+def makeJlcPcb():
+    def q(s):
+        return  str(s)
+
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = SParser(pcb_sexp)
+    pcb_parser.toArray()
+
+
+    diodesRefs = []
+    prints = pcb_parser.findObjectsByNoun("footprint", 1)
+    for p in prints:
+        #print(p)
+
+        o =  pcb_parser.findObjectsByNoun("fp_text", float("inf"), p)
+        filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2].startswith('"D')), o)
+        lf = list(filtered)
+        if (len(lf) == 1):
+            ref = list(lf)[0][2]
+            ref = ref.replace('"',"")
+            # print(ref)
+            #f = list(filtered)
+            diodesRefs.append(ref)
+
+    diodesRefs.sort()
+    #print(diodesRefs)
+
+    layout = get_layout()
+    bom_headers = ["Comment","Designator","Footprint","LCSC Part #"]
+    cpl_headers = ["Designator","Val","Package","Mid X","Mid Y","Rotation","Layer"]
+
+    bom_refs = []
+    cpl_rows = [];
+
+
+    for dRef in diodesRefs:
+        bom_refs.append(dRef)
+
+        # print(dRef)
+        at = pcb_parser.findAtByReference(dRef)
+        at.append("0") # If there is no rotation
+        # print(at)
+
+        x = float(at[1])
+        y = float(at[2])
+        r = float(at[3])
+
+        cpl_row = [
+            q(dRef),
+            q("1N4148W"),
+            q("SOD-123"),
+            q(str(x) + "mm"),
+            q(str(-y) + "mm"),
+            q(r + 180),
+            q("top")
+        ]
+
+        cpl_rows.append(cpl_row)
+
+
+
+    # for item in layout:
+
+    #     if item.designator == None:
+    #         print("skipping " + item.label)
+    #         continue
+    #     else:
+    #         print("Searching for " + item.label + " " + item.designator)
+
+    #         bom_refs.append("D" + item.designator)
+
+    #         # C1,0.1uF,C_0805_2012Metric,164.532500,-94.930000,0.000000,top
+
+    #         cpl_row = [
+    #             q("D" + item.designator),
+    #             q("1N4148W"),
+    #             q("SOD-123"),
+    #             q(str(item.diode_x) + "mm"),
+    #             q(str(-item.diode_y) + "mm"),
+    #             q(90),
+    #             q("top")
+    #         ]
+
+    #         cpl_rows.append(cpl_row)
+
+    bom_row = ["1N4148W",",".join(bom_refs),"SOD-123","C176288"]
+
+    with open(jlc_bom_file, 'w', encoding='UTF8') as f:
+        writer = csv.writer(f)
+
+        # write the header
+        writer.writerow(bom_headers)
+
+        # write the data
+        writer.writerow(bom_row)
+
+    with open(jlc_cpl_file, 'w', encoding='UTF8') as f:
+        writer = csv.writer(f)
+
+        # write the header
+        writer.writerow(cpl_headers)
+
+        # write the data
+        writer.writerows(cpl_rows)
+
 
 
 if __name__ == '__main__':
     #run_it()
     #calcPnP()
-    makeOpnscad()
+    #makeOpnscad()
+    makeJlcPcb()

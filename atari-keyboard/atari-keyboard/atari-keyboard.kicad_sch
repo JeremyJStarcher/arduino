@@ -1624,7 +1624,7 @@
       (reference "D217") (unit 1) (value "8") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/93bab6b5-ac9b-4be4-a726-fb29d1f8e12f"
-      (reference "D218") (unit 1) (value "UP") (footprint "retro-kbd:Diode-dual")
+      (reference "D218") (unit 1) (value "C_UP") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bdcb5b74-1f6b-4925-bb73-7aae2a758026"
       (reference "D219") (unit 1) (value "9") (footprint "retro-kbd:Diode-dual")
@@ -1633,10 +1633,10 @@
       (reference "D220") (unit 1) (value "0") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/a63abb63-fbc0-43e6-95f7-f8ef1bb39cc2"
-      (reference "D221") (unit 1) (value "<") (footprint "retro-kbd:Diode-dual")
+      (reference "D221") (unit 1) (value "LT") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/fdf7b66b-02cb-4423-80ca-8cb48a52743e"
-      (reference "D222") (unit 1) (value ">") (footprint "retro-kbd:Diode-dual")
+      (reference "D222") (unit 1) (value "GT") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0c10f712-9afb-4612-af2c-deb97c393270"
       (reference "D223") (unit 1) (value "BS") (footprint "retro-kbd:Diode-dual")
@@ -1651,7 +1651,7 @@
       (reference "D226") (unit 1) (value "Q") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/8467e097-4e4f-4750-8e0c-f905e1b2502d"
-      (reference "D227") (unit 1) (value "DOWN") (footprint "retro-kbd:Diode-dual")
+      (reference "D227") (unit 1) (value "C_DOWN") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/d835937c-0813-4986-b0c4-c55b3ca351f1"
       (reference "D228") (unit 1) (value "W") (footprint "retro-kbd:Diode-dual")
@@ -1678,16 +1678,16 @@
       (reference "D235") (unit 1) (value "O") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/e0691e3d-f3a5-433f-ac48-b6b32a39d90f"
-      (reference "D236") (unit 1) (value "LEFT") (footprint "retro-kbd:Diode-dual")
+      (reference "D236") (unit 1) (value "C_LEFT") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0c1b683f-4563-4a80-a5a8-a8fb3ec4a3f1"
       (reference "D237") (unit 1) (value "P") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/f20bbb75-6e1c-4b87-8a94-28eed7ef2d23"
-      (reference "D238") (unit 1) (value "[-]") (footprint "retro-kbd:Diode-dual")
+      (reference "D238") (unit 1) (value "DASH") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/31265e11-d1dd-4d7e-9dca-82e017cfbf86"
-      (reference "D239") (unit 1) (value "[=]") (footprint "retro-kbd:Diode-dual")
+      (reference "D239") (unit 1) (value "EQUAL") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/06cf9672-125e-4c42-969d-2bac960c1653"
       (reference "D240") (unit 1) (value "RET") (footprint "retro-kbd:Diode-dual")
@@ -1705,7 +1705,7 @@
       (reference "D244") (unit 1) (value "D") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/27b73bad-3364-4b07-ab7b-3316c9a4e654"
-      (reference "D245") (unit 1) (value "RIGHT") (footprint "retro-kbd:Diode-dual")
+      (reference "D245") (unit 1) (value "C_RIGHT") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/f44047a7-fb42-440d-b8cf-12dec7bbf2af"
       (reference "D246") (unit 1) (value "F") (footprint "retro-kbd:Diode-dual")
@@ -1726,16 +1726,16 @@
       (reference "D251") (unit 1) (value "L") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0d613ecc-0ab9-410f-9e42-9e40059d93ae"
-      (reference "D252") (unit 1) (value "[;]") (footprint "retro-kbd:Diode-dual")
+      (reference "D252") (unit 1) (value "SEMI") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/93dbd43b-ef0c-4cd0-ba07-6c58097861bb"
-      (reference "D253") (unit 1) (value "[+]") (footprint "retro-kbd:Diode-dual")
+      (reference "D253") (unit 1) (value "PLUS") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b66acc6d-fe0c-430b-80f1-369308d81ea4"
       (reference "D254") (unit 1) (value "N") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/41906be9-def6-4ec7-b5dd-3b98c009b00d"
-      (reference "D255") (unit 1) (value "MULT") (footprint "retro-kbd:Diode-dual")
+      (reference "D255") (unit 1) (value "ASTRIX") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/33497429-98b1-4ca7-936b-1330c65e35f0"
       (reference "D256") (unit 1) (value "CAPS") (footprint "retro-kbd:Diode-dual")
@@ -1768,16 +1768,16 @@
       (reference "D265") (unit 1) (value "INV") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/78bdd35f-a1d9-43e1-bee4-4dc4856c923c"
-      (reference "D266") (unit 1) (value "SPC") (footprint "retro-kbd:Diode-dual")
+      (reference "D266") (unit 1) (value "SPACE") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/634f4e9f-ef29-49ae-b4d4-01853988083f"
-      (reference "D267") (unit 1) (value "[,]") (footprint "retro-kbd:Diode-dual")
+      (reference "D267") (unit 1) (value "COMMA") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/805c2145-1325-426b-b05a-e245f6a62a93"
-      (reference "D268") (unit 1) (value "[.]") (footprint "retro-kbd:Diode-dual")
+      (reference "D268") (unit 1) (value "PERIOD") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2a6e9558-ed1b-417f-917f-f2d251487ca1"
-      (reference "D269") (unit 1) (value "[/]") (footprint "retro-kbd:Diode-dual")
+      (reference "D269") (unit 1) (value "SLASH") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bce8dcfb-ce2b-4423-ac10-6a057fc3b0b8"
       (reference "D270") (unit 1) (value "POWER") (footprint "retro-kbd:Diode-dual")
@@ -2068,7 +2068,7 @@
       (reference "SW217") (unit 1) (value "8") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/7811ec31-89a0-4e53-953d-c92e696cfb9d"
-      (reference "SW218") (unit 1) (value "UP") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW218") (unit 1) (value "C_UP") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/70f327d2-dd6a-40d7-afaf-c20a901f3c60"
       (reference "SW219") (unit 1) (value "9") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
@@ -2077,10 +2077,10 @@
       (reference "SW220") (unit 1) (value "0") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/a9258a3f-bd72-464c-b305-d6ec60df8922"
-      (reference "SW221") (unit 1) (value "<") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW221") (unit 1) (value "LT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bc96dd9f-bf52-4ecc-b32f-efd0c504989f"
-      (reference "SW222") (unit 1) (value ">") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW222") (unit 1) (value "GT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/dda276e7-2ab1-473d-aeed-7b703b8f5f70"
       (reference "SW223") (unit 1) (value "BS") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB")
@@ -2095,7 +2095,7 @@
       (reference "SW226") (unit 1) (value "Q") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/6368250e-15d0-4da4-87dc-4acb682dab4b"
-      (reference "SW227") (unit 1) (value "DOWN") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW227") (unit 1) (value "C_DOWN") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/47b7bfe0-a798-4edc-9e20-2c34431964e3"
       (reference "SW228") (unit 1) (value "W") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
@@ -2122,16 +2122,16 @@
       (reference "SW235") (unit 1) (value "O") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/8fbd44c7-947d-4cd6-9484-c423a2a17d0f"
-      (reference "SW236") (unit 1) (value "LEFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW236") (unit 1) (value "C_LEFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/13b43263-f9df-489d-879f-5f70539102ea"
       (reference "SW237") (unit 1) (value "P") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/24f4b413-4450-4264-8b42-269fafe8d3b1"
-      (reference "SW238") (unit 1) (value "[-]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW238") (unit 1) (value "DASH") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/a725b710-a41a-4477-8c7d-d1d5b488a649"
-      (reference "SW239") (unit 1) (value "[=]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW239") (unit 1) (value "EQUAL") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/32b80fdb-b175-4734-92cd-e32ba1b8d671"
       (reference "SW240") (unit 1) (value "RET") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.50u_PCB")
@@ -2149,7 +2149,7 @@
       (reference "SW244") (unit 1) (value "D") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/ce0956a4-883d-4f3f-b644-95f9a8788f9f"
-      (reference "SW245") (unit 1) (value "RIGHT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW245") (unit 1) (value "C_RIGHT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/cbeaaafa-088a-47c2-a072-8a60910ef0b0"
       (reference "SW246") (unit 1) (value "F") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
@@ -2170,16 +2170,16 @@
       (reference "SW251") (unit 1) (value "L") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/ce7f4225-e42b-456d-ab87-db31dc6442b2"
-      (reference "SW252") (unit 1) (value "[;]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW252") (unit 1) (value "SEMI") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/131e6542-c02c-4f0b-8dd5-a67c61e6e944"
-      (reference "SW253") (unit 1) (value "[+]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW253") (unit 1) (value "PLUS") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/f02b0585-6cb7-45c5-ad54-12a7e108bee5"
       (reference "SW254") (unit 1) (value "N") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b0e9f2d5-1432-4e3c-a679-0c0b34e49062"
-      (reference "SW255") (unit 1) (value "MULT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW255") (unit 1) (value "ASTRIX") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/19c2ec05-c253-4417-97a1-708c2d85bf61"
       (reference "SW256") (unit 1) (value "CAPS") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.25u_PCB")
@@ -2212,16 +2212,16 @@
       (reference "SW265") (unit 1) (value "INV") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/142f1f2a-f57c-442c-bf6a-24296beadf96"
-      (reference "SW266") (unit 1) (value "SPC") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_6.25u_PCB")
+      (reference "SW266") (unit 1) (value "SPACE") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_6.25u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/eb6b0e49-1216-4df3-8874-cf596740483f"
-      (reference "SW267") (unit 1) (value "[,]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW267") (unit 1) (value "COMMA") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/980ac8db-8e99-4892-9948-f5b3253ba90d"
-      (reference "SW268") (unit 1) (value "[.]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW268") (unit 1) (value "PERIOD") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b6f1da38-68c3-481e-8220-09221a8b2c95"
-      (reference "SW269") (unit 1) (value "[/]") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW269") (unit 1) (value "SLASH") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2f170201-a346-425f-ac5c-60533c0b40bf"
       (reference "SW270") (unit 1) (value "POWER") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
