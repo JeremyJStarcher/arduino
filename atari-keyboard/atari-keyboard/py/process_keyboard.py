@@ -348,28 +348,22 @@ def makeJlcPcb():
         if (len(lf) == 1):
             ref = list(lf)[0][2]
             ref = ref.replace('"',"")
-            # print(ref)
-            #f = list(filtered)
             diodesRefs.append(ref)
 
     diodesRefs.sort()
-    #print(diodesRefs)
 
     layout = get_layout()
     bom_headers = ["Comment","Designator","Footprint","LCSC Part #"]
     cpl_headers = ["Designator","Val","Package","Mid X","Mid Y","Rotation","Layer"]
 
     bom_refs = []
-    cpl_rows = [];
-
+    cpl_rows = []
 
     for dRef in diodesRefs:
         bom_refs.append(dRef)
 
-        # print(dRef)
         at = pcb_parser.findAtByReference(dRef)
         at.append("0") # If there is no rotation
-        # print(at)
 
         x = float(at[1])
         y = float(at[2])
@@ -380,38 +374,12 @@ def makeJlcPcb():
             q("1N4148W"),
             q("SOD-123"),
             q(str(x) + "mm"),
-            q(str(-y) + "mm"),
+            q(str(-y) + "mm"), # The y coordinate system is inverted, of course.
             q(r + 180),
             q("top")
         ]
 
         cpl_rows.append(cpl_row)
-
-
-
-    # for item in layout:
-
-    #     if item.designator == None:
-    #         print("skipping " + item.label)
-    #         continue
-    #     else:
-    #         print("Searching for " + item.label + " " + item.designator)
-
-    #         bom_refs.append("D" + item.designator)
-
-    #         # C1,0.1uF,C_0805_2012Metric,164.532500,-94.930000,0.000000,top
-
-    #         cpl_row = [
-    #             q("D" + item.designator),
-    #             q("1N4148W"),
-    #             q("SOD-123"),
-    #             q(str(item.diode_x) + "mm"),
-    #             q(str(-item.diode_y) + "mm"),
-    #             q(90),
-    #             q("top")
-    #         ]
-
-    #         cpl_rows.append(cpl_row)
 
     bom_row = ["1N4148W",",".join(bom_refs),"SOD-123","C176288"]
 
