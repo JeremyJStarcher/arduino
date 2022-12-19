@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 22385)
+    (start_pass_no 17467)
     (layer_rule F.Cu
       (active on)
       (preferred_direction horizontal)
@@ -26,10 +26,10 @@
     )
   )
   (rule
-    (width 1000.0)
-    (clear 300.2)
-    (clear 500.0 (type smd_to_turn_gap))
-    (clear 75.0 (type smd_smd))
+    (width 500.0)
+    (clear 500.2)
+    (clear 250.0 (type smd_to_turn_gap))
+    (clear 125.0 (type smd_smd))
   )
   (padstack "Via[0-1]_800:400_um"
     (shape
@@ -61,22 +61,23 @@
   (class default
     R1 R2 R3 R4 R5 R8 C8 C7
     C6 C5 C4 C3 C2 C1 "Net-(D102-Pad1)" "Net-(D103-Pad1)"
-    "Net-(D104-Pad1)" "Net-(D105-Pad1)" "Net-(D106-Pad1)" "Net-(D107-Pad1)" "Net-(D108-Pad1)" "Net-(D109-Pad1)" "Net-(D110-Pad1)" "Net-(D111-Pad1)"
+    "Net-(D104-Pad1)" "Net-(D105-Pad1)" "Net-(J102-Pad1)" "Net-(D107-Pad1)" "Net-(D108-Pad1)" "Net-(D109-Pad1)" "Net-(D110-Pad1)" "Net-(D111-Pad1)"
     C9 "/JS_2+5" "/JS1_+5" "unconnected-(U101-Pad1)" "unconnected-(U101-Pad2)" R9 "Net-(D101-Pad1)" "unconnected-(U101-Pad22)"
-    "unconnected-(U101-Pad24)" "unconnected-(U101-Pad28)" SDA SCL R6 R7 "/JS1_APAD" "/JS1_BPAD"
-    "/JS2_APAD" "/JS2_BPAD" "Net-(D201-Pad2)" "Net-(D202-Pad2)" "Net-(D203-Pad2)" "Net-(D204-Pad2)" "Net-(D205-Pad2)" "Net-(D206-Pad2)"
-    "Net-(D207-Pad2)" "Net-(D208-Pad2)" "Net-(D209-Pad2)" "Net-(D210-Pad2)" "Net-(D211-Pad2)" "Net-(D212-Pad2)" "Net-(D213-Pad2)" "Net-(D214-Pad2)"
-    "Net-(D215-Pad2)" "Net-(D216-Pad2)" "Net-(D217-Pad2)" "Net-(D218-Pad2)" "Net-(D219-Pad2)" "Net-(D220-Pad2)" "Net-(D221-Pad2)" "Net-(D222-Pad2)"
-    "Net-(D223-Pad2)" "Net-(D224-Pad2)" "Net-(D225-Pad2)" "Net-(D226-Pad2)" "Net-(D227-Pad2)" "Net-(D228-Pad2)" "Net-(D229-Pad2)" "Net-(D230-Pad2)"
-    "Net-(D231-Pad2)" "Net-(D232-Pad2)" "Net-(D233-Pad2)" "Net-(D234-Pad2)" "Net-(D235-Pad2)" "Net-(D236-Pad2)" "Net-(D237-Pad2)" "Net-(D238-Pad2)"
-    "Net-(D239-Pad2)" "Net-(D240-Pad2)" "Net-(D241-Pad2)" "Net-(D242-Pad2)" "Net-(D243-Pad2)" "Net-(D244-Pad2)" "Net-(D245-Pad2)" "Net-(D246-Pad2)"
-    "Net-(D247-Pad2)" "Net-(D248-Pad2)" "Net-(D249-Pad2)" "Net-(D250-Pad2)" "Net-(D251-Pad2)" "Net-(D252-Pad2)" "Net-(D253-Pad2)" "Net-(D254-Pad2)"
-    "Net-(D255-Pad2)" "Net-(D256-Pad2)" "Net-(D257-Pad2)" "Net-(D258-Pad2)" "Net-(D259-Pad2)" "Net-(D260-Pad2)" "Net-(D261-Pad2)" "Net-(D262-Pad2)"
-    "Net-(D263-Pad2)" "Net-(D264-Pad2)" "Net-(D265-Pad2)" "Net-(D266-Pad2)" "Net-(D267-Pad2)" "Net-(D268-Pad2)" "Net-(D269-Pad2)" "Net-(D270-Pad2)"
+    "unconnected-(U101-Pad24)" SDA SCL R6 R7 "/JS1_APAD" "/JS1_BPAD" "/JS2_APAD"
+    "/JS2_BPAD" "Net-(D201-Pad2)" "Net-(D202-Pad2)" "Net-(D203-Pad2)" "Net-(D204-Pad2)" "Net-(D205-Pad2)" "Net-(D206-Pad2)" "Net-(D207-Pad2)"
+    "Net-(D208-Pad2)" "Net-(D209-Pad2)" "Net-(D210-Pad2)" "Net-(D211-Pad2)" "Net-(D212-Pad2)" "Net-(D213-Pad2)" "Net-(D214-Pad2)" "Net-(D215-Pad2)"
+    "Net-(D216-Pad2)" "Net-(D217-Pad2)" "Net-(D218-Pad2)" "Net-(D219-Pad2)" "Net-(D220-Pad2)" "Net-(D221-Pad2)" "Net-(D222-Pad2)" "Net-(D223-Pad2)"
+    "Net-(D224-Pad2)" "Net-(D225-Pad2)" "Net-(D226-Pad2)" "Net-(D227-Pad2)" "Net-(D228-Pad2)" "Net-(D229-Pad2)" "Net-(D230-Pad2)" "Net-(D231-Pad2)"
+    "Net-(D232-Pad2)" "Net-(D233-Pad2)" "Net-(D234-Pad2)" "Net-(D235-Pad2)" "Net-(D236-Pad2)" "Net-(D237-Pad2)" "Net-(D238-Pad2)" "Net-(D239-Pad2)"
+    "Net-(D240-Pad2)" "Net-(D241-Pad2)" "Net-(D242-Pad2)" "Net-(D243-Pad2)" "Net-(D244-Pad2)" "Net-(D245-Pad2)" "Net-(D246-Pad2)" "Net-(D247-Pad2)"
+    "Net-(D248-Pad2)" "Net-(D249-Pad2)" "Net-(D250-Pad2)" "Net-(D251-Pad2)" "Net-(D252-Pad2)" "Net-(D253-Pad2)" "Net-(D254-Pad2)" "Net-(D255-Pad2)"
+    "Net-(D256-Pad2)" "Net-(D257-Pad2)" "Net-(D258-Pad2)" "Net-(D259-Pad2)" "Net-(D260-Pad2)" "Net-(D261-Pad2)" "Net-(D262-Pad2)" "Net-(D263-Pad2)"
+    "Net-(D264-Pad2)" "Net-(D265-Pad2)" "Net-(D266-Pad2)" "Net-(D267-Pad2)" "Net-(D268-Pad2)" "Net-(D269-Pad2)" "Net-(D270-Pad2)" "unconnected-(U101-Pad28)"
+    "unconnected-(SW227-Pad2)" "unconnected-(SW236-Pad2)" "unconnected-(SW245-Pad2)" "unconnected-(SW254-Pad2)" "unconnected-(SW263-Pad2)" "unconnected-(SW264-Pad2)" "unconnected-(SW265-Pad2)"
     (clearance_class default)
     (via_rule default)
     (rule
-      (width 1000.0)
+      (width 500.0)
     )
     (circuit 
       (use_layer F.Cu B.Cu)
@@ -86,7 +87,7 @@
     (clearance_class "kicad_default")
     (via_rule kicad_default)
     (rule
-      (width 1000.0)
+      (width 500.0)
     )
     (circuit 
       (use_layer F.Cu B.Cu)
@@ -97,7 +98,7 @@
     (clearance_class PWR)
     (via_rule PWR)
     (rule
-      (width 1000.0)
+      (width 500.0)
     )
     (circuit 
       (use_layer F.Cu B.Cu)

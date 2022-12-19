@@ -404,7 +404,7 @@ def makeJlcPcb():
 
 
 if __name__ == '__main__':
-    #run_it()
-    #calcPnP()
-    #makeOpnscad()
+    run_it()
+    calcPnP()
+    makeOpnscad()
     makeJlcPcb()
