@@ -339,7 +339,7 @@ module key_i() {
 
 module key_o() {
     tu(KEY_O)
-    graphicsKey(2, "I", "ctrl-i") {
+    graphicsKey(2, "O", "ctrl-i") {
         translate([-4, -1, -4])
         cube([4, gCut, 4]);
     }
@@ -621,7 +621,7 @@ module fullkeyboard() {
         key_reset();
         key_menu();
         key_turbo();
-        key_astrixt();
+        key_start();
         key_select();
         key_option();
         key_help();

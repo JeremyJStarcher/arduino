@@ -1,20 +1,24 @@
 use <key_desc.scad>
 
 
- key = "layout";
- print_one();
- 
-//  prepKey() key_a();
+  key = "key_o";
+  print_one();
+
+//   prepKey() key_o();
+//   prepKey() key_i();
+//   prepKey() key_comma();
 
 module prepKey() {
     /* Cut off key flush with baseline -- doubtful this is really needed anymore. */
 
-    difference() {
-        children();
+    children();
 
-        translate([-500, -500, -1000])
-        cube([1000, 1000, 1000]);
-   }
+//     difference() {
+//         children();
+
+//         translate([-500, -500, -1000])
+//         cube([1000, 1000, 1000]);
+//    }
 }
 
 module print_one() {
@@ -189,8 +193,8 @@ module print_one() {
     if (key == "key_turbo" || key == "layout") {
         prepKey() key_turbo();
     }
-    if (key == "key_astrix" || key == "layout") {
-        prepKey() key_astrix();
+    if (key == "key_start" || key == "layout") {
+        prepKey() key_start();
     }
     if (key == "key_select" || key == "layout") {
         prepKey() key_select();

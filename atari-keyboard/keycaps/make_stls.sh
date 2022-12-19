@@ -70,7 +70,7 @@ make_stl key_bs
 make_stl key_reset
 make_stl key_menu
 make_stl key_turbo
-make_stl key_astrixt
+make_stl key_start
 make_stl key_select
 make_stl key_option
 make_stl key_help
