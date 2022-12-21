@@ -6,7 +6,7 @@ module preKey(size, w2, h2) {
 
     // $support_type = "bars"; // [flared, bars, flat, disable]
 
-    $stem_support_type = "tines"; // [tines, brim, disabled]
+    $stem_support_type = "brim"; // [tines, brim, disabled]
 
     // For FDM printers the stem has to reach the print bed
     // or support issues get ... "strange."

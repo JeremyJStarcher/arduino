@@ -25,7 +25,11 @@ base_height = 0.4;
 
 $keytop_thickness = 2;
 
-$stem_support_type = "tines"; //  "disable"; // "disable"; // "tines"
+
+// Supports for the stem, as it often comes off during printing. Reccommended for most machines
+// $stem_support_type = "tines"; // [tines, brim, disabled]
+
+$stem_support_type = "brim"; //  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
 // $clearance_check = true;
 

@@ -533,6 +533,7 @@ module key_c_left() {
 }
 
 module key_c_down() {
+    $key_bump = true;
     tu(KEY_C_DOWN)
     graphicsKey(2, "↓", "ctrl-y");
  }
