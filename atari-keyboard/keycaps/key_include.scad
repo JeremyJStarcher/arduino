@@ -19,6 +19,7 @@ full_size = 5;
 long_size = 4;
 // Font size if there are multiple lines on a key.
 half_size = 5; // 4.5;
+grid_key_size = 4;
 
 
 base_height = 0.4;
@@ -34,5 +35,5 @@ $inset_legend_depth = 1.5;
 // $clearance_check = true;
 
 // $font = "Liberation Mono:style=Bold";
-$font = "Liberation Sand:style=Bold";
+$font = "Liberation Sans:style=Bold";
 

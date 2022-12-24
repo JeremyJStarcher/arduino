@@ -249,7 +249,7 @@ module gridKeyRender(legend) {
     module key1() {
         u(usize)
         uh(uhsize)
-        flegend(legend, [0,0], half_size)
+        flegend(legend, [0,0], grid_key_size)
         grid_row(1)
         key();
     }
