@@ -1,6 +1,6 @@
 import unittest
-from parser import SParser
-from parser import Layer
+from parser_1 import SParser
+from parser_1 import Layer
 
 def read_file():
     data_file = open("sample_pcb", "r")
@@ -248,6 +248,18 @@ class TestStringMethods(unittest.TestCase):
         pcb_x = parser.getSymbolPropertyAsFloat("H257", "XYZZY", 100)
         self.assertEqual(pcb_x, 100)
 
+    def test_removeNouns(self):
+        s = read_file()
+        parser = SParser(s)
+        parser.toArray()
+
+        parent = parser.findFootprintByReference("SW266")
+        startNouns = parser.findObjectsByNoun("model", float("inf"), parent)
+        self.assertGreater(len(startNouns), 0)
+
+        parser.removeNouns(parent, "model")
+        afterNouns = parser.findObjectsByNoun("model", float("inf"), parent)
+        self.assertEqual(len(afterNouns), 0)
 
 if __name__ == '__main__':
     unittest.main()

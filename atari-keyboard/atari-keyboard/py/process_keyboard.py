@@ -1,8 +1,8 @@
 import json
 import csv
-from parser import SParser
-from parser import BoundingBox
-from parser import Layer
+from parser_1 import SParser
+from parser_1 import BoundingBox
+from parser_1 import Layer
 
 layout_json_filename = "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
 pcb_name = "../atari-keyboard.kicad_pcb"
@@ -342,7 +342,7 @@ def makeJlcPcb():
     for p in prints:
         #print(p)
 
-        o =  pcb_parser.findObjectsByNoun("fp_text", float("inf"), p)
+        o = pcb_parser.findObjectsByNoun("fp_text", float("inf"), p)
         filtered = filter(lambda fp: (fp[1] == "reference") and (fp[2].startswith('"D')), o)
         lf = list(filtered)
         if (len(lf) == 1):
@@ -402,9 +402,38 @@ def makeJlcPcb():
         writer.writerows(cpl_rows)
 
 
+def setModels():
+    layout = get_layout()
+
+    #print (layout)
+
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = SParser(pcb_sexp)
+    pcb_parser.toArray()
+
+    for item in layout:
+
+        if item.designator == None:
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
+   
+        footprint = pcb_parser.findFootprintByReference("SW" + item.designator)
+        pcb_parser.removeNouns(footprint, "model")
+        pcb_parser.addSwitchFootprint(footprint)
+
+    l = pcb_parser.arrayToSexp()
+    out = "\r\n".join(l)
+
+    with open(pcb_name, 'w') as f:
+        f.write(out)
+
 
 if __name__ == '__main__':
-    run_it()
-    calcPnP()
-    makeOpnscad()
-    makeJlcPcb()
+    #run_it()
+    #calcPnP()
+    #makeOpnscad()
+    #makeJlcPcb()
+    setModels()
+
