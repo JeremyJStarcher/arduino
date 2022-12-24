@@ -18,7 +18,7 @@ full_size = 5;
 // Font size of words written on a key
 long_size = 4;
 // Font size if there are multiple lines on a key.
-half_size = 4.5;
+half_size = 5; // 4.5;
 
 
 base_height = 0.4;
@@ -33,5 +33,6 @@ $stem_support_type = "brim"; //  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
 // $clearance_check = true;
 
-$font = "Liberation Mono:style=Bold";
+// $font = "Liberation Mono:style=Bold";
+$font = "Liberation Sand:style=Bold";
 
