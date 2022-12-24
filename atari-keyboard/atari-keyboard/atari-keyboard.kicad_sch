@@ -627,7 +627,6 @@
   )
 
 
-
   (no_connect (at 219.456 132.08) (uuid 2467894f-4fef-4ed7-9ed4-8e08e8441c0e))
   (no_connect (at 219.456 129.54) (uuid 2baf0916-c034-48da-9c5b-96fa401a3d02))
   (no_connect (at 220.98 30.48) (uuid 32297761-3fb6-40f8-b720-b041c7783c37))
@@ -2183,7 +2182,7 @@
       (reference "SW255") (unit 1) (value "FN") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.75u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/8b2cb0ae-40a9-4bc3-bde6-f6b025cbca8c"
-      (reference "SW256") (unit 1) (value "LSHIFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB")
+      (reference "SW256") (unit 1) (value "LSHIFT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.25u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/3c90011c-c332-4439-b06d-f5e3a332eb62"
       (reference "SW257") (unit 1) (value "Z") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")

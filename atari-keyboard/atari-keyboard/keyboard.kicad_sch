@@ -2970,7 +2970,7 @@
     (uuid 8b2cb0ae-40a9-4bc3-bde6-f6b025cbca8c)
     (property "Reference" "SW256" (id 0) (at 158.75 121.031 0))
     (property "Value" "LSHIFT" (id 1) (at 158.75 123.3424 0))
-    (property "Footprint" "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB" (id 2) (at 158.75 127 0)
+    (property "Footprint" "Button_Switch_Keyboard:SW_Cherry_MX_2.25u_PCB" (id 2) (at 158.75 127 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 158.75 127 0)
