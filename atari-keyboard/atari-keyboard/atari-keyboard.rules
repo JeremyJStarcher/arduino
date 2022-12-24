@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 17467)
+    (start_pass_no 99)
     (layer_rule F.Cu
       (active on)
       (preferred_direction horizontal)
@@ -61,7 +61,7 @@
   (class default
     R1 R2 R3 R4 R5 R8 C8 C7
     C6 C5 C4 C3 C2 C1 "Net-(D102-Pad1)" "Net-(D103-Pad1)"
-    "Net-(D104-Pad1)" "Net-(D105-Pad1)" "Net-(J102-Pad1)" "Net-(D107-Pad1)" "Net-(D108-Pad1)" "Net-(D109-Pad1)" "Net-(D110-Pad1)" "Net-(D111-Pad1)"
+    "Net-(D104-Pad1)" "Net-(D105-Pad1)" "Net-(D106-Pad1)" "Net-(D107-Pad1)" "Net-(D108-Pad1)" "Net-(D109-Pad1)" "Net-(D110-Pad1)" "Net-(D111-Pad1)"
     C9 "/JS_2+5" "/JS1_+5" "unconnected-(U101-Pad1)" "unconnected-(U101-Pad2)" R9 "Net-(D101-Pad1)" "unconnected-(U101-Pad22)"
     "unconnected-(U101-Pad24)" SDA SCL R6 R7 "/JS1_APAD" "/JS1_BPAD" "/JS2_APAD"
     "/JS2_BPAD" "Net-(D201-Pad2)" "Net-(D202-Pad2)" "Net-(D203-Pad2)" "Net-(D204-Pad2)" "Net-(D205-Pad2)" "Net-(D206-Pad2)" "Net-(D207-Pad2)"

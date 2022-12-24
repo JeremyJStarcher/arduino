@@ -71,7 +71,7 @@ module print_one() {
         prepKey() key_slash();
     }
     if (key == "key_rshift" || key == "layout") {
-        key_rshift();
+        prepKey() key_rshift();
     }
     if (key == "key_control" || key == "layout") {
         prepKey() key_control();
@@ -223,8 +223,8 @@ module print_one() {
     if (key == "key_power" || key == "layout") {
         prepKey() key_power();
     }
-    if (key == "key_inverse" || key == "layout") {
-        prepKey() key_inverse();
+    if (key == "key_inv" || key == "layout") {
+        prepKey() key_inv();
     }
     if (key == "key_break" || key == "layout") {
         prepKey() key_break();

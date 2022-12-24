@@ -499,7 +499,7 @@ module key_help() {
     gridKey("HELP");
 }
 
-module key_inverse() {
+module key_inv() {
     tu(KEY_INV)
     gridKey("INV");
 }
@@ -630,7 +630,7 @@ module fullkeyboard() {
         key_select();
         key_option();
         key_help();
-        key_inverse();
+        key_inv();
         key_break();
     }
 

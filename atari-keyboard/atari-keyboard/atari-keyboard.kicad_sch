@@ -1777,7 +1777,7 @@
       (reference "D268") (unit 1) (value "INV") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/bc0c9424-66e5-4a43-b309-f26896f5033b"
-      (reference "D269") (unit 1) (value "BRK") (footprint "retro-kbd:Diode-dual")
+      (reference "D269") (unit 1) (value "BREAK") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/78bdd35f-a1d9-43e1-bee4-4dc4856c923c"
       (reference "D270") (unit 1) (value "SPACE") (footprint "retro-kbd:Diode-dual")
@@ -2221,7 +2221,7 @@
       (reference "SW268") (unit 1) (value "INV") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/2c8cdf5f-5ea1-4aab-83a3-34d9ed2b3e16"
-      (reference "SW269") (unit 1) (value "BRK") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
+      (reference "SW269") (unit 1) (value "BREAK") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/142f1f2a-f57c-442c-bf6a-24296beadf96"
       (reference "SW270") (unit 1) (value "SPACE") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_6.25u_PCB")
