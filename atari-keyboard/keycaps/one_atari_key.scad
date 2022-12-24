@@ -1,5 +1,8 @@
 use <key_desc.scad>
 
+keymode = 4;
+
+$part_mode = keymode;
 
   key = "key_o";
   print_one();
@@ -20,10 +23,16 @@ module keyWithoutLegend() {
 
 module prepKey() {
     $set_location = key == "layout";
-    
-    difference() {
-        union() {color("red") keyWithoutLegend() children(); }
-        union() {color("white") keyWithLegend() children(); }
+
+    if ($part_mode == "2") {
+        difference() {
+            union() {color("red") keyWithoutLegend() children(); }
+            union() {color("white") keyWithLegend() children(); }
+        }
+    }
+
+    if ($part_mode == "1") {
+        keyWithLegend() children();
     }
 }
 
