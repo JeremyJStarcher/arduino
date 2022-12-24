@@ -447,7 +447,7 @@ class SParser:
 
             parent.remove(nouns[0])
 
-    def addSwitchFootprint(self, parent):
+    def addSwitchModel(self, parent):
         o = [
             "model", '"${KIPRJMOD}/3d/mx/asm_mx_asm_PCB.stp"',
             ["offset",  ["xyz", "-2.1", "-4.5", "4"]],
@@ -455,4 +455,13 @@ class SParser:
             ["rotate", ["xyz", "-180", "0", "90"]]
         ]
         parent.append(o)
-        
+
+    def addKeycapModel(self, parent, url):
+        o = [
+            "model", f'"{url}"',
+            ["offset",  ["xyz", "-2.2", "-4.9", "10"]],
+            ["scale",  ["xyz",  "0.4", "0.4", "0.4"]],
+            ["rotate", ["xyz", "0", "0", "0"]]
+        ]
+        parent.append(o)
+

@@ -412,7 +412,6 @@ def setModels():
     pcb_parser.toArray()
 
     for item in layout:
-
         if item.designator == None:
             print("skipping " + item.label)
             continue
@@ -421,7 +420,14 @@ def setModels():
    
         footprint = pcb_parser.findFootprintByReference("SW" + item.designator)
         pcb_parser.removeNouns(footprint, "model")
-        pcb_parser.addSwitchFootprint(footprint)
+        pcb_parser.addSwitchModel(footprint)
+
+        url = f"../keycaps/vrml/key_{item.label.lower()}_cap.wrl"
+        pcb_parser.addKeycapModel(footprint, url)
+
+        url = f"../keycaps/vrml/key_{item.label.lower()}_insert.wrl"
+        pcb_parser.addKeycapModel(footprint, url)
+
 
     l = pcb_parser.arrayToSexp()
     out = "\r\n".join(l)

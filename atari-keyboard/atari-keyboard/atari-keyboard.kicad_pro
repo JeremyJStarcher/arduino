@@ -403,7 +403,7 @@
       "netlist": "atari-keyboard.net",
       "specctra_dsn": "atari-keyboard.dsn",
       "step": "",
-      "vrml": ""
+      "vrml": "atari-keyboard.wrl"
     },
     "page_layout_descr_file": ""
   },
