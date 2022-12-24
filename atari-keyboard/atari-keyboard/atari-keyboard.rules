@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 20127)
+    (start_pass_no 23798)
     (layer_rule F.Cu
       (active on)
       (preferred_direction horizontal)
@@ -73,7 +73,6 @@
     "Net-(D248-Pad2)" "Net-(D249-Pad2)" "Net-(D250-Pad2)" "Net-(D251-Pad2)" "Net-(D252-Pad2)" "Net-(D253-Pad2)" "Net-(D254-Pad2)" "Net-(D255-Pad2)"
     "Net-(D256-Pad2)" "Net-(D257-Pad2)" "Net-(D258-Pad2)" "Net-(D259-Pad2)" "Net-(D260-Pad2)" "Net-(D261-Pad2)" "Net-(D262-Pad2)" "Net-(D263-Pad2)"
     "Net-(D264-Pad2)" "Net-(D265-Pad2)" "Net-(D266-Pad2)" "Net-(D267-Pad2)" "Net-(D268-Pad2)" "Net-(D269-Pad2)" "Net-(D270-Pad2)" "unconnected-(U101-Pad28)"
-    "unconnected-(SW227-Pad2)" "unconnected-(SW236-Pad2)" "unconnected-(SW245-Pad2)" "unconnected-(SW254-Pad2)" "unconnected-(SW263-Pad2)" "unconnected-(SW264-Pad2)" "unconnected-(SW265-Pad2)"
     (clearance_class default)
     (via_rule default)
     (rule
