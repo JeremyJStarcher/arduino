@@ -32,7 +32,7 @@ def buildOpenScadCmd(key_name, mode):
       tmode = 2
 
    fileName = buildFileName(STL_DIR, key_name, "stl", mode)
-   cmd = f'flatpak run org.openscad.OpenSCAD -D "key=\\"{key_name}\\"" -D "keymode=\\"{tmode}\\"" -o "{fileName}" "one_atari_key.scad" --export-format binstl' 
+   cmd = f'flatpak run org.openscad.OpenSCAD -D "key=\\"{key_name}\\"" -D "keymode=\\"{tmode}\\"" -o "{fileName}" "one_atari_key.scad" --export-format binstl'
    return cmd
 
 def key_to_stl(key_name):
@@ -78,8 +78,8 @@ def make_vrml():
       wrl1Name = buildFileName(VRML_DIR, key, "wrl", StlMode.KEY_CAP)
       wrl2Name = buildFileName(VRML_DIR, key, "wrl", StlMode.INSET)
 
-      cmd1 = f'ctmconv {stl1Name} {wrl1Name}' 
-      cmd2 = f'ctmconv {stl2Name} {wrl2Name}' 
+      cmd1 = f'ctmconv {stl1Name} {wrl1Name}'
+      cmd2 = f'ctmconv {stl2Name} {wrl2Name}'
 
       process1 = Popen(cmd1, shell=True)
       process2 = Popen(cmd2, shell=True)
