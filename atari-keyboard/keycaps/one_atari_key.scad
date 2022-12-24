@@ -8,17 +8,23 @@ use <key_desc.scad>
 //   prepKey() key_i();
 //   prepKey() key_comma();
 
-module prepKey() {
-    /* Cut off key flush with baseline -- doubtful this is really needed anymore. */
-
+module keyWithLegend() {
+    $show_legend = true;
     children();
+}
 
-//     difference() {
-//         children();
+module keyWithoutLegend() {
+    $show_legend = false;
+    children();
+}
 
-//         translate([-500, -500, -1000])
-//         cube([1000, 1000, 1000]);
-//    }
+module prepKey() {
+    $set_location = key == "layout";
+    
+    difference() {
+        union() {color("red") keyWithoutLegend() children(); }
+        union() {color("white") keyWithLegend() children(); }
+    }
 }
 
 module print_one() {

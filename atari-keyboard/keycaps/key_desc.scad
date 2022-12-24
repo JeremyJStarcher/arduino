@@ -8,8 +8,12 @@ include <keyboard-position.scad>
 /// ROW 4
 
 module tu(a) {
-    // translate_u(a[0], -a[1]) children();
-    translate([a[2], -a[3], 0]) children();
+    if ($set_location) {
+        // translate_u(a[0], -a[1]) children();
+        translate([a[2], -a[3], 0]) children();
+    } else {
+        children();
+    }
 }
 
 
@@ -17,7 +21,7 @@ module key_lshift() {
     tu(KEY_LSHIFT)
     u(2.25)
     stabilized()
-    legend("SHIFT", [0,0], long_size)
+    flegend("SHIFT", [0,0], long_size)
     oem_row(4)
     preKey()
     key();
@@ -101,7 +105,7 @@ module key_slash() {
 module key_rshift() {
     tu(KEY_RSHIFT)
     u(1.75)
-    legend("SHIFT", [0,0], long_size)
+    flegend("SHIFT", [0,0], long_size)
     oem_row(4)
     preKey()
     key();
@@ -115,7 +119,7 @@ module key_control() {
     tu(KEY_CONTROL)
     u(2)
     stabilized()
-    legend("CONTROL", [0,0], long_size)
+    flegend("CONTROL", [0,0], long_size)
     oem_row(3)
     preKey()
     key();
@@ -250,7 +254,7 @@ module key_astrix() {
 module key_caps() {
     tu(KEY_CAPS)
     u(1.25)
-    legend("CAPS", [0,0], long_size)
+    flegend("CAPS", [0,0], long_size)
     oem_row(3)
     preKey()
     key();
@@ -263,9 +267,9 @@ module key_caps() {
 module key_tab() {
     tu(KEY_TAB)
     u(1.75)
-    legend("TAB", [0,1], long_size)
-    legend("CLR", [1,-1], long_size)
-    legend("SET", [-1,-1], long_size)
+    flegend("TAB", [0,1], long_size)
+    flegend("CLR", [1,-1], long_size)
+    flegend("SET", [-1,-1], long_size)
     oem_row(2)
     preKey()
     key();
@@ -368,7 +372,7 @@ module key_equal() {
 module key_return() {
     tu(KEY_RETURN)
     u(1.5)
-    legend("RETURN", [0,0], long_size)
+    flegend("RETURN", [0,0], long_size)
     oem_row(2)
     preKey()
     key();
@@ -379,7 +383,7 @@ module key_return() {
 module key_esc() {
     tu(KEY_ESC)
     u(1.25)
-    legend("ESC", [0,0], long_size)
+    flegend("ESC", [0,0], long_size)
     oem_row(1)
     preKey()
     key();
@@ -450,8 +454,8 @@ module key_bs() {
     tu(KEY_BS)
     u(2)
     stabilized()
-    legend("BACK SP", [0,1], half_size)
-    legend("DELETE", [0,-1], half_size)
+    flegend("BACK SP", [0,1], half_size)
+    flegend("DELETE", [0,-1], half_size)
     oem_row(1)
     preKey()
     key();

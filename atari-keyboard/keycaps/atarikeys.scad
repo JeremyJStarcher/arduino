@@ -118,22 +118,24 @@ module support_stabilizers(x, y) {
 }
 
 module frontGraphic() {
-    // this value by trial and error
-    inset = -0.3;
+    if ($show_legend) {
+        // this value by trial and error
+        inset = -0.3;
 
-    rotate([atari_rotation, 0, 0])
-    front_of_key()
-    translate([0, inset, 0])
-    scale([0.75, 2, 0.75]) {
-        boundBox();
-        color("white") children();
+        rotate([atari_rotation, 0, 0])
+        front_of_key()
+        translate([0, inset, 0])
+        scale([0.75, 2, 0.75]) {
+            boundBox();
+            color("white") children();
+        }
     }
 }
 
 module graphicsKey(row, legend, svg) {
     difference() {
         u(1)
-        legend(legend, [0,0], full_size)
+        flegend(legend, [0,0], full_size)
         oem_row(row)
         preKey()
         key();
@@ -146,8 +148,8 @@ module graphicsKey(row, legend, svg) {
 module graphicsKey2(row, legendBottom, legendTop, svg) {
     difference() {
         u(1)
-        legend(legendBottom, [0,1], half_size)
-        legend(legendTop, [0,-1], half_size)
+        flegend(legendBottom, [0,1], half_size)
+        flegend(legendTop, [0,-1], half_size)
         oem_row(row)
         preKey()
         key();
@@ -160,9 +162,9 @@ module graphicsKey2(row, legendBottom, legendTop, svg) {
 module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg) {
     difference() {
         u(1)
-        legend(legendBottom, [0,1], half_size)
-        legend(legendTop, [0,-1], half_size)
-        legend(legendLeft, [-1,-1], half_size)
+        flegend(legendBottom, [0,1], half_size)
+        flegend(legendTop, [0,-1], half_size)
+        flegend(legendLeft, [-1,-1], half_size)
         oem_row(row)
         preKey()
         key();
@@ -247,7 +249,7 @@ module gridKeyRender(legend) {
     module key1() {
         u(usize)
         uh(uhsize)
-        legend(legend, [0,0], half_size)
+        flegend(legend, [0,0], half_size)
         grid_row(1)
         key();
     }
@@ -272,6 +274,17 @@ module gridKeyRender(legend) {
     // Then draw the button itself (which will redraw the thin walls)
     key1();
 }
+
+module flegend(txt, pos, size) {
+    if ($show_legend) {
+        legend(txt, pos, size)
+        children();
+    } else {
+        legend("", pos, size)
+        children();
+    }
+}
+
 
 
 //  fullkeyboard();
