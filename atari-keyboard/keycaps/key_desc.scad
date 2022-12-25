@@ -5,6 +5,13 @@ include <atarikeys.scad>
 use <key_include.scad>
 include <keyboard-position.scad>
 
+
+ARROW_UP = "↑";
+ARROW_LEFT = "←";
+ARROW_DOWN =  "↓";
+ARROW_RIGHT =  "→";
+
+
 /// ROW 4
 
 module tu(a) {
@@ -241,13 +248,13 @@ module key_semi() {
 
 module key_plus() {
     tu(KEY_PLUS)
-    graphicsKey3(3, "+", chr(34), "←", "ctrl-comma");
+    graphicsKey3(3, "+", chr(34), ARROW_LEFT, "ctrl-comma");
 }
 
 
 module key_astrix() {
     tu(KEY_ASTRIX)
-    graphicsKey3(3, "*", "^", "→", "ctrl-comma");
+    graphicsKey3(3, "*", "^", ARROW_RIGHT, "ctrl-comma");
 }
 
 
@@ -360,12 +367,12 @@ module key_p() {
 // ← ↑ ↓ →
 module key_dash() {
     tu(KEY_DASH)
-    graphicsKey3(2, "-", "_", "↑", "ctrl-comma");
+    graphicsKey3(2, "-", "_", ARROW_UP, "ctrl-comma");
 }
 
 module key_equal() {
     tu(KEY_EQUAL)
-    graphicsKey3(2, "=", "|", "↓", "ctrl-comma");
+    graphicsKey3(2, "=", "|", ARROW_DOWN, "ctrl-comma");
 }
 
 
@@ -528,23 +535,23 @@ module key_space() {
 
 module key_c_up() {
     tu(KEY_C_UP)
-    graphicsKey(2, "↑", "ctrl-y");
+    arrowKey(2, ARROW_UP, "ctrl-y");
 }
 
 module key_c_left() {
     tu(KEY_C_LEFT)
-    graphicsKey(2, "←", "ctrl-y");
+    arrowKey(2, ARROW_LEFT, "ctrl-y");
 }
 
 module key_c_down() {
     $key_bump = true;
     tu(KEY_C_DOWN)
-    graphicsKey(2, "↓", "ctrl-y");
+    arrowKey(2, ARROW_DOWN, "ctrl-y");
  }
 
 module key_c_right() {
     tu(KEY_C_RIGHT)
-    graphicsKey(2, "→", "ctrl-y");
+    arrowKey(2, ARROW_RIGHT, "ctrl-y");
  }
 
 

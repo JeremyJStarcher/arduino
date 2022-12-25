@@ -181,7 +181,8 @@ key_list = [
    "key_w",
    "key_x",
    "key_y",
-   "key_z"
+   "key_z",
+   "layout"
 ]
 
 if __name__ == '__main__':

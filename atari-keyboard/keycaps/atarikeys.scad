@@ -132,6 +132,20 @@ module frontGraphic() {
     }
 }
 
+module arrowKey(row, legend, svg) {
+    difference() {
+        u(1)
+        flegend(legend, [0,0], arrow_size)
+        oem_row(row)
+        preKey()
+        key();
+
+        frontGraphic()
+        children();
+    }
+}
+
+
 module graphicsKey(row, legend, svg) {
     difference() {
         u(1)
@@ -163,8 +177,8 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg) {
     difference() {
         u(1)
         flegend(legendBottom, [0,1], half_size)
-        flegend(legendTop, [0,-1], half_size)
-        flegend(legendLeft, [-1,-1], half_size)
+        flegend(legendTop, [1,-1], half_size)
+        flegend(legendLeft, [-1,-1], arrow_size)
         oem_row(row)
         preKey()
         key();

@@ -20,6 +20,7 @@ long_size = 4;
 // Font size if there are multiple lines on a key.
 half_size = 5; // 4.5;
 grid_key_size = 4;
+arrow_size = 6;
 
 
 base_height = 0.4;
