@@ -9,6 +9,7 @@
 
 #include "IRCClient.h"
 #include "hardware.h"
+#include "eeprom.h"
 
 char * getEpromString(int phrase, char *buffer, size_t len);
 void setupAP(void);
@@ -25,16 +26,6 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define PW_MAX_LEN 100
 #define DATA_MAX_LEN 100
 
-#define EEPROM_MODE_OFFSET 0
-#define EEPROM_DATA_OFFSET 1
-
-#define EEPROM_SSID_NAME 0
-#define EEPROM_SSID_PW 1
-#define EEPROM_IRC_SERVER 2
-#define EEPROM_IRC_PORT 3
-#define EEPROM_IRC_NICK 4
-#define EEPROM_IRC_USER 5
-#define EEPROM_IRC_FULLNAME 6
 
 const int LED_PIN = 2;
 
@@ -284,9 +275,9 @@ void showStatus() {
     char buf2[100];
     intensity_to_string(toy.intensity, buf2);
 
-    snprintf(buf, 99, "%1s %-10s %4s %2d",
+    snprintf(buf, 99, "%1s %-10s %4s %2ld",
              timeLeft > 0 ? "+" : " ",
-             toy.id,
+             toy.id.c_str(),
              buf2,
              timeLeft > 0 ? (long) timeLeft : 0
             );
@@ -367,10 +358,10 @@ void processListCommand(IRCMessage ircMessage) {
     char buf2[100];
     intensity_to_string(toy.intensity, buf2);
 
-    snprintf(buf, 99, "%4s %-10s %-20s %11s %6d",
+    snprintf(buf, 99, "%4s %-10s %-20s %11s %6ld",
              timeLeft > 0 ? "on" : "off",
-             toy.id,
-             &toy.name[0],
+             toy.id.c_str(),
+             toy.name.c_str(),
              buf2,
              timeLeft > 0 ? (long) timeLeft : 0
             );

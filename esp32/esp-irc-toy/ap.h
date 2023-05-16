@@ -1,3 +1,4 @@
+#include "eeprom.h"
 
 WiFiServer server(80);
 
@@ -5,7 +6,7 @@ void setupAP() {
   Serial.println();
   Serial.println("Configuring access point...");
 
-  uint64_t chipid = ESP.getEfuseMac(); //The chip ID is essentially its MAC address(length: 6 bytes).
+  uint64_t chipid = ESP.getEfuseMac();  //The chip ID is essentially its MAC address(length: 6 bytes).
   uint16_t chip = (uint16_t)(chipid >> 32);
   static char ssid[23];
 
@@ -33,17 +34,29 @@ void setupAP() {
 }
 
 
-void loopAP() {
-  WiFiClient client = server.available();   // listen for incoming clients
+String getAndSend(int phrase) {
+  static char buff[100];
+  String output(getEpromString(phrase, buff, 100));
 
-  if (client) {                             // if you get a client,
-    Serial.println("New Client.");           // print a message out the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
-    while (client.connected()) {            // loop while the client's connected
-      if (client.available()) {             // if there's bytes to read from the client,
-        char c = client.read();             // read a byte, then
+  output.replace("&", "&amp;");
+  output.replace("\"", "&quot;");
+  output.replace("'", "&#39;");
+  output.replace("<", "&lt;");
+  output.replace(">", "&gt;");
+  return output;
+}
+
+void loopAP() {
+  WiFiClient client = server.available();  // listen for incoming clients
+
+  if (client) {                     // if you get a client,
+    Serial.println("New Client.");  // print a message out the serial port
+    String currentLine = "";        // make a String to hold incoming data from the client
+    while (client.connected()) {    // loop while the client's connected
+      if (client.available()) {     // if there's bytes to read from the client,
+        char c = client.read();     // read a byte, then
         // Serial.write(c);                    // print it out the serial monitor
-        if (c == '\n') {                    // if the byte is a newline character
+        if (c == '\n') {  // if the byte is a newline character
 
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
@@ -63,17 +76,17 @@ void loopAP() {
             client.print("<form action='' method='get'>");
             client.print("<fieldset>");
             client.print("<legend>WIFI Configuration</legend>");
-            client.print("<div><label>SSID (Wifi Name)</label><input value='TinkerHouse' id='ssid' name='ssid'></div>");
-            client.print("<div><label>Password</label><input id='pw' value='Join us in the fun.' type='password' name='pw'></div>");
+            client.printf("<div><label>SSID (Wifi Name)</label><input value='%s' id='ssid' name='ssid'></div>", getAndSend(EEPROM_SSID_NAME).c_str());
+            client.printf("<div><label>Password</label><input id='pw' value='%s' type='password' name='pw'></div>", getAndSend(EEPROM_SSID_PW).c_str());
             client.print("</fieldset>");
 
             client.print("<fieldset>");
             client.print("<legend>IRC Configuration</legend>");
-            client.print("<div><label>Server</label><input id='irc_server' value='us.undernet.org' name='irc_server'></div>");
-            client.print("<div><label>Port</label><input id='irc_port' value='6667' name='irc_port'></div>");
-            client.print("<div><label>Nickname</label><input id='irc_nickname' value='jilly_t2' name='irc_nickname'></div>");
-            client.print("<div><label>User</label><input id='irc_user' value='jillybot' name='irc_user'></div>");
-            client.print("<div><label>Full Name</label><input id='irc_fullname' value='jilly_t2' name='irc_fullname'></div>");
+            client.printf("<div><label>Server</label><input id='irc_server' value='%s' name='irc_server'></div>", getAndSend(EEPROM_IRC_SERVER).c_str());
+            client.printf("<div><label>Port</label><input id='irc_port' value='%s' name='irc_port'></div>", getAndSend(EEPROM_IRC_PORT).c_str());
+            client.printf("<div><label>Nickname</label><input id='irc_nickname' value='%s' name='irc_nickname'></div>", getAndSend(EEPROM_IRC_NICK).c_str());
+            client.printf("<div><label>User</label><input id='irc_user' value='%s' name='irc_user'></div>", getAndSend(EEPROM_IRC_USER).c_str());
+            client.printf("<div><label>Full Name</label><input id='irc_fullname' value='%s' name='irc_fullname'></div>", getAndSend(EEPROM_IRC_FULLNAME).c_str());
             client.print("</fieldset>");
 
             client.print("<button type='button' onclick='save()'>Save</button></form>");
@@ -113,7 +126,7 @@ void loopAP() {
             client.println();
             // break out of the while loop:
             break;
-          } else {    // if you got a newline, then clear currentLine:
+          } else {  // if you got a newline, then clear currentLine:
             Serial.println("Current line: ");
             Serial.println(currentLine);
             if (currentLine.startsWith("GET /save/")) {
@@ -156,9 +169,9 @@ void loopAP() {
                 EEPROM.write(offset, ch);
                 ptr = strtok(NULL, ",");
                 Serial.print("SSID Saving ");
-                Serial.print((int) ch);
+                Serial.print((int)ch);
                 Serial.print(" ");
-                Serial.print((char) ch);
+                Serial.print((char)ch);
                 Serial.print(" at ");
                 Serial.println(offset);
 
@@ -191,10 +204,10 @@ void loopAP() {
 
         // Check to see if the client request was "GET /H" or "GET /L":
         if (currentLine.endsWith("GET /H")) {
-          digitalWrite(LED_PIN, HIGH);               // GET /H turns the LED on
+          digitalWrite(LED_PIN, HIGH);  // GET /H turns the LED on
         }
         if (currentLine.endsWith("GET /L")) {
-          digitalWrite(LED_PIN, LOW);                // GET /L turns the LED off
+          digitalWrite(LED_PIN, LOW);  // GET /L turns the LED off
         }
       }
     }
