@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>/home/jjs/Dropbox/KiCad/esp-motor/esp-toy.sch</source>
+    <date>Sun 20 Sep 2020 03:00:53 PM EDT</date>
+    <tool>Eeschema 5.1.5+dfsg1-2build2</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>ESP_TOY</title>
+        <company>Jeremy J Starcher</company>
+        <rev>1</rev>
+        <date>2020-08-11</date>
+        <source>esp-toy.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="J5">
+      <value>MOTOR4</value>
+      <footprint>TerminalBlock:TerminalBlock_bornier-2_P5.08mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F33AD4E</tstamp>
+    </comp>
+    <comp ref="J3">
+      <value>MOTOR2</value>
+      <footprint>TerminalBlock:TerminalBlock_bornier-2_P5.08mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F33BA71</tstamp>
+    </comp>
+    <comp ref="J2">
+      <value>MOTOR1</value>
+      <footprint>TerminalBlock:TerminalBlock_bornier-2_P5.08mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F33D79E</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>PRG SWITCH</value>
+      <footprint>Button_Switch_THT:SW_PUSH-12mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3462E4</tstamp>
+    </comp>
+    <comp ref="J4">
+      <value>MOTOR3</value>
+      <footprint>TerminalBlock:TerminalBlock_bornier-2_P5.08mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="Screw_Terminal_01x02" description="Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3B359C</tstamp>
+    </comp>
+    <comp ref="U1">
+      <value>ULN2003A</value>
+      <footprint>Package_DIP:DIP-16_W10.16mm</footprint>
+      <datasheet>http://www.ti.com/lit/ds/symlink/uln2003a.pdf</datasheet>
+      <libsource lib="Transistor_Array" part="ULN2003A" description="High Voltage, High Current Darlington Transistor Arrays, SOIC16/SOIC16W/DIP16/TSSOP16"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3369C5</tstamp>
+    </comp>
+    <comp ref="A3">
+      <value>ESP32-OLED</value>
+      <footprint>esp-toy:ESP32-OLED</footprint>
+      <libsource lib="esp-toy" part="ESP32-OLED" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F4737A5</tstamp>
+    </comp>
+    <comp ref="A1">
+      <value>MINI_360</value>
+      <footprint>esp-toy:MINI_360</footprint>
+      <libsource lib="esp-toy" part="MINI_360" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F474301</tstamp>
+    </comp>
+    <comp ref="A2">
+      <value>MINI_360</value>
+      <footprint>esp-toy:MINI_360</footprint>
+      <libsource lib="esp-toy" part="MINI_360" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F477D00</tstamp>
+    </comp>
+    <comp ref="H1">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_DIN965_Pad</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3C91D1</tstamp>
+    </comp>
+    <comp ref="H2">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_DIN965_Pad</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3C949A</tstamp>
+    </comp>
+    <comp ref="H3">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_DIN965_Pad</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3C95D8</tstamp>
+    </comp>
+    <comp ref="H4">
+      <value>MountingHole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_DIN965_Pad</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F3C9740</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>D</value>
+      <footprint>Diode_THT:D_5W_P12.70mm_Horizontal</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Device" part="D" description="Diode"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F4031E0</tstamp>
+    </comp>
+    <comp ref="J1">
+      <value>POWER</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Horizontal</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="Conn_01x03_Female" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F439A02</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector" part="Conn_01x03_Female">
+      <description>Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x03_Female</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector" part="Screw_Terminal_01x02">
+      <description>Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TerminalBlock*:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Screw_Terminal_01x02</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="D">
+      <description>Diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TO-???*</fp>
+        <fp>*_Diode_*</fp>
+        <fp>*SingleDiode*</fp>
+        <fp>D_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Mechanical" part="MountingHole">
+      <description>Mounting Hole without connection</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>MountingHole*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MountingHole</field>
+      </fields>
+    </libpart>
+    <libpart lib="Switch" part="SW_Push">
+      <description>Push button switch, generic, two pins</description>
+      <docs>~</docs>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_Push</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Transistor_Array" part="ULN2003">
+      <aliases>
+        <alias>ULN2003A</alias>
+        <alias>ULN2002</alias>
+        <alias>ULN2002A</alias>
+        <alias>ULN2004</alias>
+        <alias>ULN2004A</alias>
+      </aliases>
+      <description>High Voltage, High Current Darlington Transistor Arrays, SOIC16/SOIC16W/DIP16/TSSOP16</description>
+      <docs>http://www.ti.com/lit/ds/symlink/uln2003a.pdf</docs>
+      <footprints>
+        <fp>DIP*W7.62mm*</fp>
+        <fp>SOIC*3.9x9.9mm*P1.27mm*</fp>
+        <fp>SSOP*4.4x5.2mm*P0.65mm*</fp>
+        <fp>TSSOP*4.4x5mm*P0.65mm*</fp>
+        <fp>SOIC*W*5.3x10.2mm*P1.27mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">ULN2003</field>
+      </fields>
+      <pins>
+        <pin num="1" name="I1" type="input"/>
+        <pin num="2" name="I2" type="input"/>
+        <pin num="3" name="I3" type="input"/>
+        <pin num="4" name="I4" type="input"/>
+        <pin num="5" name="I5" type="input"/>
+        <pin num="6" name="I6" type="input"/>
+        <pin num="7" name="I7" type="input"/>
+        <pin num="8" name="GND" type="power_in"/>
+        <pin num="9" name="COM" type="passive"/>
+        <pin num="10" name="O7" type="openCol"/>
+        <pin num="11" name="O6" type="openCol"/>
+        <pin num="12" name="O5" type="openCol"/>
+        <pin num="13" name="O4" type="openCol"/>
+        <pin num="14" name="O3" type="openCol"/>
+        <pin num="15" name="O2" type="openCol"/>
+        <pin num="16" name="O1" type="openCol"/>
+      </pins>
+    </libpart>
+    <libpart lib="esp-toy" part="ESP32-OLED">
+      <fields>
+        <field name="Reference">A</field>
+        <field name="Value">ESP32-OLED</field>
+      </fields>
+      <pins>
+        <pin num="1" name="SVP" type="input"/>
+        <pin num="2" name="25" type="BiDi"/>
+        <pin num="3" name="26" type="BiDi"/>
+        <pin num="4" name="S1" type="input"/>
+        <pin num="5" name="CM" type="input"/>
+        <pin num="6" name="S0" type="input"/>
+        <pin num="7" name="CL" type="input"/>
+        <pin num="8" name="3.3v" type="input"/>
+        <pin num="9" name="SND" type="input"/>
+        <pin num="10" name="5V_L" type="input"/>
+        <pin num="11" name="5V_L" type="power_in"/>
+        <pin num="12" name="GND" type="power_in"/>
+        <pin num="13" name="GND" type="power_in"/>
+        <pin num="14" name="3.3v" type="power_out"/>
+        <pin num="15" name="TX" type="BiDi"/>
+        <pin num="16" name="RX" type="BiDi"/>
+        <pin num="17" name="15" type="BiDi"/>
+        <pin num="18" name="13" type="BiDi"/>
+        <pin num="19" name="12" type="BiDi"/>
+        <pin num="20" name="14" type="BiDi"/>
+        <pin num="21" name="2" type="BiDi"/>
+        <pin num="22" name="0" type="BiDi"/>
+        <pin num="23" name="4" type="BiDi"/>
+        <pin num="24" name="5" type="BiDi"/>
+        <pin num="25" name="16" type="BiDi"/>
+        <pin num="26" name="SVN" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="esp-toy" part="MINI_360">
+      <fields>
+        <field name="Reference">A</field>
+        <field name="Value">MINI_360</field>
+      </fields>
+      <pins>
+        <pin num="1" name="IN-" type="power_in"/>
+        <pin num="2" name="IN+" type="power_in"/>
+        <pin num="3" name="OUT+" type="power_out"/>
+        <pin num="4" name="OUT-" type="input"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector">
+      <uri>/usr/share/kicad/library/Connector.lib</uri>
+    </library>
+    <library logical="Device">
+      <uri>/usr/share/kicad/library/Device.lib</uri>
+    </library>
+    <library logical="Mechanical">
+      <uri>/usr/share/kicad/library/Mechanical.lib</uri>
+    </library>
+    <library logical="Switch">
+      <uri>/usr/share/kicad/library/Switch.lib</uri>
+    </library>
+    <library logical="Transistor_Array">
+      <uri>/usr/share/kicad/library/Transistor_Array.lib</uri>
+    </library>
+    <library logical="esp-toy">
+      <uri>/home/jjs/Dropbox/KiCad/esp-motor/esp-toy.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="Net-(A3-Pad23)">
+      <node ref="A3" pin="23"/>
+    </net>
+    <net code="2" name="Net-(A3-Pad24)">
+      <node ref="A3" pin="24"/>
+    </net>
+    <net code="3" name="Net-(A3-Pad25)">
+      <node ref="A3" pin="25"/>
+      <node ref="U1" pin="2"/>
+    </net>
+    <net code="4" name="Net-(A3-Pad26)">
+      <node ref="A3" pin="26"/>
+    </net>
+    <net code="5" name="Net-(A3-Pad3)">
+      <node ref="U1" pin="3"/>
+      <node ref="A3" pin="3"/>
+    </net>
+    <net code="6" name="Net-(A3-Pad4)">
+      <node ref="A3" pin="4"/>
+    </net>
+    <net code="7" name="Net-(A3-Pad5)">
+      <node ref="A3" pin="5"/>
+    </net>
+    <net code="8" name="Net-(A3-Pad6)">
+      <node ref="A3" pin="6"/>
+    </net>
+    <net code="9" name="Net-(A3-Pad7)">
+      <node ref="A3" pin="7"/>
+    </net>
+    <net code="10" name="Net-(A3-Pad8)">
+      <node ref="A3" pin="8"/>
+    </net>
+    <net code="11" name="Net-(A3-Pad9)">
+      <node ref="A3" pin="9"/>
+    </net>
+    <net code="12" name="Net-(A3-Pad22)">
+      <node ref="A3" pin="22"/>
+    </net>
+    <net code="14" name="/5V_ESP">
+      <node ref="A3" pin="10"/>
+      <node ref="A3" pin="11"/>
+      <node ref="A1" pin="3"/>
+    </net>
+    <net code="15" name="Net-(A3-Pad1)">
+      <node ref="A3" pin="1"/>
+    </net>
+    <net code="16" name="Net-(A3-Pad14)">
+      <node ref="A3" pin="14"/>
+    </net>
+    <net code="17" name="Net-(A3-Pad15)">
+      <node ref="A3" pin="15"/>
+    </net>
+    <net code="18" name="Net-(A3-Pad16)">
+      <node ref="A3" pin="16"/>
+    </net>
+    <net code="19" name="Net-(A3-Pad17)">
+      <node ref="A3" pin="17"/>
+    </net>
+    <net code="20" name="Net-(A3-Pad18)">
+      <node ref="SW1" pin="1"/>
+      <node ref="A3" pin="18"/>
+    </net>
+    <net code="21" name="Net-(A3-Pad19)">
+      <node ref="A3" pin="19"/>
+    </net>
+    <net code="22" name="Net-(A3-Pad2)">
+      <node ref="U1" pin="4"/>
+      <node ref="A3" pin="2"/>
+    </net>
+    <net code="23" name="Net-(A3-Pad20)">
+      <node ref="A3" pin="20"/>
+    </net>
+    <net code="24" name="Net-(A3-Pad21)">
+      <node ref="A3" pin="21"/>
+      <node ref="U1" pin="1"/>
+    </net>
+    <net code="26" name="/DC_IN">
+      <node ref="A1" pin="2"/>
+      <node ref="A2" pin="2"/>
+      <node ref="D1" pin="1"/>
+    </net>
+    <net code="27" name="/VRAW">
+      <node ref="J1" pin="3"/>
+      <node ref="D1" pin="2"/>
+    </net>
+    <net code="28" name="Net-(J1-Pad2)">
+      <node ref="J1" pin="2"/>
+    </net>
+    <net code="29" name="GND">
+      <node ref="A3" pin="13"/>
+      <node ref="A3" pin="12"/>
+      <node ref="SW1" pin="2"/>
+      <node ref="J1" pin="1"/>
+      <node ref="A1" pin="4"/>
+      <node ref="A2" pin="1"/>
+      <node ref="A2" pin="4"/>
+      <node ref="A1" pin="1"/>
+      <node ref="U1" pin="8"/>
+    </net>
+    <net code="30" name="Net-(U1-Pad12)">
+      <node ref="U1" pin="12"/>
+    </net>
+    <net code="31" name="Net-(U1-Pad11)">
+      <node ref="U1" pin="11"/>
+    </net>
+    <net code="32" name="Net-(U1-Pad10)">
+      <node ref="U1" pin="10"/>
+    </net>
+    <net code="33" name="Net-(U1-Pad7)">
+      <node ref="U1" pin="7"/>
+    </net>
+    <net code="34" name="Net-(U1-Pad6)">
+      <node ref="U1" pin="6"/>
+    </net>
+    <net code="35" name="Net-(U1-Pad5)">
+      <node ref="U1" pin="5"/>
+    </net>
+    <net code="36" name="VCC">
+      <node ref="J5" pin="1"/>
+      <node ref="J4" pin="1"/>
+      <node ref="J3" pin="1"/>
+      <node ref="J2" pin="1"/>
+      <node ref="A2" pin="3"/>
+      <node ref="U1" pin="9"/>
+    </net>
+    <net code="37" name="Net-(J5-Pad2)">
+      <node ref="J5" pin="2"/>
+      <node ref="U1" pin="13"/>
+    </net>
+    <net code="38" name="Net-(J4-Pad2)">
+      <node ref="U1" pin="14"/>
+      <node ref="J4" pin="2"/>
+    </net>
+    <net code="39" name="Net-(J3-Pad2)">
+      <node ref="U1" pin="15"/>
+      <node ref="J3" pin="2"/>
+    </net>
+    <net code="40" name="Net-(J2-Pad2)">
+      <node ref="J2" pin="2"/>
+      <node ref="U1" pin="16"/>
+    </net>
+  </nets>
+</export>

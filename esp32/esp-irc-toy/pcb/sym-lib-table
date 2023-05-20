@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name esp-toy)(type Legacy)(uri ${KIPRJMOD}/esp-toy.lib)(options "")(descr ""))
+  (lib (name esp-toy-rescue)(type Legacy)(uri ${KIPRJMOD}/esp-toy-rescue.lib)(options "")(descr ""))
+)

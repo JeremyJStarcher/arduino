@@ -1,0 +1,12 @@
+Reference, Quantity, Value, Footprint, Datasheet
+A1 A2 ,2,"MINI_360","esp-toy:MINI_360",""
+A3 ,1,"ESP32-OLED","esp-toy:ESP32-OLED",""
+D1 ,1,"D","Diode_THT:D_5W_P12.70mm_Horizontal","~"
+H1 H2 H3 H4 ,4,"MountingHole","MountingHole:MountingHole_2.2mm_M2_DIN965_Pad","~"
+J1 ,1,"POWER","Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Horizontal","~"
+J2 ,1,"MOTOR1","TerminalBlock:TerminalBlock_bornier-2_P5.08mm","~"
+J3 ,1,"MOTOR2","TerminalBlock:TerminalBlock_bornier-2_P5.08mm","~"
+J4 ,1,"MOTOR3","TerminalBlock:TerminalBlock_bornier-2_P5.08mm","~"
+J5 ,1,"MOTOR4","TerminalBlock:TerminalBlock_bornier-2_P5.08mm","~"
+SW1 ,1,"PRG SWITCH","Button_Switch_THT:SW_PUSH-12mm","~"
+U1 ,1,"ULN2003A","Package_DIP:DIP-16_W10.16mm","http://www.ti.com/lit/ds/symlink/uln2003a.pdf"

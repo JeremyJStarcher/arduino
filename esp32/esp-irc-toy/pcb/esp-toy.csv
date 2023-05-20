@@ -1,0 +1,12 @@
+Comment,Designator,Footprint,LCSC
+"MINI_360","A1,A2","esp-toy:MINI_360",""
+"ESP32-OLED","A3","esp-toy:ESP32-OLED",""
+"D","D1","Diode_THT:D_5W_P12.70mm_Horizontal",""
+"MountingHole","H1,H2,H3,H4","MountingHole:MountingHole_2.2mm_M2_DIN965_Pad",""
+"POWER","J1","Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Horizontal",""
+"MOTOR1","J2","TerminalBlock:TerminalBlock_bornier-2_P5.08mm",""
+"MOTOR2","J3","TerminalBlock:TerminalBlock_bornier-2_P5.08mm",""
+"MOTOR3","J4","TerminalBlock:TerminalBlock_bornier-2_P5.08mm",""
+"MOTOR4","J5","TerminalBlock:TerminalBlock_bornier-2_P5.08mm",""
+"PRG SWITCH","SW1","Button_Switch_THT:SW_PUSH-12mm",""
+"ULN2003A","U1","Package_DIP:DIP-16_W10.16mm",""

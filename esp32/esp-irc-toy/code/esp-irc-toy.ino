@@ -512,26 +512,38 @@ void debugSentCallback(String data) {
   Serial.println(data);
 }
 
+/ Function to retrieve a specific string from EEPROM
 char * getEpromString(int phrase, char *buffer, size_t len) {
+  // Declare and initialize indices and the variable for storing the read character
   size_t i = 0;
   size_t idx = 0;
   int ch = -1;
 
+  // Loop through strings stored in EEPROM until the specified one is reached
   for (int ii = 0; ii <= phrase; ii++) {
-    i = 0;
+    i = 0; // Reset buffer index for each string
+    // Read characters from EEPROM into buffer until the end of the string is reached (denoted by a zero)
     while ((ch = EEPROM.read(EEPROM_DATA_OFFSET + idx)) != 0) {
-      // Un-initialized memory defaults to 0xff
+      // If the character read from EEPROM is the default value for uninitialized memory (0xff), stop reading
       if (ch == 0xff) break;
 
+      // Store the character read into the buffer and ensure the buffer always contains a valid zero-terminated string
       buffer[i] = ch;
       buffer[i + 1] = 0;
+      
+      // Increment the buffer and EEPROM indices
       i++;
       idx += 1;
     }
+    // Skip the zero character at the end of the string in the EEPROM
     idx += 1;
   }
+  
+  // Return the pointer to the buffer containing the retrieved string
+  // This is not strictly necessary since the original buffer pointer was passed in.
   return buffer;
 }
+
 
 char * getEpromServer() {
   static char buffer[100];
