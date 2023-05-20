@@ -1,4 +1,0 @@
-#!/bin/sh
-
-java -jar ~/bin/./layout/opt/layout/bin/freeRouting.jar \
--dl -de ./atari-keyboard/atari-keyboard.dsn -do atari-keyboard/atari-keyboard.ses
